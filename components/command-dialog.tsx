@@ -3,7 +3,7 @@
 import * as React from "react";
 import { useRouter } from "next/navigation";
 import { DialogProps } from "@radix-ui/react-alert-dialog";
-import { File, Github, Laptop, Mail, Moon, Sun, Twitter } from "lucide-react";
+import { File, Github, Laptop, Mail, Moon, Sun, Twitter, BookOpen, Calendar, Tag } from "lucide-react";
 import { useTheme } from "next-themes";
 
 import siteMetadata, { defaultAuthor } from "@/lib/metadata";
@@ -20,9 +20,13 @@ import {
   CommandSeparator,
 } from "@/components/ui/command";
 
+// Import contentlayer generated data
+import { allPosts, allPages } from "contentlayer/generated";
+
 export function CommandDialogComponent({ ...props }: DialogProps) {
   const router = useRouter();
   const [open, setOpen] = React.useState(false);
+  const [searchValue, setSearchValue] = React.useState("");
   const { setTheme } = useTheme();
 
   React.useEffect(() => {
@@ -50,6 +54,32 @@ export function CommandDialogComponent({ ...props }: DialogProps) {
     command();
   }, []);
 
+  // Filter content based on search value
+  const filteredPosts = React.useMemo(() => {
+    if (!searchValue.trim()) return [];
+
+    const searchLower = searchValue.toLowerCase();
+    return allPosts
+      .filter((post) => post.status === "published")
+      .filter((post) =>
+        post.title.toLowerCase().includes(searchLower) ||
+        post.description?.toLowerCase().includes(searchLower) ||
+        post.tags?.some((tag: string) => tag.toLowerCase().includes(searchLower))
+      );
+  }, [searchValue]);
+
+  const filteredPages = React.useMemo(() => {
+    if (!searchValue.trim()) return [];
+
+    const searchLower = searchValue.toLowerCase();
+    return allPages.filter((page) =>
+      page.title?.toLowerCase().includes(searchLower) ||
+      page.description?.toLowerCase().includes(searchLower)
+    );
+  }, [searchValue]);
+
+  const hasSearchResults = filteredPosts.length > 0 || filteredPages.length > 0;
+
   return (
     <>
       <Button
@@ -65,38 +95,107 @@ export function CommandDialogComponent({ ...props }: DialogProps) {
           <span className="text-xs">⌘</span>K
         </kbd>
       </Button>
-      <CommandDialog open={open} onOpenChange={setOpen}>
-        <CommandInput placeholder="Type a command or search..." />
+      <CommandDialog open={open} onOpenChange={(open) => {
+        setOpen(open);
+        if (!open) {
+          setSearchValue("");
+        }
+      }}>
+        <CommandInput
+          placeholder="Type a command or search..."
+          value={searchValue}
+          onValueChange={setSearchValue}
+        />
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>
-          <CommandGroup heading="Content">
-            {navigationLinks.map((item) =>
-              item.content ? (
-                item.content.map((subItem) => (
-                  <CommandItem
-                    key={subItem.title.trim()}
-                    onSelect={() => {
-                      runCommand(() => navigate(subItem.href as string));
-                    }}
-                  >
-                    <File className="mr-2 h-4 w-4" />
-                    <span>{subItem.title}</span>
-                  </CommandItem>
-                ))
-              ) : (
-                <CommandItem
-                  key={item.title.trim()}
-                  onSelect={() => {
-                    runCommand(() => navigate(item.href as string));
-                  }}
-                >
-                  <File className="mr-2 h-4 w-4" />
-                  <span>{item.title}</span>
-                </CommandItem>
-              )
-            )}
-          </CommandGroup>
-          <CommandSeparator />
+
+          {/* Search Results */}
+          {hasSearchResults && (
+            <>
+              {filteredPosts.length > 0 && (
+                <CommandGroup heading="Articles">
+                  {filteredPosts.map((post) => (
+                    <CommandItem
+                      key={post._id}
+                      onSelect={() => {
+                        runCommand(() => navigate(`/posts/${post.slug}`));
+                      }}
+                    >
+                      <BookOpen className="mr-2 h-4 w-4" />
+                      <div className="flex flex-col">
+                        <span>{post.title}</span>
+                        {post.description && (
+                          <span className="text-xs text-muted-foreground line-clamp-1">
+                            {post.description}
+                          </span>
+                        )}
+                      </div>
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              )}
+
+              {filteredPages.length > 0 && (
+                <CommandGroup heading="Pages">
+                  {filteredPages.map((page) => (
+                    <CommandItem
+                      key={page._id}
+                      onSelect={() => {
+                        runCommand(() => navigate(`/${page.slug}`));
+                      }}
+                    >
+                      <File className="mr-2 h-4 w-4" />
+                      <div className="flex flex-col">
+                        <span>{page.title || page.slug}</span>
+                        {page.description && (
+                          <span className="text-xs text-muted-foreground line-clamp-1">
+                            {page.description}
+                          </span>
+                        )}
+                      </div>
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              )}
+
+              <CommandSeparator />
+            </>
+          )}
+
+          {/* Navigation Links - only show when not searching */}
+          {!hasSearchResults && (
+            <>
+              <CommandGroup heading="Content">
+                {navigationLinks.map((item) =>
+                  item.content ? (
+                    item.content.map((subItem) => (
+                      <CommandItem
+                        key={subItem.title.trim()}
+                        onSelect={() => {
+                          runCommand(() => navigate(subItem.href as string));
+                        }}
+                      >
+                        <File className="mr-2 h-4 w-4" />
+                        <span>{subItem.title}</span>
+                      </CommandItem>
+                    ))
+                  ) : (
+                    <CommandItem
+                      key={item.title.trim()}
+                      onSelect={() => {
+                        runCommand(() => navigate(item.href as string));
+                      }}
+                    >
+                      <File className="mr-2 h-4 w-4" />
+                      <span>{item.title}</span>
+                    </CommandItem>
+                  )
+                )}
+              </CommandGroup>
+              <CommandSeparator />
+            </>
+          )}
+
           <CommandGroup heading="Social">
             <CommandItem
               onSelect={() => {

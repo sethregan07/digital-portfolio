@@ -1,16 +1,18 @@
 export const projects = [
   {
-    title: "ProductEngineerJobs.co",
-    description: `Job board for product engineers. Built with Next.js, Tailwind CSS, and Airtable.`,
-    href: "https://productengineerjobs.co",
-    mediaSrc: "/project-pejobs.png",
+    title: "Deprogramming",
+    description: `Resources and tools for critical thinking and breaking free from limiting beliefs and societal conditioning.`,
+    href: "/projects/deprogramming",
+    mediaSrc: "https://via.placeholder.com/400x300/7c3aed/ffffff?text=Deprogramming",
     mediaType: "image",
+    category: "Deprogramming",
   },
   {
-    title: "Developer Digital Garden",
-    description: `An open source blogging (digital gardening) template for developers using Next.js app router, MDX, Contentlayer, Tailwind CSS, @shadcn/ui, Lucide Icons, and more.`,
-    href: "https://github.com/thedevdavid/digital-garden",
-    mediaSrc: "/project-garden.mp4",
-    mediaType: "video",
+    title: "Frameworks",
+    description: `Templates and frameworks for thinking about life, society, and personal development - like Notion templates for the mind.`,
+    href: "#",
+    mediaSrc: "https://via.placeholder.com/400x300/10b981/ffffff?text=Frameworks",
+    mediaType: "image",
+    category: "Frameworks",
   },
 ];

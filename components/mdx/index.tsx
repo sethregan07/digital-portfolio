@@ -1,8 +1,6 @@
 import NextImage, { ImageProps } from "next/image";
 import Link from "next/link";
 import { useMDXComponent } from "next-contentlayer/hooks";
-import type { TweetProps } from "react-tweet";
-import { Tweet } from "react-tweet";
 
 import { NewsletterCTA } from "./newsletter-cta";
 import { YouTubeVideo } from "./youtube-video";
@@ -25,13 +23,6 @@ const components = {
   NewsletterCTA,
   YouTubeVideo,
   // a: CustomLink,
-  Tweet: (props: TweetProps) => {
-    return (
-      <div className="not-prose [&>div]:mx-auto">
-        <Tweet {...props} />
-      </div>
-    );
-  },
 };
 
 interface MdxProps {

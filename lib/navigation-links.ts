@@ -4,9 +4,14 @@ import siteMetadata, { defaultAuthor } from "@/lib/metadata";
 
 const content: ContentNavItem[] = [
   {
-    title: "Blog",
-    href: "/posts",
-    description: "Blogposts. Mostly about web development. Or chicken fingers",
+    title: "Articles",
+    href: "/articles",
+    description: "Articles on web development, technology, and life lessons",
+  },
+  {
+    title: "Sections",
+    href: "/articles",
+    description: "Articles organized into categories for easy browsing",
   },
   {
     title: "Speaking",
@@ -40,8 +45,8 @@ export const navigationLinks: NavItem[] = [
     href: "/projects",
   },
   {
-    title: "Uses",
-    href: "/uses",
+    title: "Resources",
+    href: "/resources",
   },
   {
     title: "Now",
