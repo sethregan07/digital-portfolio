@@ -1,9 +1,7 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { allPages } from "contentlayer/generated";
+import { prisma } from "@/lib/db";
 import { format, parseISO } from "date-fns";
-
-import { Mdx } from "@/components/mdx";
 
 interface PageProps {
   params: {
@@ -12,10 +10,15 @@ interface PageProps {
 }
 
 async function getPageFromParams(params: PageProps["params"]) {
-  const page = allPages.find((page) => page.slug === params.slug);
+  const page = await prisma.page.findFirst({
+    where: {
+      slug: params.slug,
+      status: "published",
+    },
+  });
 
   if (!page) {
-    null;
+    return null;
   }
 
   return page;
@@ -30,12 +33,21 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   return {
     title: page.title,
-    description: page.description,
+    description: page.description || undefined,
   };
 }
 
 export async function generateStaticParams(): Promise<PageProps["params"][]> {
-  return allPages.map((page) => ({
+  const pages = await prisma.page.findMany({
+    where: {
+      status: "published",
+    },
+    select: {
+      slug: true,
+    },
+  });
+
+  return pages.map((page) => ({
     slug: page.slug,
   }));
 }
@@ -54,11 +66,11 @@ export default async function PagePage({ params }: PageProps) {
         {page.description && <p className="m-0 text-xl">{page.description}</p>}
         {page.lastUpdatedDate && (
           <time className="text-sm text-slate-500">
-            Last updated: {format(parseISO(page.lastUpdatedDate), "LLLL d, yyyy")}
+            Last updated: {format(parseISO(page.lastUpdatedDate.toISOString()), "LLLL d, yyyy")}
           </time>
         )}
         <hr className="my-4" />
-        <Mdx code={page.body.code} />
+        <div dangerouslySetInnerHTML={{ __html: page.body }} />
       </article>
     </div>
   );

@@ -1,9 +1,20 @@
 import { Metadata } from "next";
-import { allPosts } from "contentlayer/generated";
+import { prisma } from "@/lib/db";
 
 import { defaultAuthor } from "@/lib/metadata";
-import { sortByDate } from "@/lib/utils";
 import PostPreview from "@/components/post-preview";
+
+// Transform database post to match PostPreview expectations
+function transformPostForPreview(dbPost: any) {
+  return {
+    slug: dbPost.slug,
+    title: dbPost.title,
+    publishedDate: dbPost.publishedDate.toISOString(),
+    readTimeMinutes: dbPost.readTimeMinutes,
+    tags: dbPost.tags,
+    description: dbPost.description,
+  };
+}
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -12,19 +23,29 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function Articles() {
-  const posts = allPosts.filter((post) => post.status === "published").sort(sortByDate);
+export default async function Articles() {
+  const posts = await prisma.post.findMany({
+    where: {
+      status: "published",
+    },
+    orderBy: {
+      publishedDate: 'desc',
+    },
+  });
+
+  // Transform posts for PostPreview component
+  const transformedPosts = posts.map(transformPostForPreview);
 
   // Group posts by categories
   const categories = {
-    "Society & Politics": posts.filter(post =>
-      post.tags?.some(tag => ['society', 'politics', 'democracy', 'inequality', 'decentralisation'].includes(tag))
+    "Society & Politics": transformedPosts.filter(post =>
+      post.tags?.some((tag: string) => ['society', 'politics', 'democracy', 'inequality', 'decentralisation'].includes(tag))
     ),
-    "Economics & History": posts.filter(post =>
-      post.tags?.some(tag => ['economics', 'history'].includes(tag))
+    "Economics & History": transformedPosts.filter(post =>
+      post.tags?.some((tag: string) => ['economics', 'history'].includes(tag))
     ),
-    "Development": posts.filter(post =>
-      post.tags?.some(tag => ['development', 'docs', 'starter'].includes(tag))
+    "Development": transformedPosts.filter(post =>
+      post.tags?.some((tag: string) => ['development', 'docs', 'starter'].includes(tag))
     ),
   };
 
@@ -40,7 +61,7 @@ export default function Articles() {
             {categoryPosts.length > 0 ? (
               <div className="grid grid-flow-row gap-2">
                 {categoryPosts.map((post) => (
-                  <PostPreview key={post._id} post={post} />
+                  <PostPreview key={post.slug} post={post as any} />
                 ))}
               </div>
             ) : (

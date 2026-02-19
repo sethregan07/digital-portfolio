@@ -1,0 +1,95 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum ContentStatus {
+  draft
+  published
+}
+
+model Author {
+  id    String @id @default(cuid())
+  name  String
+  image String?
+
+  posts Post[]
+
+  @@map("authors")
+}
+
+model Series {
+  id    String @id @default(cuid())
+  title String
+  order Int
+
+  posts Post[]
+
+  @@map("series")
+}
+
+model Post {
+  id                String        @id @default(cuid())
+  title             String
+  description       String?
+  publishedDate     DateTime
+  lastUpdatedDate   DateTime?
+  tags              String[]      // Array of tag strings
+  status            ContentStatus
+  slug              String        @unique
+  tagSlugs          String[]      // Computed slugs for tags
+  readTimeMinutes   Int
+  headings          Json          // JSON array of heading objects
+  body              String        // Raw MDX content
+
+  authorId String?
+  author   Author? @relation(fields: [authorId], references: [id])
+
+  seriesId String?
+  series   Series? @relation(fields: [seriesId], references: [id])
+
+  @@map("posts")
+  @@index([status, publishedDate])
+  @@index([slug])
+}
+
+model Course {
+  id                String        @id @default(cuid())
+  title             String
+  description       String
+  section           String
+  sectionOrder      Int
+  lessonOrder       Int
+  course            String        // Course name (e.g., "deprogramming")
+  status            ContentStatus
+  estimatedReadTime Int?
+  resources         String[]      // Array of resource strings
+  slug              String        @unique
+  readTimeMinutes   Int
+  headings          Json          // JSON array of heading objects
+  body              String        // Raw MDX content
+  bodyCode          String?       // Compiled MDX code for rendering
+  contentBlocks     Json?         // Structured content blocks for rendering
+
+  @@map("courses")
+  @@index([course, status, sectionOrder, lessonOrder])
+  @@index([slug])
+}
+
+model Page {
+  id              String        @id @default(cuid())
+  title           String
+  description     String?
+  lastUpdatedDate DateTime?
+  status          ContentStatus
+  slug            String        @unique
+  body            String        // Raw MDX content
+
+  @@map("pages")
+}

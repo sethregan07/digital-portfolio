@@ -1,12 +1,13 @@
 import { Metadata } from "next";
 import Link from "next/link";
-import { allCourses } from "contentlayer/generated";
+import { prisma } from "@/lib/db";
 import { BookOpen, Clock, Users, Award } from "lucide-react";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { PreloadLink } from "@/components/preload-link";
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -17,14 +18,16 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function DeprogrammingCoursePage() {
   // Get all deprogramming course content
-  const courseLessons = allCourses
-    .filter(course => course.course === "deprogramming" && course.status === "published")
-    .sort((a, b) => {
-      if (a.sectionOrder !== b.sectionOrder) {
-        return a.sectionOrder - b.sectionOrder;
-      }
-      return a.lessonOrder - b.lessonOrder;
-    });
+  const courseLessons = await prisma.course.findMany({
+    where: {
+      course: "deprogramming",
+      status: "published",
+    },
+    orderBy: [
+      { sectionOrder: 'asc' },
+      { lessonOrder: 'asc' },
+    ],
+  });
 
   // Group lessons by section
   const sections = courseLessons.reduce((acc, lesson) => {
@@ -161,12 +164,12 @@ export default async function DeprogrammingCoursePage() {
                           {lesson.lessonOrder}.
                         </span>
                         <div>
-                          <Link
+                          <PreloadLink
                             href={`/projects/deprogramming/${lesson.slug}`}
                             className="font-medium hover:text-primary transition-colors"
                           >
                             {lesson.title}
-                          </Link>
+                          </PreloadLink>
                           <p className="text-sm text-muted-foreground mt-1">
                             {lesson.description}
                           </p>

@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { allCourses } from "contentlayer/generated";
+import { prisma } from "@/lib/db";
 import { ArrowLeft, ArrowRight, Clock, BookOpen } from "lucide-react";
 
 import { BASE_URL } from "@/lib/metadata";
@@ -18,11 +18,15 @@ interface LessonPageProps {
 }
 
 async function getLessonFromParams(params: LessonPageProps["params"]) {
-  const lesson = allCourses.find(
-    (lesson) => lesson.slug === params.slug && lesson.course === "deprogramming"
-  );
+  const lesson = await prisma.course.findFirst({
+    where: {
+      slug: params.slug,
+      course: "deprogramming",
+      status: "published",
+    },
+  });
 
-  if (!lesson || lesson.status !== "published") {
+  if (!lesson) {
     return null;
   }
 
@@ -30,14 +34,16 @@ async function getLessonFromParams(params: LessonPageProps["params"]) {
 }
 
 async function getAdjacentLessons(currentLesson: any) {
-  const allLessons = allCourses
-    .filter(course => course.course === "deprogramming" && course.status === "published")
-    .sort((a, b) => {
-      if (a.sectionOrder !== b.sectionOrder) {
-        return a.sectionOrder - b.sectionOrder;
-      }
-      return a.lessonOrder - b.lessonOrder;
-    });
+  const allLessons = await prisma.course.findMany({
+    where: {
+      course: "deprogramming",
+      status: "published",
+    },
+    orderBy: [
+      { sectionOrder: 'asc' },
+      { lessonOrder: 'asc' },
+    ],
+  });
 
   const currentIndex = allLessons.findIndex(lesson => lesson.slug === currentLesson.slug);
 
@@ -61,11 +67,19 @@ export async function generateMetadata({ params }: LessonPageProps): Promise<Met
 }
 
 export async function generateStaticParams(): Promise<LessonPageProps["params"][]> {
-  return allCourses
-    .filter(course => course.course === "deprogramming" && course.status === "published")
-    .map((lesson) => ({
-      slug: lesson.slug,
-    }));
+  const lessons = await prisma.course.findMany({
+    where: {
+      course: "deprogramming",
+      status: "published",
+    },
+    select: {
+      slug: true,
+    },
+  });
+
+  return lessons.map((lesson) => ({
+    slug: lesson.slug,
+  }));
 }
 
 export default async function LessonPage({ params }: LessonPageProps) {
@@ -168,7 +182,25 @@ export default async function LessonPage({ params }: LessonPageProps) {
 
       {/* Lesson Content */}
       <article className="prose dark:prose-invert prose-headings:mb-3 prose-headings:mt-8 prose-headings:font-heading prose-headings:font-bold prose-headings:leading-tight hover:prose-a:text-accent-foreground prose-a:prose-headings:no-underline max-w-none">
-        <Mdx code={lesson.body.code} />
+        {lesson.contentBlocks?.map((block: any, index: number) => {
+          switch (block.type) {
+            case 'heading':
+              const HeadingTag = `h${block.level}` as keyof JSX.IntrinsicElements
+              return <HeadingTag key={index}>{block.content}</HeadingTag>
+            case 'paragraph':
+              return <p key={index}>{block.content}</p>
+            case 'list':
+              return (
+                <ul key={index} className="list-disc list-inside">
+                  {block.items.map((item: string, itemIndex: number) => (
+                    <li key={itemIndex}>{item}</li>
+                  ))}
+                </ul>
+              )
+            default:
+              return null
+          }
+        })}
       </article>
 
       {/* Resources Section */}

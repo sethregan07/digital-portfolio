@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PostSeries, SeriesItem } from "@/types";
-import { allPosts } from "contentlayer/generated";
+import { prisma } from "@/lib/db";
 import { format, parseISO } from "date-fns";
 import { Home } from "lucide-react";
 
@@ -23,26 +23,52 @@ interface PostProps {
 }
 
 async function getPostFromParams(params: PostProps["params"]): Promise<any> {
-  const post = allPosts.find((post) => post.slug === params.slug);
+  const post = await prisma.post.findFirst({
+    where: {
+      slug: params.slug,
+      status: "published",
+    },
+    include: {
+      author: true,
+      series: true,
+    },
+  });
 
   if (!post) {
-    null;
+    return null;
   }
 
   if (post?.series) {
-    const seriesPosts: SeriesItem[] = allPosts
-      .filter((p) => p.series?.title === post.series?.title)
-      .sort((a, b) => Number(a.series!.order) - Number(b.series!.order))
-      .map((p) => {
-        return {
-          title: p.title,
-          slug: p.slug,
-          status: p.status,
-          isCurrent: p.slug === post.slug,
-        };
-      });
-    if (seriesPosts.length > 0) {
-      return { ...post, series: { ...post.series, posts: seriesPosts } as PostSeries };
+    const seriesPosts = await prisma.post.findMany({
+      where: {
+        seriesId: post.seriesId,
+        status: "published",
+      },
+      include: {
+        series: true,
+      },
+      orderBy: {
+        series: {
+          order: 'asc',
+        },
+      },
+    });
+
+    const seriesItems: SeriesItem[] = seriesPosts.map((p) => ({
+      title: p.title,
+      slug: p.slug,
+      status: p.status,
+      isCurrent: p.slug === post.slug,
+    }));
+
+    if (seriesItems.length > 0) {
+      return {
+        ...post,
+        series: {
+          ...post.series,
+          posts: seriesItems,
+        } as unknown as PostSeries
+      };
     }
   }
 
@@ -65,8 +91,17 @@ export async function generateMetadata({ params }: PostProps): Promise<Metadata>
 }
 
 export async function generateStaticParams(): Promise<PostProps["params"][]> {
-  return allPosts.map((post) => ({
-    slug: `/posts/${post._raw.flattenedPath}`,
+  const posts = await prisma.post.findMany({
+    where: {
+      status: "published",
+    },
+    select: {
+      slug: true,
+    },
+  });
+
+  return posts.map((post) => ({
+    slug: post.slug,
   }));
 }
 
@@ -158,7 +193,7 @@ export default async function PostPage({ params }: PostProps) {
               <PostSeriesBox data={post.series} />
             </div>
           )}
-          <Mdx code={post.body.code} />
+          <div dangerouslySetInnerHTML={{ __html: post.body }} />
           <hr className="my-4" />
           <div className="flex flex-row items-center justify-between">
             {post.tags && (
@@ -174,7 +209,7 @@ export default async function PostPage({ params }: PostProps) {
             )}
             <SocialShare
               text={`${post.title} via ${defaultAuthor.handle}`}
-              url={`${BASE_URL}/${post._raw.flattenedPath}`}
+              url={`${BASE_URL}/posts/${post.slug}`}
             />
           </div>
         </article>
