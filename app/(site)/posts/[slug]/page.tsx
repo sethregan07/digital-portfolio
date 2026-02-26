@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PostSeries, SeriesItem } from "@/types";
 import { prisma } from "@/lib/db";
-import { format, parseISO } from "date-fns";
+import { format, isValid, parseISO } from "date-fns";
 import { Home } from "lucide-react";
 
 import { BASE_URL, defaultAuthor } from "@/lib/metadata";
@@ -20,6 +20,20 @@ interface PostProps {
   params: {
     slug: string;
   };
+}
+
+function formatPostDate(dateValue?: Date | string | null): string | null {
+  if (!dateValue) {
+    return null;
+  }
+
+  const date = dateValue instanceof Date ? dateValue : parseISO(dateValue);
+
+  if (!isValid(date)) {
+    return null;
+  }
+
+  return format(date, "LLLL d, yyyy");
 }
 
 async function getPostFromParams(params: PostProps["params"]): Promise<any> {
@@ -119,6 +133,9 @@ export default async function PostPage({ params }: PostProps) {
     description: post?.description,
   };
 
+  const publishedDate = formatPostDate(post.publishedDate);
+  const lastUpdatedDate = formatPostDate(post.lastUpdatedDate);
+
   return (
     <div className="container max-w-6xl pb-10">
       <nav aria-label="Breadcrumb">
@@ -167,11 +184,9 @@ export default async function PostPage({ params }: PostProps) {
         <div className="lg:hidden">
           <div className="mb-4 mt-1 text-sm leading-snug text-muted-foreground">
             <p className="mb-2">{`${post.readTimeMinutes} mins read`}</p>
-            <time>Originally published: {format(parseISO(post.publishedDate), "LLLL d, yyyy")} </time>
-            <br />
-            {post.lastUpdatedDate && (
-              <time> Last updated: {format(parseISO(post.lastUpdatedDate), "LLLL d, yyyy")}</time>
-            )}
+            {publishedDate && <time>Originally published: {publishedDate} </time>}
+            {publishedDate && lastUpdatedDate && <br />}
+            {lastUpdatedDate && <time> Last updated: {lastUpdatedDate}</time>}
           </div>
           <Accordion type="single" collapsible>
             <AccordionItem value="table-of-contents">
@@ -225,11 +240,9 @@ export default async function PostPage({ params }: PostProps) {
             <CardFooter>
               <div className="mb-4 mt-1 text-sm leading-snug text-muted-foreground">
                 <p className="mb-2">{`${post.readTimeMinutes} mins read`}</p>
-                <time>Originally published: {format(parseISO(post.publishedDate), "LLLL d, yyyy")} </time>
-                <br />
-                {post.lastUpdatedDate && (
-                  <time> Last updated: {format(parseISO(post.lastUpdatedDate), "LLLL d, yyyy")}</time>
-                )}
+                {publishedDate && <time>Originally published: {publishedDate} </time>}
+                {publishedDate && lastUpdatedDate && <br />}
+                {lastUpdatedDate && <time> Last updated: {lastUpdatedDate}</time>}
               </div>
             </CardFooter>
           </Card>

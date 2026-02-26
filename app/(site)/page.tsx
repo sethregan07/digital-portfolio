@@ -195,7 +195,7 @@ export default async function Home() {
                     </div>
                   </div>
                   <CardTitle className="text-lg leading-tight line-clamp-2">
-                    <Link href={`/posts/${post.slug}`} className="hover:text-primary transition-colors">
+                    <Link href={`/articles/${post.slug}`} className="hover:text-primary transition-colors">
                       {post.title}
                     </Link>
                   </CardTitle>
@@ -210,7 +210,7 @@ export default async function Home() {
                       {new Date(post.publishedDate).toLocaleDateString()}
                     </div>
                     <Button asChild size="sm" variant="ghost">
-                      <Link href={`/posts/${post.slug}`}>
+                      <Link href={`/articles/${post.slug}`}>
                         Read <ArrowRight className="ml-1 h-3 w-3" />
                       </Link>
                     </Button>
