@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Post } from "contentlayer/generated";
 import { format, parseISO } from "date-fns";
 import { CalendarDays, Timer } from "lucide-react";
 
@@ -7,7 +6,14 @@ import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 
 type PostPreviewProps = {
-  post: Post;
+  post: {
+    slug: string;
+    title: string;
+    description?: string | null;
+    publishedDate: string;
+    readTimeMinutes: number;
+    tags?: string[];
+  };
 };
 
 const PostPreview = ({ post }: PostPreviewProps) => {

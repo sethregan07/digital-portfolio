@@ -1,10 +1,10 @@
 import { ImageResponse } from "next/server";
-import { allPosts } from "contentlayer/generated";
-import { format, parseISO } from "date-fns";
+import { format, isValid } from "date-fns";
 
+import { prisma } from "@/lib/db";
 import { defaultAuthor } from "@/lib/metadata";
 
-export const runtime = "edge";
+export const runtime = "nodejs";
 
 export const alt = `Article by ${defaultAuthor.name}`;
 export const size = {
@@ -14,15 +14,29 @@ export const size = {
 
 export const contentType = "image/png";
 
+export const revalidate = 300;
+
 // Image generation
 export default async function Image({ params }: { params: { slug: string } }) {
-  const post = await allPosts.find((post) => post.slug === params.slug);
+  const post = await prisma.post.findFirst({
+    where: {
+      slug: params.slug,
+      status: "published",
+    },
+    select: {
+      title: true,
+      publishedDate: true,
+      lastUpdatedDate: true,
+      readTimeMinutes: true,
+    },
+  });
 
   if (!post) {
     return {};
   }
 
   const date = post.lastUpdatedDate || post.publishedDate;
+  const formattedDate = isValid(date) ? format(date, "LLLL d, yyyy") : "";
 
   return new ImageResponse(
     (
@@ -75,7 +89,7 @@ export default async function Image({ params }: { params: { slug: string } }) {
               fontSize: "20px",
             }}
           >
-            {format(parseISO(date), "LLLL d, yyyy")} &middot; {post.readTimeMinutes} min read
+            {formattedDate} &middot; {post.readTimeMinutes} min read
           </p>
         </div>
       </div>

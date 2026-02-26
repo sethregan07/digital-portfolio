@@ -1,9 +1,10 @@
 import { Metadata } from "next";
-import { allPosts } from "contentlayer/generated";
 
 import { defaultAuthor } from "@/lib/metadata";
-import { sortByDate } from "@/lib/utils";
+import { getPublishedPosts } from "@/lib/repositories/content";
 import PostPreview from "@/components/post-preview";
+
+export const revalidate = 300;
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -12,8 +13,8 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function Blog() {
-  const posts = allPosts.filter((post) => post.status === "published").sort(sortByDate);
+export default async function Blog() {
+  const posts = await getPublishedPosts();
 
   return (
     <div className="container mb-4">
@@ -22,7 +23,17 @@ export default function Blog() {
         <hr className="my-4" />
         <div className="grid grid-flow-row gap-2">
           {posts.map((post) => (
-            <PostPreview post={post} key={post._id} />
+            <PostPreview
+              post={{
+                slug: post.slug,
+                title: post.title,
+                description: post.description,
+                publishedDate: post.publishedDate.toISOString(),
+                readTimeMinutes: post.readTimeMinutes,
+                tags: post.tags,
+              }}
+              key={post.id}
+            />
           ))}
         </div>
       </div>

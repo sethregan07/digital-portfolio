@@ -1,26 +1,27 @@
 import { MetadataRoute } from "next";
-import { allPages, allPosts } from "contentlayer/generated";
 
 import { tagOptions } from "@/lib/content-definitions/post";
 import { BASE_URL } from "@/lib/metadata";
+import { getPublishedPages, getPublishedPosts } from "@/lib/repositories/content";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export const revalidate = 300;
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
-  const loadedPosts = allPosts.filter((post) => post.status === "published");
+  const loadedPosts = await getPublishedPosts();
+  const loadedPages = await getPublishedPages();
   const tags = tagOptions.map((tag) => ({
     url: `${BASE_URL}/tags/${tag}`,
     lastModified: now,
   }));
   const posts = loadedPosts.map((post) => ({
     url: `${BASE_URL}/posts/${post.slug}`,
-    lastModified: post.lastUpdatedDate || post.publishedDate,
+    lastModified: post.lastUpdatedDate || post.publishedDate || now,
   }));
-  const pages = allPages
-    .filter((page) => page.status === "published")
-    .map((page) => ({
-      url: `${BASE_URL}/${page.slug.split("/pages")}`,
-      lastModified: page.lastUpdatedDate,
-    }));
+  const pages = loadedPages.map((page) => ({
+    url: `${BASE_URL}/${page.slug}`,
+    lastModified: page.lastUpdatedDate || now,
+  }));
   return [
     {
       url: BASE_URL,

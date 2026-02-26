@@ -1,15 +1,20 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { prisma } from "@/lib/db";
 import { ArrowLeft, ArrowRight, Clock, BookOpen } from "lucide-react";
 
 import { BASE_URL } from "@/lib/metadata";
+import {
+  getDeprogrammingLessonAdjacent,
+  getDeprogrammingLessonBySlug,
+  getDeprogrammingLessonStaticParams,
+} from "@/lib/services/content";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Mdx } from "@/components/mdx";
+
+export const revalidate = 300;
 
 interface LessonPageProps {
   params: {
@@ -17,44 +22,8 @@ interface LessonPageProps {
   };
 }
 
-async function getLessonFromParams(params: LessonPageProps["params"]) {
-  const lesson = await prisma.course.findFirst({
-    where: {
-      slug: params.slug,
-      course: "deprogramming",
-      status: "published",
-    },
-  });
-
-  if (!lesson) {
-    return null;
-  }
-
-  return lesson;
-}
-
-async function getAdjacentLessons(currentLesson: any) {
-  const allLessons = await prisma.course.findMany({
-    where: {
-      course: "deprogramming",
-      status: "published",
-    },
-    orderBy: [
-      { sectionOrder: 'asc' },
-      { lessonOrder: 'asc' },
-    ],
-  });
-
-  const currentIndex = allLessons.findIndex(lesson => lesson.slug === currentLesson.slug);
-
-  return {
-    previous: currentIndex > 0 ? allLessons[currentIndex - 1] : null,
-    next: currentIndex < allLessons.length - 1 ? allLessons[currentIndex + 1] : null,
-  };
-}
-
 export async function generateMetadata({ params }: LessonPageProps): Promise<Metadata> {
-  const lesson = await getLessonFromParams(params);
+  const lesson = await getDeprogrammingLessonBySlug(params.slug);
 
   if (!lesson) {
     return {};
@@ -67,29 +36,17 @@ export async function generateMetadata({ params }: LessonPageProps): Promise<Met
 }
 
 export async function generateStaticParams(): Promise<LessonPageProps["params"][]> {
-  const lessons = await prisma.course.findMany({
-    where: {
-      course: "deprogramming",
-      status: "published",
-    },
-    select: {
-      slug: true,
-    },
-  });
-
-  return lessons.map((lesson) => ({
-    slug: lesson.slug,
-  }));
+  return getDeprogrammingLessonStaticParams();
 }
 
 export default async function LessonPage({ params }: LessonPageProps) {
-  const lesson = await getLessonFromParams(params);
+  const lesson = await getDeprogrammingLessonBySlug(params.slug);
 
   if (!lesson) {
     notFound();
   }
 
-  const { previous, next } = await getAdjacentLessons(lesson);
+  const { previous, next } = await getDeprogrammingLessonAdjacent(lesson.slug);
 
   const jsonLd = {
     "@context": "https://schema.org",

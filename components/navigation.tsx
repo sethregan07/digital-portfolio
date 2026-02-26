@@ -1,45 +1,44 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { Rocket } from "lucide-react";
 
 import siteMetadata from "@/lib/metadata";
-import { cn, debounce } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { AnnouncementBar } from "@/components/announcement-bar";
-import { CommandDialogComponent } from "@/components/command-dialog";
 import { MobileNav } from "@/components/mobile-nav";
 import { ModeToggle } from "@/components/mode-toggle";
 import { Navbar } from "@/components/navbar";
 // Removed WorkAvailabilityBadge per request
 
-const SCROLL_OFFSET = 200;
+const CommandDialogComponent = dynamic(
+  () => import("@/components/command-dialog").then((mod) => mod.CommandDialogComponent),
+  { ssr: false }
+);
 
 export function Navigation() {
-  const [prevScrollPos, setPrevScrollPos] = useState(0);
   const [visible, setVisible] = useState(true);
-
-  const handleScroll = useCallback(
-    () =>
-      debounce(() => {
-        const currentScrollPos = window.scrollY;
-
-        if ((prevScrollPos > currentScrollPos && prevScrollPos - currentScrollPos > 70) || currentScrollPos < 10) {
-          setVisible(true);
-        } else {
-          setVisible(false);
-        }
-
-        setPrevScrollPos(currentScrollPos);
-      }, 100),
-    [prevScrollPos, setPrevScrollPos, setVisible]
-  );
+  const prevScrollPosRef = useRef(0);
 
   useEffect(() => {
-    window.addEventListener("scroll", handleScroll);
+    const handleScroll = () => {
+      const currentScrollPos = window.scrollY;
+      const prevScrollPos = prevScrollPosRef.current;
 
+      if ((prevScrollPos > currentScrollPos && prevScrollPos - currentScrollPos > 70) || currentScrollPos < 10) {
+        setVisible(true);
+      } else {
+        setVisible(false);
+      }
+
+      prevScrollPosRef.current = currentScrollPos;
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [prevScrollPos, visible, handleScroll]);
+  }, []);
 
   return (
     <>

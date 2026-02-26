@@ -1,20 +1,20 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { PostSeries, SeriesItem } from "@/types";
-import { prisma } from "@/lib/db";
 import { format, isValid, parseISO } from "date-fns";
 import { Home } from "lucide-react";
 
 import { BASE_URL, defaultAuthor } from "@/lib/metadata";
+import { getPostDetailBySlug, getPostStaticParams } from "@/lib/services/content";
 import { cn } from "@/lib/utils";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Mdx } from "@/components/mdx";
 import { PostSeriesBox } from "@/components/post-series-box";
 import { SocialShare } from "@/components/social-share";
 import { TableOfContents } from "@/components/table-of-contents";
+
+export const revalidate = 300;
 
 interface PostProps {
   params: {
@@ -36,61 +36,8 @@ function formatPostDate(dateValue?: Date | string | null): string | null {
   return format(date, "LLLL d, yyyy");
 }
 
-async function getPostFromParams(params: PostProps["params"]): Promise<any> {
-  const post = await prisma.post.findFirst({
-    where: {
-      slug: params.slug,
-      status: "published",
-    },
-    include: {
-      author: true,
-      series: true,
-    },
-  });
-
-  if (!post) {
-    return null;
-  }
-
-  if (post?.series) {
-    const seriesPosts = await prisma.post.findMany({
-      where: {
-        seriesId: post.seriesId,
-        status: "published",
-      },
-      include: {
-        series: true,
-      },
-      orderBy: {
-        series: {
-          order: 'asc',
-        },
-      },
-    });
-
-    const seriesItems: SeriesItem[] = seriesPosts.map((p) => ({
-      title: p.title,
-      slug: p.slug,
-      status: p.status,
-      isCurrent: p.slug === post.slug,
-    }));
-
-    if (seriesItems.length > 0) {
-      return {
-        ...post,
-        series: {
-          ...post.series,
-          posts: seriesItems,
-        } as unknown as PostSeries
-      };
-    }
-  }
-
-  return post;
-}
-
 export async function generateMetadata({ params }: PostProps): Promise<Metadata> {
-  const post = await getPostFromParams(params);
+  const post = await getPostDetailBySlug(params.slug);
 
   if (!post) {
     return {};
@@ -105,22 +52,11 @@ export async function generateMetadata({ params }: PostProps): Promise<Metadata>
 }
 
 export async function generateStaticParams(): Promise<PostProps["params"][]> {
-  const posts = await prisma.post.findMany({
-    where: {
-      status: "published",
-    },
-    select: {
-      slug: true,
-    },
-  });
-
-  return posts.map((post) => ({
-    slug: post.slug,
-  }));
+  return getPostStaticParams();
 }
 
 export default async function PostPage({ params }: PostProps) {
-  const post = await getPostFromParams(params);
+  const post = await getPostDetailBySlug(params.slug);
 
   if (!post || (process.env.NODE_ENV === "development" && post.status !== "published")) {
     notFound();

@@ -1,23 +1,10 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { allPosts, Post } from "contentlayer/generated";
 
-import { sortByDate } from "@/lib/utils";
+import { getPostsByTag } from "@/lib/services/content";
 import PostPreview from "@/components/post-preview";
 
-// Get sorted articles from the contentlayer
-async function getSortedArticles(): Promise<Post[]> {
-  let articles = await allPosts;
-
-  articles = articles.filter((article: Post) => article.status === "published");
-
-  return articles.sort((a: Post, b: Post) => {
-    if (a.publishedDate && b.publishedDate) {
-      return new Date(b.publishedDate).getTime() - new Date(a.publishedDate).getTime();
-    }
-    return 0;
-  });
-}
+export const revalidate = 300;
 
 // Dynamic metadata for the page
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
@@ -29,13 +16,9 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 
 export default async function TagPage({ params }: { params: { slug: string } }) {
   const tag = params.slug;
+  const posts = await getPostsByTag(tag);
 
-  const posts = allPosts
-    .filter((post) => post.status === "published")
-    .filter((post) => post.tags?.includes(tag))
-    .sort(sortByDate);
-
-  if (!posts) {
+  if (posts.length === 0) {
     notFound();
   }
 
@@ -46,7 +29,17 @@ export default async function TagPage({ params }: { params: { slug: string } }) 
         <hr className="my-4" />
         <div className="grid grid-flow-row gap-2">
           {posts.map((post) => (
-            <PostPreview post={post} key={post._id} />
+            <PostPreview
+              post={{
+                slug: post.slug,
+                title: post.title,
+                description: post.description,
+                publishedDate: post.publishedDate.toISOString(),
+                readTimeMinutes: post.readTimeMinutes,
+                tags: post.tags,
+              }}
+              key={post.id}
+            />
           ))}
         </div>
       </div>

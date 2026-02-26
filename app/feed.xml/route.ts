@@ -1,9 +1,12 @@
-import { allPosts } from "contentlayer/generated";
 import RSS from "rss";
 
 import siteMetadata, { BASE_URL, defaultAuthor } from "@/lib/metadata";
+import { getPublishedPosts } from "@/lib/repositories/content";
+
+export const revalidate = 300;
 
 export async function GET(request: Request) {
+  const posts = await getPublishedPosts();
   const feed = new RSS({
     title: siteMetadata.title.default,
     description: siteMetadata.description,
@@ -14,14 +17,12 @@ export async function GET(request: Request) {
     pubDate: new Date(),
   });
 
-  allPosts
-    .filter((post) => post.status === "published")
-    .map((post) => {
+  posts.map((post) => {
       feed.item({
         title: post.title,
         guid: `${BASE_URL}/posts/${post.slug}`,
         url: `${BASE_URL}/posts/${post.slug}`,
-        date: post.lastUpdatedDate as string,
+        date: post.lastUpdatedDate || post.publishedDate,
         description: post.description || "",
         author: defaultAuthor.name,
         categories: post?.tags?.map((tag) => tag) || [],

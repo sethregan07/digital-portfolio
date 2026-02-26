@@ -1,36 +1,11 @@
 import { Metadata } from "next";
 import Link from "next/link";
-import { prisma } from "@/lib/db";
 import { format } from "date-fns";
 
 import { defaultAuthor } from "@/lib/metadata";
+import { ArticleListItem, getArticlesForListing } from "@/lib/services/content";
 
-type ArticleListItem = {
-  slug: string;
-  title: string;
-  description: string | null;
-  readTimeMinutes: number;
-  publishedDate?: Date;
-  section: string;
-  sectionOrder: number;
-  lessonOrder: number;
-  href: string;
-};
-
-const fallbackSections = ["Society & Politics", "Economics & History", "Development", "General"];
-
-function getFallbackSectionFromTags(tags: string[]): string {
-  if (tags.some((tag) => ["society", "politics", "democracy", "inequality", "decentralisation"].includes(tag))) {
-    return "Society & Politics";
-  }
-  if (tags.some((tag) => ["economics", "history"].includes(tag))) {
-    return "Economics & History";
-  }
-  if (tags.some((tag) => ["development", "docs", "starter"].includes(tag))) {
-    return "Development";
-  }
-  return "General";
-}
+export const revalidate = 300;
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -40,55 +15,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function Articles() {
-  const courseArticles = await prisma.course.findMany({
-    where: {
-      course: "articles",
-      status: "published",
-    },
-    orderBy: [{ sectionOrder: "asc" }, { lessonOrder: "asc" }],
-  });
-
-  let articles: ArticleListItem[] = [];
-
-  if (courseArticles.length > 0) {
-    articles = courseArticles.map((article) => ({
-      slug: article.slug,
-      title: article.title,
-      description: article.description,
-      readTimeMinutes: article.estimatedReadTime || article.readTimeMinutes,
-      publishedDate: undefined,
-      section: article.section,
-      sectionOrder: article.sectionOrder,
-      lessonOrder: article.lessonOrder,
-      href: `/articles/${article.slug}`,
-    }));
-  } else {
-    const posts = await prisma.post.findMany({
-      where: {
-        status: "published",
-      },
-      orderBy: {
-        publishedDate: "desc",
-      },
-    });
-
-    const sectionCounters: Record<string, number> = {};
-    articles = posts.map((post) => {
-      const section = getFallbackSectionFromTags(post.tags || []);
-      sectionCounters[section] = (sectionCounters[section] || 0) + 1;
-      return {
-        slug: post.slug,
-        title: post.title,
-        description: post.description,
-        readTimeMinutes: post.readTimeMinutes,
-        publishedDate: post.publishedDate,
-        section,
-        sectionOrder: Math.max(1, fallbackSections.indexOf(section) + 1),
-        lessonOrder: sectionCounters[section],
-        href: `/articles/${post.slug}`,
-      };
-    });
-  }
+  const articles = await getArticlesForListing();
 
   const sections = articles.reduce((acc, article) => {
     const section = article.section;

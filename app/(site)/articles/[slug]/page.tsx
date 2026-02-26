@@ -1,13 +1,16 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { prisma } from "@/lib/db";
 import { ArrowLeft, ArrowRight, Home } from "lucide-react";
-import { remark } from "remark";
-import remarkHtml from "remark-html";
 import { format, isValid, parseISO } from "date-fns";
 
 import { BASE_URL } from "@/lib/metadata";
+import {
+  getUnifiedArticleAdjacent,
+  getUnifiedArticleBySlug,
+  getUnifiedArticleStaticParams,
+  type UnifiedArticle,
+} from "@/lib/services/content";
 import { cn } from "@/lib/utils";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
@@ -16,44 +19,12 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Separator } from "@/components/ui/separator";
 import { TableOfContents } from "@/components/table-of-contents";
 
+export const revalidate = 300;
+
 interface ArticlePageProps {
   params: {
     slug: string;
   };
-}
-
-type ArticleSource = "course" | "post";
-
-type UnifiedArticle = {
-  source: ArticleSource;
-  slug: string;
-  title: string;
-  description: string | null;
-  section: string;
-  sectionOrder: number;
-  lessonOrder: number;
-  readTimeMinutes: number;
-  publishedDate: Date | null;
-  lastUpdatedDate: Date | null;
-  headings: Array<{ heading?: number; text?: string; slug?: string }>;
-  bodyCode: string | null;
-  contentBlocks: any[] | null;
-  resources: string[];
-};
-
-const fallbackSections = ["Society & Politics", "Economics & History", "Development", "General"];
-
-function getFallbackSectionFromTags(tags: string[]): string {
-  if (tags.some((tag) => ["society", "politics", "democracy", "inequality", "decentralisation"].includes(tag))) {
-    return "Society & Politics";
-  }
-  if (tags.some((tag) => ["economics", "history"].includes(tag))) {
-    return "Economics & History";
-  }
-  if (tags.some((tag) => ["development", "docs", "starter"].includes(tag))) {
-    return "Development";
-  }
-  return "General";
 }
 
 function formatPostDate(dateValue?: Date | string | null): string | null {
@@ -69,116 +40,8 @@ function formatPostDate(dateValue?: Date | string | null): string | null {
   return format(date, "LLLL d, yyyy");
 }
 
-async function markdownToHtml(markdown: string): Promise<string> {
-  const result = await remark().use(remarkHtml).process(markdown);
-  return result.toString();
-}
-
-async function getArticleFromParams(params: ArticlePageProps["params"]) {
-  const courseArticle = await prisma.course.findFirst({
-    where: {
-      slug: params.slug,
-      course: "articles",
-      status: "published",
-    },
-  });
-
-  if (courseArticle) {
-    return {
-      source: "course",
-      slug: courseArticle.slug,
-      title: courseArticle.title,
-      description: courseArticle.description,
-      section: courseArticle.section,
-      sectionOrder: courseArticle.sectionOrder,
-      lessonOrder: courseArticle.lessonOrder,
-      readTimeMinutes: courseArticle.estimatedReadTime || courseArticle.readTimeMinutes,
-      publishedDate: null,
-      lastUpdatedDate: null,
-      headings: Array.isArray(courseArticle.headings)
-        ? (courseArticle.headings as Array<{ heading?: number; text?: string; slug?: string }>)
-        : [],
-      bodyCode: courseArticle.bodyCode,
-      contentBlocks: Array.isArray(courseArticle.contentBlocks) ? (courseArticle.contentBlocks as any[]) : null,
-      resources: courseArticle.resources || [],
-    } as UnifiedArticle;
-  }
-
-  const post = await prisma.post.findFirst({
-    where: {
-      slug: params.slug,
-      status: "published",
-    },
-  });
-
-  if (!post) {
-    return null;
-  }
-
-  const section = getFallbackSectionFromTags(post.tags || []);
-  const bodyCode = await markdownToHtml(post.body);
-
-  return {
-    source: "post",
-    slug: post.slug,
-    title: post.title,
-    description: post.description,
-    section,
-    sectionOrder: Math.max(1, fallbackSections.indexOf(section) + 1),
-    lessonOrder: 1,
-    readTimeMinutes: post.readTimeMinutes,
-    publishedDate: post.publishedDate,
-    lastUpdatedDate: post.lastUpdatedDate,
-    headings: Array.isArray(post.headings)
-      ? (post.headings as Array<{ heading?: number; text?: string; slug?: string }>)
-      : [],
-    bodyCode,
-    contentBlocks: null,
-    resources: [],
-  } as UnifiedArticle;
-}
-
-async function getAdjacentArticles(currentArticle: UnifiedArticle) {
-  if (currentArticle.source === "course") {
-    const allArticles = await prisma.course.findMany({
-      where: {
-        course: "articles",
-        status: "published",
-      },
-      orderBy: [{ sectionOrder: "asc" }, { lessonOrder: "asc" }],
-    });
-
-    const currentIndex = allArticles.findIndex((article) => article.slug === currentArticle.slug);
-
-    return {
-      previous: currentIndex > 0 ? allArticles[currentIndex - 1] : null,
-      next: currentIndex < allArticles.length - 1 ? allArticles[currentIndex + 1] : null,
-    };
-  }
-
-  const allPosts = await prisma.post.findMany({
-    where: {
-      status: "published",
-    },
-    orderBy: {
-      publishedDate: "desc",
-    },
-    select: {
-      slug: true,
-      title: true,
-    },
-  });
-
-  const currentIndex = allPosts.findIndex((post) => post.slug === currentArticle.slug);
-
-  return {
-    previous: currentIndex > 0 ? allPosts[currentIndex - 1] : null,
-    next: currentIndex < allPosts.length - 1 ? allPosts[currentIndex + 1] : null,
-  };
-}
-
 export async function generateMetadata({ params }: ArticlePageProps): Promise<Metadata> {
-  const article = await getArticleFromParams(params);
+  const article = await getUnifiedArticleBySlug(params.slug);
 
   if (!article) {
     return {};
@@ -191,37 +54,17 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
 }
 
 export async function generateStaticParams(): Promise<ArticlePageProps["params"][]> {
-  const articles = await prisma.course.findMany({
-    where: {
-      course: "articles",
-      status: "published",
-    },
-    select: {
-      slug: true,
-    },
-  });
-
-  const posts = await prisma.post.findMany({
-    where: {
-      status: "published",
-    },
-    select: {
-      slug: true,
-    },
-  });
-
-  const slugSet = new Set([...articles.map((article) => article.slug), ...posts.map((post) => post.slug)]);
-  return Array.from(slugSet).map((slug) => ({ slug }));
+  return getUnifiedArticleStaticParams();
 }
 
 export default async function ArticlePage({ params }: ArticlePageProps) {
-  const article = await getArticleFromParams(params);
+  const article = await getUnifiedArticleBySlug(params.slug);
 
   if (!article) {
     notFound();
   }
 
-  const { previous, next } = await getAdjacentArticles(article);
+  const { previous, next } = await getUnifiedArticleAdjacent(article.source, article.slug);
 
   const jsonLd = {
     "@context": "https://schema.org",

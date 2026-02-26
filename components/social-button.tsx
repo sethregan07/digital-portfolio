@@ -10,16 +10,26 @@ interface SocialButtonProps extends ButtonProps {
   platform: SocialProfile;
 }
 
+function isSimpleIcon(value: unknown): value is SimpleIcon {
+  return Boolean(
+    value &&
+      typeof value === "object" &&
+      "path" in value &&
+      typeof (value as { path?: unknown }).path === "string"
+  );
+}
+
 export function SocialButton({ platform, ...props }: SocialButtonProps) {
   const platformCamel = platform.name.toLocaleLowerCase().charAt(0).toUpperCase() + platform.name.slice(1);
 
   const platformIconIdentifier = `si${platformCamel}`;
 
   const renderIcon = () => {
-    const icon: SimpleIcon = Icons[platformIconIdentifier as keyof typeof Icons];
-    if (!icon) {
+    const maybeIcon = Icons[platformIconIdentifier as keyof typeof Icons];
+    if (!isSimpleIcon(maybeIcon)) {
       return null;
     }
+    const icon: SimpleIcon = maybeIcon;
     return (
       <svg role="img" viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
         <path d={icon.path}></path>

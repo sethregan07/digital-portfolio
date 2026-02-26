@@ -1,6 +1,5 @@
 import Image from "next/image";
 import Link from "next/link";
-import { allPages, allPosts } from "contentlayer/generated";
 import {
   ArrowRight,
   MapPin,
@@ -17,27 +16,17 @@ import {
 } from "lucide-react";
 
 import siteMetadata, { defaultAuthor } from "@/lib/metadata";
-import { sortByDate } from "@/lib/utils";
+import { getRecentPosts } from "@/lib/services/content";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import NewsletterSubscribe from "@/components/newsletter-subscribe";
 
-async function getAboutPage() {
-  const aboutPage = allPages.find((page) => page.slug === "about");
-  if (!aboutPage) {
-    return null;
-  }
-  return aboutPage;
-}
+export const revalidate = 300;
 
 export default async function Home() {
-  const aboutPage = await getAboutPage();
-  const posts = allPosts
-    .filter((post) => post.status === "published")
-    .sort(sortByDate)
-    .slice(0, 3); // Show only 3 recent posts
+  const posts = await getRecentPosts(3);
 
   return (
     <div className="pb-10">
@@ -183,7 +172,7 @@ export default async function Home() {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {posts.map((post) => (
-              <Card key={post._id} className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+              <Card key={post.id} className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
                 <CardHeader>
                   <div className="flex items-start justify-between mb-2">
                     <Badge variant="secondary" className="text-xs">
@@ -207,7 +196,7 @@ export default async function Home() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center text-xs text-muted-foreground">
                       <Eye className="mr-1 h-3 w-3" />
-                      {new Date(post.publishedDate).toLocaleDateString()}
+                      {post.publishedDate.toLocaleDateString()}
                     </div>
                     <Button asChild size="sm" variant="ghost">
                       <Link href={`/articles/${post.slug}`}>

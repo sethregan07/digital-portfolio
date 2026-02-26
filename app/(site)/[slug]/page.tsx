@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { prisma } from "@/lib/db";
 import { format, parseISO } from "date-fns";
+import { getStaticPageBySlug, getStaticPageParams } from "@/lib/services/content";
 
 interface PageProps {
   params: {
@@ -9,23 +9,10 @@ interface PageProps {
   };
 }
 
-async function getPageFromParams(params: PageProps["params"]) {
-  const page = await prisma.page.findFirst({
-    where: {
-      slug: params.slug,
-      status: "published",
-    },
-  });
-
-  if (!page) {
-    return null;
-  }
-
-  return page;
-}
+export const revalidate = 300;
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const page = await getPageFromParams(params);
+  const page = await getStaticPageBySlug(params.slug);
 
   if (!page) {
     return {};
@@ -38,22 +25,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export async function generateStaticParams(): Promise<PageProps["params"][]> {
-  const pages = await prisma.page.findMany({
-    where: {
-      status: "published",
-    },
-    select: {
-      slug: true,
-    },
-  });
-
-  return pages.map((page) => ({
-    slug: page.slug,
-  }));
+  return getStaticPageParams();
 }
 
 export default async function PagePage({ params }: PageProps) {
-  const page = await getPageFromParams(params);
+  const page = await getStaticPageBySlug(params.slug);
 
   if (!page || (process.env.NODE_ENV === "development" && page.status !== "published")) {
     notFound();

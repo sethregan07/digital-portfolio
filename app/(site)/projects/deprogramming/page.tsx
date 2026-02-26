@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { PreloadLink } from "@/components/preload-link";
 
+export const revalidate = 300;
+
 export async function generateMetadata(): Promise<Metadata> {
   return {
     title: "Deprogramming Course",

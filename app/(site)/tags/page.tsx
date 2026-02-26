@@ -1,11 +1,12 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { allPosts } from "contentlayer/generated";
 
 import siteMetadata from "@/lib/metadata";
-import { getTagsWithCount } from "@/lib/utils";
+import { getTagCounts } from "@/lib/services/content";
 import { Badge } from "@/components/ui/badge";
+
+export const revalidate = 300;
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -14,10 +15,8 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function TagsPage() {
-  const posts = allPosts.filter((post) => post.status === "published");
-
-  const tags = getTagsWithCount(posts);
+export default async function TagsPage() {
+  const tags = await getTagCounts();
 
   if (!tags || Object.keys(tags).length === 0) {
     notFound();
