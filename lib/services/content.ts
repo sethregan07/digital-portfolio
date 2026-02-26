@@ -15,6 +15,8 @@ import {
 import { cache } from "react";
 import { PostSeries, SeriesItem } from "@/types";
 import { PostHeading } from "@/types";
+import { remark } from "remark";
+import remarkHtml from "remark-html";
 
 export type ContentTagCount = Record<string, number>;
 export type ArticleSource = "course" | "post";
@@ -121,6 +123,11 @@ export async function getArticlesForListing(): Promise<ArticleListItem[]> {
   });
 }
 
+async function markdownToHtml(markdown: string): Promise<string> {
+  const result = await remark().use(remarkHtml).process(markdown);
+  return result.toString();
+}
+
 export const getPostDetailBySlug = cache(async (slug: string): Promise<any | null> => {
   const post = await getPublishedPostBySlug(slug);
 
@@ -189,6 +196,7 @@ export const getUnifiedArticleBySlug = cache(async (slug: string): Promise<Unifi
   }
 
   const section = getFallbackSectionFromTags(post.tags || []);
+  const bodyCode = await markdownToHtml(post.body);
 
   return {
     source: "post",
@@ -206,7 +214,7 @@ export const getUnifiedArticleBySlug = cache(async (slug: string): Promise<Unifi
           (h) => typeof h?.heading === "number" && typeof h?.text === "string" && typeof h?.slug === "string"
         )
       : [],
-    bodyCode: post.body,
+    bodyCode,
     contentBlocks: null,
     resources: [],
   };
