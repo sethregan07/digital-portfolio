@@ -12,7 +12,8 @@ import remarkHtml from 'remark-html'
 
 const connectionString = process.env.DATABASE_URL!
 const pool = new Pool({ connectionString })
-const adapter = new PrismaPg(pool)
+// PrismaPg expects a Pool type from its bundled pg types; cast avoids duplicate @types/pg conflicts.
+const adapter = new PrismaPg(pool as unknown as any)
 
 const prisma = new PrismaClient({ adapter })
 

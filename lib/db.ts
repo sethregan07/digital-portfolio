@@ -10,7 +10,8 @@ const connectionString = process.env.DATABASE_URL!
 
 // Use adapter for both development and production
 const pool = new Pool({ connectionString })
-const adapter = new PrismaPg(pool)
+// PrismaPg expects a Pool type from its bundled pg types; cast avoids duplicate @types/pg conflicts.
+const adapter = new PrismaPg(pool as unknown as any)
 
 const prisma = globalForPrisma.prisma ?? new PrismaClient({ adapter })
 
