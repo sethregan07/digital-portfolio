@@ -144,3 +144,64 @@ sudo apt install -y certbot python3-certbot-nginx
 sudo certbot --nginx -d your-domain.com
 ```
 
+---
+
+## Add-ons: Umami, Listmonk, PostHog
+
+### Umami (analytics)
+
+1) Deploy Umami (Docker):
+
+```bash
+git clone https://github.com/umami-software/umami.git
+cd umami
+docker compose up -d
+```
+
+2) Put it behind Nginx (recommended) on a subdomain like `analytics.your-domain.com`.
+
+3) Create a website in Umami and copy the Website ID.
+
+4) Set these in your app `.env`:
+
+```
+NEXT_PUBLIC_UMAMI_SCRIPT_URL=https://analytics.your-domain.com/script.js
+NEXT_PUBLIC_UMAMI_WEBSITE_ID=YOUR_WEBSITE_ID
+```
+
+### Listmonk (newsletter)
+
+1) Deploy Listmonk (Docker):
+
+```bash
+git clone https://github.com/knadh/listmonk.git
+cd listmonk
+docker compose up -d
+docker compose run --rm app ./listmonk --install
+```
+
+2) Visit `http://your-server:9000`, create admin, create a list, and copy the list UUID.
+
+3) Set these in your app `.env`:
+
+```
+EMAIL_API_BASE=https://list.your-domain.com/
+EMAIL_LIST_UUIDS=uuid1,uuid2
+```
+
+### PostHog (heatmaps + session replay)
+
+1) Deploy PostHog (self-host hobby deploy):
+
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/posthog/posthog/HEAD/bin/deploy-hobby)"
+```
+
+2) Put it behind Nginx on `posthog.your-domain.com`.
+
+3) In PostHog, copy the Project API Key and set:
+
+```
+NEXT_PUBLIC_POSTHOG_KEY=phc_...
+NEXT_PUBLIC_POSTHOG_HOST=https://posthog.your-domain.com
+```
