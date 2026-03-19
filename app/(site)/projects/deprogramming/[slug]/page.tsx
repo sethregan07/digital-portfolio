@@ -173,7 +173,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
             </CardHeader>
             <CardContent>
               <ul className="space-y-2">
-                {lesson.resources.map((resource, index) => (
+                {lesson.resources.map((resource: string, index: number) => (
                   <li key={index} className="text-sm">
                     {resource}
                   </li>
