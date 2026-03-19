@@ -192,3 +192,81 @@ EMAIL_LIST_UUIDS=GROUP_ID_1,GROUP_ID_2
 NEXT_PUBLIC_POSTHOG_KEY=phc_...
 NEXT_PUBLIC_POSTHOG_HOST=https://app.posthog.com
 ```
+
+---
+
+## Listmonk (self-hosted, lightweight)
+
+### 1) Install Docker (Debian)
+
+```bash
+sudo apt update
+sudo apt install -y docker.io docker-compose
+sudo systemctl enable --now docker
+```
+
+### 2) Allow current user to run Docker without sudo
+
+```bash
+sudo usermod -aG docker $(whoami)
+newgrp docker
+```
+
+### 3) Create Listmonk DB
+
+```bash
+sudo -u postgres psql
+```
+
+```sql
+CREATE DATABASE listmonk;
+CREATE USER listmonk_user WITH PASSWORD 'listmonk_pass';
+GRANT ALL PRIVILEGES ON DATABASE listmonk TO listmonk_user;
+\q
+```
+
+### 4) Docker Compose
+
+```bash
+mkdir -p ~/listmonk
+nano ~/listmonk/docker-compose.yml
+```
+
+```
+services:
+  listmonk:
+    image: listmonk/listmonk:latest
+    ports:
+      - "9000:9000"
+    environment:
+      LISTMONK_app__address: "0.0.0.0:9000"
+      LISTMONK_db__host: "host.docker.internal"
+      LISTMONK_db__port: "5432"
+      LISTMONK_db__user: "listmonk_user"
+      LISTMONK_db__password: "listmonk_pass"
+      LISTMONK_db__database: "listmonk"
+      LISTMONK_db__ssl_mode: "disable"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+```
+
+### 5) Start + install
+
+```bash
+cd ~/listmonk
+docker-compose up -d
+docker-compose run --rm listmonk ./listmonk --install
+```
+
+### 6) Connect the app
+
+Open `http://YOUR_IP:9000`, create admin and a list, then copy the list UUID.
+
+In `.env`:
+
+```
+NEWSLETTER_PROVIDER=listmonk
+EMAIL_API_BASE=http://YOUR_IP:9000/
+EMAIL_LIST_UUIDS=YOUR_LIST_UUID
+```
