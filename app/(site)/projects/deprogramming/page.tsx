@@ -43,7 +43,10 @@ export default async function DeprogrammingCoursePage() {
 
   // Calculate course stats
   const totalLessons = courseLessons.length;
-  const totalReadTime = courseLessons.reduce((acc, lesson) => acc + (lesson.estimatedReadTime || lesson.readTimeMinutes), 0);
+  const totalReadTime = courseLessons.reduce(
+    (acc: number, lesson: (typeof courseLessons)[number]) => acc + (lesson.estimatedReadTime || lesson.readTimeMinutes),
+    0
+  );
   const sectionCount = Object.keys(sections).length;
 
   return (
