@@ -149,7 +149,8 @@ export default async function DeprogrammingCoursePage() {
         <h2 className="text-2xl font-bold mb-6">Course Curriculum</h2>
 
         <div className="space-y-4">
-          {Object.entries(sections).map(([sectionName, lessons], sectionIndex) => (
+          {Object.entries(sections).map(
+            ([sectionName, lessons]: [string, (typeof courseLessons)[number][]], sectionIndex) => (
             <Card key={sectionName}>
               <CardHeader>
                 <CardTitle className="flex items-center gap-3">
