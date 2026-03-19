@@ -18,6 +18,9 @@ export const revalidate = 300;
 
 // Image generation
 export default async function Image({ params }: { params: { slug: string } }) {
+  if (process.env.SKIP_DB === "true") {
+    return {};
+  }
   const post = await prisma.post.findFirst({
     where: {
       slug: params.slug,

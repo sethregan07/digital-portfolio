@@ -2,6 +2,8 @@ import { cache } from "react";
 import { prisma } from "@/lib/db";
 import { ContentStatus } from "@prisma/client";
 
+const shouldSkipDb = process.env.SKIP_DB === "true";
+
 export type DbPostPreview = {
   id: string;
   slug: string;
@@ -49,6 +51,7 @@ export type DbPageDetail = {
 };
 
 export const getPublishedPosts = cache(async (): Promise<DbPostPreview[]> => {
+  if (shouldSkipDb) return [];
   return prisma.post.findMany({
     where: {
       status: "published",
@@ -70,6 +73,7 @@ export const getPublishedPosts = cache(async (): Promise<DbPostPreview[]> => {
 });
 
 export const getPublishedPostBySlug = cache(async (slug: string) => {
+  if (shouldSkipDb) return null;
   return prisma.post.findFirst({
     where: {
       slug,
@@ -83,6 +87,7 @@ export const getPublishedPostBySlug = cache(async (slug: string) => {
 });
 
 export const getPublishedPostsBySeriesId = cache(async (seriesId: string) => {
+  if (shouldSkipDb) return [];
   return prisma.post.findMany({
     where: {
       seriesId,
@@ -100,6 +105,7 @@ export const getPublishedPostsBySeriesId = cache(async (seriesId: string) => {
 });
 
 export const getPublishedCourseArticles = cache(async (course: string): Promise<DbCourseArticleListItem[]> => {
+  if (shouldSkipDb) return [];
   const rows = await prisma.course.findMany({
     where: {
       course,
@@ -130,6 +136,7 @@ export const getPublishedCourseArticles = cache(async (course: string): Promise<
 });
 
 export const getPublishedPostSlugs = cache(async (): Promise<string[]> => {
+  if (shouldSkipDb) return [];
   const posts = await prisma.post.findMany({
     where: {
       status: "published",
@@ -143,6 +150,7 @@ export const getPublishedPostSlugs = cache(async (): Promise<string[]> => {
 });
 
 export const getPublishedPages = cache(async () => {
+  if (shouldSkipDb) return [];
   return prisma.page.findMany({
     where: {
       status: "published",
@@ -155,6 +163,7 @@ export const getPublishedPages = cache(async () => {
 });
 
 export const getPublishedPageBySlug = cache(async (slug: string): Promise<DbPageDetail | null> => {
+  if (shouldSkipDb) return null;
   return prisma.page.findFirst({
     where: {
       slug,
@@ -172,6 +181,7 @@ export const getPublishedPageBySlug = cache(async (slug: string): Promise<DbPage
 });
 
 export const getPublishedCourseLessonBySlug = cache(async (course: string, slug: string) => {
+  if (shouldSkipDb) return null;
   return prisma.course.findFirst({
     where: {
       slug,
@@ -197,6 +207,7 @@ export const getPublishedCourseLessonBySlug = cache(async (course: string, slug:
 });
 
 export const getPublishedCourseLessons = cache(async (course: string) => {
+  if (shouldSkipDb) return [];
   return prisma.course.findMany({
     where: {
       course,
@@ -213,6 +224,7 @@ export const getPublishedCourseLessons = cache(async (course: string) => {
 });
 
 export const getPublishedCourseLessonSlugs = cache(async (course: string): Promise<string[]> => {
+  if (shouldSkipDb) return [];
   const lessons = await prisma.course.findMany({
     where: {
       course,

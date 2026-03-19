@@ -19,17 +19,20 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function DeprogrammingCoursePage() {
+  const shouldSkipDb = process.env.SKIP_DB === "true";
   // Get all deprogramming course content
-  const courseLessons = await prisma.course.findMany({
-    where: {
-      course: "deprogramming",
-      status: "published",
-    },
-    orderBy: [
-      { sectionOrder: 'asc' },
-      { lessonOrder: 'asc' },
-    ],
-  });
+  const courseLessons = shouldSkipDb
+    ? []
+    : await prisma.course.findMany({
+        where: {
+          course: "deprogramming",
+          status: "published",
+        },
+        orderBy: [
+          { sectionOrder: "asc" },
+          { lessonOrder: "asc" },
+        ],
+      });
 
   // Group lessons by section
   const sections = courseLessons.reduce((acc: Record<string, typeof courseLessons>, lesson: (typeof courseLessons)[number]) => {
