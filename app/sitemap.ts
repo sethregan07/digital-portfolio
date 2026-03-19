@@ -10,7 +10,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
   const loadedPosts = await getPublishedPosts();
   const loadedPages = await getPublishedPages();
-  const tags = tagOptions.map((tag) => ({
+  const tags = tagOptions.map((tag: string) => ({
     url: `${BASE_URL}/tags/${tag}`,
     lastModified: now,
   }));
@@ -18,7 +18,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     url: `${BASE_URL}/posts/${post.slug}`,
     lastModified: post.lastUpdatedDate || post.publishedDate || now,
   }));
-  const pages = loadedPages.map((page) => ({
+  const pages = loadedPages.map((page: { slug: string; lastUpdatedDate: Date | null }) => ({
     url: `${BASE_URL}/${page.slug}`,
     lastModified: page.lastUpdatedDate || now,
   }));
