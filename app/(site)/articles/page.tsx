@@ -17,7 +17,8 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function Articles() {
   const articles = await getArticlesForListing();
 
-  const sections = articles.reduce((acc, article) => {
+  const sections = articles.reduce(
+    (acc: Record<string, ArticleListItem[]>, article: ArticleListItem) => {
     const section = article.section;
     if (!acc[section]) {
       acc[section] = [];

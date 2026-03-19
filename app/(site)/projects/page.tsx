@@ -24,7 +24,8 @@ const getCategoryIcon = (category: string) => {
 
 export default async function SocialPage() {
   // Group projects by category
-  const projectsByCategory = projects.reduce((acc, project) => {
+  const projectsByCategory = projects.reduce(
+    (acc: Record<string, typeof projects>, project: (typeof projects)[number]) => {
     const category = project.category || 'Other';
     if (!acc[category]) {
       acc[category] = [];

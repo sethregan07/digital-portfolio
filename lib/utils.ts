@@ -25,8 +25,8 @@ type SortablePost = {
 };
 
 export const getTagsWithCount = (posts: SortablePost[]) =>
-  posts.reduce((acc: any, post: SortablePost) => {
-    post.tags?.forEach((tag: any) => {
+  posts.reduce((acc: Record<string, number>, post: SortablePost) => {
+    post.tags?.forEach((tag: string) => {
       if (acc[tag]) {
         acc[tag] += 1;
       } else {
@@ -34,7 +34,7 @@ export const getTagsWithCount = (posts: SortablePost[]) =>
       }
     });
     return acc;
-  }, {});
+  }, {} as Record<string, number>);
 
 export function debounce<T extends (...args: any[]) => any>(func: T, wait: number, immediate?: boolean) {
   let timeout: ReturnType<typeof setTimeout> | null;
