@@ -32,7 +32,7 @@ export default async function DeprogrammingCoursePage() {
   });
 
   // Group lessons by section
-  const sections = courseLessons.reduce((acc: Record<string, typeof courseLessons>, lesson) => {
+  const sections = courseLessons.reduce((acc: Record<string, typeof courseLessons>, lesson: (typeof courseLessons)[number]) => {
     const section = lesson.section;
     if (!acc[section]) {
       acc[section] = [];
