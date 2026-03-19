@@ -146,62 +146,49 @@ sudo certbot --nginx -d your-domain.com
 
 ---
 
-## Add-ons: Umami, Listmonk, PostHog
+## Add-ons (Hosted)
 
-### Umami (analytics)
+These are the light‑weight hosted options we chose.
 
-1) Deploy Umami (Docker):
+### Umami Cloud (analytics)
 
-```bash
-git clone https://github.com/umami-software/umami.git
-cd umami
-docker compose up -d
-```
-
-2) Put it behind Nginx (recommended) on a subdomain like `analytics.your-domain.com`.
-
-3) Create a website in Umami and copy the Website ID.
-
-4) Set these in your app `.env`:
+1) In Umami Cloud, create a Website.
+2) Copy:
+   - Website ID
+   - Script URL (ends with `/script.js`)
+3) Set in `.env`:
 
 ```
-NEXT_PUBLIC_UMAMI_SCRIPT_URL=https://analytics.your-domain.com/script.js
-NEXT_PUBLIC_UMAMI_WEBSITE_ID=YOUR_WEBSITE_ID
+NEXT_PUBLIC_UMAMI_SCRIPT_URL=https://cloud.umami.is/script.js
+NEXT_PUBLIC_UMAMI_WEBSITE_ID=YOUR_UMAMI_WEBSITE_ID
 ```
 
-### Listmonk (newsletter)
+**Test Umami**
 
-1) Deploy Listmonk (Docker):
+1) Open your site in a browser.
+2) In Umami Cloud, go to the website → **Realtime** and confirm you see an active visitor.
+3) If not, open DevTools → Network and confirm the script is loaded from the Script URL.
 
-```bash
-git clone https://github.com/knadh/listmonk.git
-cd listmonk
-docker compose up -d
-docker compose run --rm app ./listmonk --install
-```
+### MailerLite (newsletter)
 
-2) Visit `http://your-server:9000`, create admin, create a list, and copy the list UUID.
-
-3) Set these in your app `.env`:
+1) Create a MailerLite account and generate an API key.
+2) Create a Group and copy its Group ID.
+3) Set in `.env`:
 
 ```
-EMAIL_API_BASE=https://list.your-domain.com/
-EMAIL_LIST_UUIDS=uuid1,uuid2
+NEWSLETTER_PROVIDER=mailerlite
+EMAIL_API_BASE=https://connect.mailerlite.com/api/
+EMAIL_API_KEY=YOUR_MAILERLITE_API_KEY
+EMAIL_LIST_UUIDS=GROUP_ID_1,GROUP_ID_2
 ```
 
-### PostHog (heatmaps + session replay)
+### PostHog Cloud (heatmaps + session replay)
 
-1) Deploy PostHog (self-host hobby deploy):
-
-```bash
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/posthog/posthog/HEAD/bin/deploy-hobby)"
-```
-
-2) Put it behind Nginx on `posthog.your-domain.com`.
-
-3) In PostHog, copy the Project API Key and set:
+1) Create a PostHog Cloud project.
+2) Copy the Project API Key.
+3) Set in `.env`:
 
 ```
 NEXT_PUBLIC_POSTHOG_KEY=phc_...
-NEXT_PUBLIC_POSTHOG_HOST=https://posthog.your-domain.com
+NEXT_PUBLIC_POSTHOG_HOST=https://app.posthog.com
 ```

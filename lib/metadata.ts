@@ -32,7 +32,7 @@ const siteMetadata: SiteMetaData = {
   },
   description: defaultDescription,
   siteRepo: "https://github.com/thedevdavid/digital-garden",
-  newsletterProvider: "listmonk",
+  newsletterProvider: "mailerlite",
   newsletterUrl: "",
   analyticsProvider: "umami",
   defaultTheme: "system",
