@@ -13,6 +13,7 @@ import { Separator } from "@/components/ui/separator";
 import { PostSeriesBox } from "@/components/post-series-box";
 import { SocialShare } from "@/components/social-share";
 import { TableOfContents } from "@/components/table-of-contents";
+import NewsletterSubscribe from "@/components/newsletter-subscribe";
 
 export const revalidate = 300;
 
@@ -205,6 +206,11 @@ export default async function PostPage({ params }: PostProps) {
         </aside>
       </div>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <NewsletterSubscribe
+        title="Subscribe for new posts"
+        description="Get new posts and resources in your inbox."
+        buttonText="Subscribe"
+      />
     </div>
   );
 }

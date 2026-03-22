@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { TableOfContents } from "@/components/table-of-contents";
+import NewsletterSubscribe from "@/components/newsletter-subscribe";
 
 export const revalidate = 300;
 
@@ -244,6 +245,11 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
       )}
 
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <NewsletterSubscribe
+        title="Subscribe for new articles"
+        description="Get new articles and resources in your inbox."
+        buttonText="Subscribe"
+      />
     </div>
   );
 }
