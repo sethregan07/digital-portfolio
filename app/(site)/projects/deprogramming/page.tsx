@@ -97,6 +97,40 @@ export default async function DeprogrammingCoursePage() {
 
       <Separator className="my-8" />
 
+      {/* Who It's For */}
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold mb-4">Who This Is For</h2>
+        <div className="grid md:grid-cols-2 gap-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Curious, skeptical learners</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground">
+                You like to question narratives, test ideas, and build your own grounded worldview.
+              </p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">People navigating change</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground">
+                You feel tension between what you were taught and what you now see in the world.
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+        <p className="mt-4 text-sm text-muted-foreground">
+          If you want more context and updates, you can also{" "}
+          <Link href="/newsletter" className="text-primary hover:underline">
+            join the newsletter
+          </Link>
+          .
+        </p>
+      </div>
+
       {/* What You'll Learn */}
       <div className="mb-8">
         <h2 className="text-2xl font-bold mb-4">What You'll Learn</h2>
@@ -145,6 +179,17 @@ export default async function DeprogrammingCoursePage() {
             </CardContent>
           </Card>
         </div>
+      </div>
+
+      {/* How To Use This Course */}
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold mb-4">How To Use This Course</h2>
+        <Card>
+          <CardContent className="pt-6 text-muted-foreground">
+            Move lesson by lesson, pause often, and write down your own examples. The goal isn’t speed —
+            it’s clarity. If a topic hits a nerve, revisit it later with fresh eyes.
+          </CardContent>
+        </Card>
       </div>
 
       {/* Course Curriculum */}

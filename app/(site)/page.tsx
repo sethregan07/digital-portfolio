@@ -44,13 +44,14 @@ export default async function Home() {
             </h1>
 
             <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">
-              Frontend engineer exploring systems thinking, societal transformation,
-              and the intersection of technology with human flourishing.
+              I build practical frameworks and the Deprogramming course to help people think clearly,
+              question assumptions, and design a more honest life. This is my working library of ideas,
+              lessons, and tools as I explore systems, culture, and human flourishing.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button asChild size="lg">
-                <Link href="/updates">
+                <Link href="/now">
                   <MapPin className="mr-2 h-4 w-4" />
                   See What I'm Up To
                 </Link>
