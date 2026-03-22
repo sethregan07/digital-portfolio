@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowRight, Mail } from "lucide-react";
@@ -32,6 +32,8 @@ const NewsletterSubscribe = ({
   ...props
 }: CTAProps & React.HTMLAttributes<HTMLDivElement>) => {
   const { toast } = useToast();
+  const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
+  const [statusMessage, setStatusMessage] = useState<string>("");
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -41,6 +43,9 @@ const NewsletterSubscribe = ({
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    setStatus("idle");
+    setStatusMessage("");
+
     const response = await fetch("/newsletter", {
       method: "POST",
       headers: {
@@ -52,13 +57,19 @@ const NewsletterSubscribe = ({
     });
 
     if (!response?.ok) {
+      const body = await response.json().catch(() => ({}));
+      const message = body?.error || "The subscription did not happen. Please try again.";
+      setStatus("error");
+      setStatusMessage(message);
       return toast({
         title: "Something went wrong.",
-        description: "The subscription did not happen. Please try again.",
+        description: message,
         variant: "destructive",
       });
     }
 
+    setStatus("success");
+    setStatusMessage("You're subscribed. Check your inbox for a welcome email if enabled.");
     return toast({
       title: "🎉 Nice!",
       description: "You'll get the emails now.",
@@ -97,6 +108,16 @@ const NewsletterSubscribe = ({
               </Button>
             </form>
           </Form>
+          {status !== "idle" && (
+            <p
+              className={cn(
+                "mt-3 text-sm",
+                status === "success" ? "text-emerald-600" : "text-destructive"
+              )}
+            >
+              {statusMessage}
+            </p>
+          )}
           {siteMetadata.newsletterUrl && (
             <div className="mt-4 flex items-center justify-center">
               <Button asChild variant="ghost">
