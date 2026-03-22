@@ -47,9 +47,29 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
     return {};
   }
 
+  const url = `${BASE_URL}/articles/${params.slug}`;
+  const ogImage = `${BASE_URL}/opengraph-image`;
+  const twitterImage = `${BASE_URL}/twitter-image`;
+
   return {
     title: article.title,
     description: article.description,
+    alternates: {
+      canonical: url,
+    },
+    openGraph: {
+      type: "article",
+      url,
+      title: article.title,
+      description: article.description || undefined,
+      images: [{ url: ogImage, width: 1200, height: 630, alt: article.title }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: article.title,
+      description: article.description || undefined,
+      images: [twitterImage],
+    },
   };
 }
 

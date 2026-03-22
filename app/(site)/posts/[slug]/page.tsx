@@ -43,11 +43,31 @@ export async function generateMetadata({ params }: PostProps): Promise<Metadata>
     return {};
   }
 
+  const url = `${BASE_URL}/posts/${params.slug}`;
+  const ogImage = `${BASE_URL}/posts/${params.slug}/opengraph-image`;
+  const twitterImage = `${BASE_URL}/posts/${params.slug}/twitter-image`;
+
   return {
     title: post.title,
     description: post.description,
     authors: [{ name: post?.author?.name || defaultAuthor.name, url: defaultAuthor.website }],
     keywords: post.tags,
+    alternates: {
+      canonical: url,
+    },
+    openGraph: {
+      type: "article",
+      url,
+      title: post.title,
+      description: post.description || undefined,
+      images: [{ url: ogImage, width: 1200, height: 630, alt: post.title }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: post.title,
+      description: post.description || undefined,
+      images: [twitterImage],
+    },
   };
 }
 
