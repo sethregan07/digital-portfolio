@@ -182,6 +182,23 @@ EMAIL_API_KEY=YOUR_MAILERLITE_API_KEY
 EMAIL_LIST_UUIDS=GROUP_ID_1,GROUP_ID_2
 ```
 
+**API test (direct)**
+
+```bash
+curl -s https://connect.mailerlite.com/api/subscribers \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test@example.com","groups":["YOUR_GROUP_ID"]}'
+```
+
+**API test (via app)**
+
+```bash
+curl -s -X POST http://127.0.0.1:3000/newsletter \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test@example.com"}'
+```
+
 ### PostHog Cloud (heatmaps + session replay)
 
 1) Create a PostHog Cloud project.
