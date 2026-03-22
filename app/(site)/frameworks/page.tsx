@@ -18,15 +18,35 @@ import {
   Scale
 } from "lucide-react";
 
+import { BASE_URL } from "@/lib/metadata";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
 export async function generateMetadata(): Promise<Metadata> {
+  const title = "Frameworks - Mental Models & Templates";
+  const description =
+    "Comprehensive collection of frameworks and mental models for personal growth, decision making, and societal understanding.";
+  const url = `${BASE_URL}/frameworks`;
+
   return {
-    title: "Frameworks - Mental Models & Templates",
-    description: "Comprehensive collection of frameworks and mental models for personal growth, decision making, and societal understanding.",
+    title,
+    description,
+    alternates: {
+      canonical: url,
+    },
+    openGraph: {
+      type: "website",
+      url,
+      title,
+      description,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+    },
   };
 }
 

@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { MapPin, Briefcase, CheckCircle, XCircle, Users, MessageCircle, Calendar, Twitter, Rss } from "lucide-react";
 
+import { BASE_URL } from "@/lib/metadata";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -9,9 +10,27 @@ import { Separator } from "@/components/ui/separator";
 import NewsletterSubscribe from "@/components/newsletter-subscribe";
 
 export async function generateMetadata(): Promise<Metadata> {
+  const title = "Now - What I'm Up To";
+  const description = "A quick way to check what I'm working on these days and my current availability.";
+  const url = `${BASE_URL}/now`;
+
   return {
-    title: "Now - What I'm Up To",
-    description: "A quick way to check what I'm working on these days and my current availability.",
+    title,
+    description,
+    alternates: {
+      canonical: url,
+    },
+    openGraph: {
+      type: "website",
+      url,
+      title,
+      description,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+    },
   };
 }
 

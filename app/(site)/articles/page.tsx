@@ -2,15 +2,33 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { format } from "date-fns";
 
-import { defaultAuthor } from "@/lib/metadata";
+import { BASE_URL, defaultAuthor } from "@/lib/metadata";
 import { ArticleListItem, getArticlesForListing } from "@/lib/services/content";
 
 export const revalidate = 300;
 
 export async function generateMetadata(): Promise<Metadata> {
+  const title = "Articles";
+  const description = `Articles by ${defaultAuthor.name}`;
+  const url = `${BASE_URL}/articles`;
+
   return {
-    title: "Articles",
-    description: `Articles by ${defaultAuthor.name}`,
+    title,
+    description,
+    alternates: {
+      canonical: url,
+    },
+    openGraph: {
+      type: "website",
+      url,
+      title,
+      description,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+    },
   };
 }
 

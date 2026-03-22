@@ -2,12 +2,31 @@ import { Metadata } from "next";
 import { format, parseISO } from "date-fns";
 import { AlertTriangle } from "lucide-react";
 
+import { BASE_URL } from "@/lib/metadata";
 import { hardware, software } from "@/lib/uses-data";
 
 export async function generateMetadata(): Promise<Metadata> {
+  const title = "Uses";
+  const description = "The tools, software, and hardware I use for my work.";
+  const url = `${BASE_URL}/uses`;
+
   return {
-    title: "Uses",
-    description: "Stuff I use",
+    title,
+    description,
+    alternates: {
+      canonical: url,
+    },
+    openGraph: {
+      type: "website",
+      url,
+      title,
+      description,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+    },
   };
 }
 

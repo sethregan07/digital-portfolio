@@ -1,15 +1,33 @@
 import { Metadata } from "next";
 
-import { defaultAuthor } from "@/lib/metadata";
+import { BASE_URL, defaultAuthor } from "@/lib/metadata";
 import { getPublishedPosts } from "@/lib/repositories/content";
 import PostPreview from "@/components/post-preview";
 
 export const revalidate = 300;
 
 export async function generateMetadata(): Promise<Metadata> {
+  const title = "Posts";
+  const description = `Posts by ${defaultAuthor.name}`;
+  const url = `${BASE_URL}/posts`;
+
   return {
-    title: "Posts",
-    description: `Posts by ${defaultAuthor.name}`,
+    title,
+    description,
+    alternates: {
+      canonical: url,
+    },
+    openGraph: {
+      type: "website",
+      url,
+      title,
+      description,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+    },
   };
 }
 

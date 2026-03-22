@@ -2,16 +2,34 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import siteMetadata from "@/lib/metadata";
+import siteMetadata, { BASE_URL } from "@/lib/metadata";
 import { getTagCounts } from "@/lib/services/content";
 import { Badge } from "@/components/ui/badge";
 
 export const revalidate = 300;
 
 export async function generateMetadata(): Promise<Metadata> {
+  const title = "Tags";
+  const description = `All tags in ${siteMetadata.title}`;
+  const url = `${BASE_URL}/tags`;
+
   return {
-    title: "Tags",
-    description: `All tags in ${siteMetadata.title}`,
+    title,
+    description,
+    alternates: {
+      canonical: url,
+    },
+    openGraph: {
+      type: "website",
+      url,
+      title,
+      description,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+    },
   };
 }
 

@@ -1,13 +1,32 @@
 import { Metadata } from "next";
 import { BookOpen, Lightbulb } from "lucide-react";
 
+import { BASE_URL } from "@/lib/metadata";
 import { projects } from "@/lib/projects-data";
 import { SpotlightCard } from "@/components/spotlight-card";
 
 export async function generateMetadata(): Promise<Metadata> {
+  const title = "Projects";
+  const description = "Projects, courses, and frameworks exploring systems thinking and personal growth.";
+  const url = `${BASE_URL}/projects`;
+
   return {
-    title: "Projects",
-    description: "My projects",
+    title,
+    description,
+    alternates: {
+      canonical: url,
+    },
+    openGraph: {
+      type: "website",
+      url,
+      title,
+      description,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+    },
   };
 }
 

@@ -2,10 +2,30 @@ import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 
+import { BASE_URL } from "@/lib/metadata";
+
 export async function generateMetadata(): Promise<Metadata> {
+  const title = "Resources";
+  const description = "Books, videos, and articles I recommend for systems thinking and personal growth.";
+  const url = `${BASE_URL}/resources`;
+
   return {
-    title: "Resources",
-    description: "Books, videos, and articles I recommend",
+    title,
+    description,
+    alternates: {
+      canonical: url,
+    },
+    openGraph: {
+      type: "website",
+      url,
+      title,
+      description,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+    },
   };
 }
 
