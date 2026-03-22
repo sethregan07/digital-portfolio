@@ -1,7 +1,5 @@
 import "dotenv/config"
 import { PrismaClient } from '@prisma/client'
-import { PrismaPg } from '@prisma/adapter-pg'
-import { Pool } from 'pg'
 import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
@@ -10,12 +8,11 @@ import { compile } from '@mdx-js/mdx'
 import { remark } from 'remark'
 import remarkHtml from 'remark-html'
 
-const connectionString = process.env.DATABASE_URL!
-const pool = new Pool({ connectionString })
-// PrismaPg expects a Pool type from its bundled pg types; cast avoids duplicate @types/pg conflicts.
-const adapter = new PrismaPg(pool as unknown as any)
+if (!process.env.DATABASE_URL) {
+  throw new Error("DATABASE_URL is not set")
+}
 
-const prisma = new PrismaClient({ adapter })
+const prisma = new PrismaClient()
 
 // Helper function to calculate reading time
 function calculateReadingTime(text: string): number {
