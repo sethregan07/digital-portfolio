@@ -9,29 +9,9 @@ const content: ContentNavItem[] = [
     description: "Articles on web development, technology, and life lessons",
   },
   {
-    title: "Sections",
-    href: "/articles",
-    description: "Articles organized into categories for easy browsing",
-  },
-  {
-    title: "Speaking",
-    href: "/speaking",
-    description: "My previous (and current) talks, workshops, and other speaking engagements.",
-  },
-  {
-    title: "Videos",
-    href: defaultAuthor.socialProfiles.find((platform) => platform.name === "youtube")?.link as string,
-    description: "My YouTube channel where I talk about web development.",
-  },
-  {
-    title: "Newsletter",
+    title: "Newsletter Series",
     href: siteMetadata.newsletterUrl as string,
     description: "My newsletter about software development",
-  },
-  {
-    title: "Teaching",
-    href: "/teaching",
-    description: "I teach others. Sometimes for free, sometimes for money.",
   },
 ];
 
