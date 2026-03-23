@@ -10,12 +10,13 @@ import { AspectRatio } from "@/components/ui/aspect-ratio";
 interface SpotlightCardProps {
   title: string;
   description: string;
-  mediaSrc: string;
-  mediaType: string;
+  mediaSrc?: string;
+  mediaType?: "image" | "video" | "icon";
   href: string;
+  icon?: React.ReactNode;
 }
 
-export const SpotlightCard = ({ title, description, mediaSrc, mediaType, href }: SpotlightCardProps) => {
+export const SpotlightCard = ({ title, description, mediaSrc, mediaType = "image", href, icon }: SpotlightCardProps) => {
   const { theme } = useTheme();
   const divRef = useRef<HTMLDivElement>(null);
   const [isFocused, setIsFocused] = useState(false);
@@ -76,8 +77,14 @@ export const SpotlightCard = ({ title, description, mediaSrc, mediaType, href }:
             <source src="/project-garden.webm" type="video/webm" />
             <source src="/project-garden.mp4" type="video/mp4" />
           </video>
+        ) : mediaType === "icon" ? (
+          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-slate-100 via-white to-slate-200 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800">
+            <div className="flex h-16 w-16 items-center justify-center rounded-full border border-slate-200 bg-white/80 text-slate-800 shadow-sm dark:border-slate-700 dark:bg-slate-900/80 dark:text-slate-100">
+              {icon}
+            </div>
+          </div>
         ) : (
-          <Image src={mediaSrc} alt={title} width={960} height={540} className="m-0 p-0" />
+          mediaSrc && <Image src={mediaSrc} alt={title} width={960} height={540} className="m-0 p-0" />
         )}
       </AspectRatio>
       <div className="p-6">
