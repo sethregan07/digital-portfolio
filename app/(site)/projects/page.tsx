@@ -6,8 +6,8 @@ import { projects } from "@/lib/projects-data";
 import { SpotlightCard } from "@/components/spotlight-card";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const title = "Projects";
-  const description = "Projects, courses, and frameworks exploring systems thinking and personal growth.";
+  const title = "Offerings";
+  const description = "Courses and frameworks designed to help you think clearly, question assumptions, and act with confidence.";
   const url = `${BASE_URL}/projects`;
 
   return {
@@ -61,9 +61,9 @@ export default async function SocialPage() {
   return (
     <div className="container pb-10">
       <article className="prose mx-auto max-w-5xl dark:prose-invert prose-headings:mb-3 prose-headings:mt-8 prose-headings:font-heading prose-headings:font-bold prose-headings:leading-tight hover:prose-a:text-accent-foreground prose-a:prose-headings:no-underline">
-        <h1 className="mt-0 ">Projects</h1>
+        <h1 className="mt-0 ">Offerings</h1>
         <p className="m-0 text-xl ">
-          Here I share my projects and work across different areas.
+          Practical learning paths and tools that help you break patterns, build clarity, and apply systems thinking in real life.
         </p>
         <hr className="my-4" />
 

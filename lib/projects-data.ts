@@ -1,14 +1,14 @@
 export const projects = [
   {
     title: "Deprogramming",
-    description: `Resources and tools for critical thinking and breaking free from limiting beliefs and societal conditioning.`,
+    description: `A guided course to help you recognize conditioning, think independently, and build your own worldview.`,
     href: "/projects/deprogramming",
     mediaType: "icon",
     category: "Deprogramming",
   },
   {
     title: "Frameworks",
-    description: `Templates and frameworks for thinking about life, society, and personal development - like Notion templates for the mind.`,
+    description: `Decision frameworks and mental models you can apply to life, work, and personal growth.`,
     href: "#",
     mediaType: "icon",
     category: "Frameworks",

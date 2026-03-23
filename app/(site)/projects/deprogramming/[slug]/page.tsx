@@ -66,7 +66,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
       <nav className="mb-6">
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <Link href="/projects" className="hover:text-foreground transition-colors">
-            Projects
+            Offerings
           </Link>
           <span>/</span>
           <Link href="/projects/deprogramming" className="hover:text-foreground transition-colors">

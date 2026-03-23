@@ -328,20 +328,7 @@ export default function NowPage() {
         />
       </div>
 
-      {/* Footer Note */}
-      <Card className="bg-muted/50">
-        <CardContent className="pt-6">
-          <p className="text-center text-muted-foreground">
-            <em>
-              This page was inspired by{" "}
-              <Link href="https://nownownow.com/about" className="text-primary hover:underline">
-                Derek Sivers
-              </Link>
-              . It works as a public declaration and a reminder to myself.
-            </em>
-          </p>
-        </CardContent>
-      </Card>
+      {/* Footer Note removed */}
     </div>
   );
 }
