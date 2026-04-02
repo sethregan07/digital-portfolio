@@ -78,78 +78,71 @@ const NewsletterSubscribe = ({
 
   return (
     <section
-      className={cn("relative isolate my-24 overflow-hidden bg-card py-6 text-card-foreground", className)}
+      className={cn(
+        "border border-border/70 bg-gradient-to-b from-background via-background to-muted/30 text-card-foreground",
+        className
+      )}
       {...props}
     >
-      <div className="p-8 md:p-12">
-        <div className="mx-auto max-w-lg text-center">
-          <h2 className="font-heading text-2xl font-bold md:text-3xl">{title}</h2>
+      <div className="p-7 md:p-10">
+        <div className="mx-auto max-w-2xl text-center">
+          <div className="mb-3 flex items-center justify-center gap-2 text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+            <Mail className="h-3.5 w-3.5" />
+            <span>Newsletter</span>
+          </div>
+          <h2 className="font-heading text-2xl font-bold tracking-tight md:text-3xl">{title}</h2>
 
-          <p className="hidden text-muted-foreground sm:mt-4 sm:block">{description}</p>
+          <p className="mt-4 hidden text-sm leading-7 text-muted-foreground sm:block">{description}</p>
         </div>
 
-        <div className="mx-auto mt-8 max-w-xl">
+        <div className="mx-auto mt-8 max-w-2xl border-t border-border/60 pt-6">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="flex w-full flex-col gap-3 md:flex-row">
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="flex w-full flex-col gap-3 md:flex-row md:items-start"
+            >
               <FormField
                 control={form.control}
                 name="email"
                 render={({ field }) => (
                   <FormItem className="flex-auto">
                     <FormControl>
-                      <Input type="email" placeholder="anakin.skywalker@darksi.de" {...field} />
+                      <Input
+                        type="email"
+                        placeholder="you@example.com"
+                        className="h-11 rounded-sm border-border/80 bg-background/70"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              <Button type="submit" variant="secondary">
+              <Button type="submit" className="h-11 rounded-sm px-6">
                 <Mail className="mr-2 h-4 w-4" /> {buttonText}
               </Button>
             </form>
           </Form>
           {status !== "idle" && (
-            <p
-              className={cn(
-                "mt-3 text-sm",
-                status === "success" ? "text-emerald-600" : "text-destructive"
-              )}
-            >
+            <p className={cn("mt-3 text-sm", status === "success" ? "text-emerald-600" : "text-destructive")}>
               {statusMessage}
             </p>
           )}
           {siteMetadata.newsletterUrl && (
-            <div className="mt-4 flex items-center justify-center">
-              <Button asChild variant="ghost">
+            <div className="mt-5 flex items-center justify-center">
+              <Button
+                asChild
+                variant="ghost"
+                className="rounded-sm px-0 text-muted-foreground hover:bg-transparent hover:text-foreground"
+              >
                 <Link href={siteMetadata.newsletterUrl} target="_blank">
-                  View Archive <ArrowRight className="mr-2 h-4 w-4" />
+                  View Archive <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
             </div>
           )}
         </div>
       </div>
-
-      <svg
-        viewBox="0 0 1024 1024"
-        className="absolute left-1/2 top-1/2 -z-10 h-[64rem] w-[64rem] -translate-x-1/2"
-        aria-hidden="true"
-      >
-        <circle cx={512} cy={512} r={512} fill="url(#gradient)" fillOpacity="0.7" />
-        <defs>
-          <radialGradient
-            id="gradient"
-            cx={0}
-            cy={0}
-            r={1}
-            gradientUnits="userSpaceOnUse"
-            gradientTransform="translate(512 512) rotate(90) scale(512)"
-          >
-            <stop stopColor="#7775D6" />
-            <stop offset={1} stopColor="#E935C1" stopOpacity={0} />
-          </radialGradient>
-        </defs>
-      </svg>
     </section>
   );
 };

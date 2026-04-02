@@ -57,14 +57,18 @@ export function Sidebar({ className, ...props }: CardProps) {
                   <source src="/project-garden.webm" type="video/webm" />
                   <source src="/project-garden.mp4" type="video/mp4" />
                 </video>
-              ) : (
+              ) : project.mediaSrc ? (
                 <Image
-                  src={project.mediaSrc}
+                  src={project.mediaSrc as string}
                   alt={project.title}
                   width={56}
                   height={56}
                   className="h-16 w-16 rounded-md object-cover"
                 />
+              ) : (
+                <span className="flex h-16 w-16 items-center justify-center rounded-md border border-muted/40 bg-muted/30 text-xs text-muted-foreground">
+                  No image
+                </span>
               )}
             </Link>
           ))}

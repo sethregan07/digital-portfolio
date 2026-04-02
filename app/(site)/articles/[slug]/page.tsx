@@ -1,26 +1,26 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, ArrowRight, Home } from "lucide-react";
 import { format, isValid, parseISO } from "date-fns";
+import { ArrowLeft, ArrowRight, BookOpen, Clock, Eye, FileText, Home, Layers } from "lucide-react";
 
 import { BASE_URL } from "@/lib/metadata";
 import {
   getUnifiedArticleAdjacent,
   getUnifiedArticleBySlug,
   getUnifiedArticleStaticParams,
-  type UnifiedArticle,
 } from "@/lib/services/content";
 import { cn } from "@/lib/utils";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { TableOfContents } from "@/components/table-of-contents";
 import NewsletterSubscribe from "@/components/newsletter-subscribe";
+import { TableOfContents } from "@/components/table-of-contents";
 
 export const revalidate = 300;
+
+const editorialSerif = {
+  fontFamily: '"Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, "Times New Roman", serif',
+};
 
 interface ArticlePageProps {
   params: {
@@ -39,6 +39,15 @@ function formatPostDate(dateValue?: Date | string | null): string | null {
   }
 
   return format(date, "LLLL d, yyyy");
+}
+
+function LabelRow({ icon: Icon, label }: { icon: typeof FileText; label: string }) {
+  return (
+    <div className="flex items-center gap-2">
+      <Icon className="h-3.5 w-3.5 text-muted-foreground" />
+      <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">{label}</p>
+    </div>
+  );
 }
 
 export async function generateMetadata({ params }: ArticlePageProps): Promise<Metadata> {
@@ -98,158 +107,178 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   const lastUpdatedDate = formatPostDate(article.lastUpdatedDate);
 
   return (
-    <div className="container max-w-7xl pb-10">
-      <nav aria-label="Breadcrumb">
-        <ol role="list" className="flex items-center gap-1 text-sm text-muted-foreground">
-          <li>
-            <Link href="/" className="block transition hover:text-muted-foreground/70" aria-label="Go to Home">
-              <span className="sr-only"> Home </span>
-              <Home size={14} />
-            </Link>
-          </li>
-          <li className="rtl:rotate-180">/</li>
-          <li>
-            <Link href="/articles" className="block transition hover:text-muted-foreground/70">
-              Articles
-            </Link>
-          </li>
-          <li className="rtl:rotate-180">/</li>
-          <li>
-            <Link href="#" className="block transition hover:text-muted-foreground/70">
-              {article.title}
-            </Link>
-          </li>
-        </ol>
-      </nav>
+    <div className="bg-gradient-to-b from-background via-background to-muted/30 pb-16">
+      <div className="container max-w-6xl pt-10">
+        <nav aria-label="Breadcrumb" className="mb-6">
+          <ol
+            role="list"
+            className="flex flex-wrap items-center gap-2 text-[11px] uppercase tracking-[0.12em] text-muted-foreground"
+          >
+            <li>
+              <Link
+                href="/"
+                className="inline-flex items-center gap-1.5 transition-colors hover:text-foreground"
+                aria-label="Go to Home"
+              >
+                <Home className="h-3.5 w-3.5" />
+                <span>Home</span>
+              </Link>
+            </li>
+            <li>/</li>
+            <li>
+              <Link href="/articles" className="transition-colors hover:text-foreground">
+                Articles
+              </Link>
+            </li>
+            <li>/</li>
+            <li className="truncate text-foreground/80">{article.title}</li>
+          </ol>
+        </nav>
 
-      <header className="mt-5 border-b pb-6">
-        <div className="mb-3 flex flex-wrap items-center gap-2">
-          <Badge variant="outline">{article.section}</Badge>
-          <Badge variant="secondary">Article {article.sectionOrder}.{article.lessonOrder}</Badge>
-        </div>
-        <h1 className="mb-3 font-heading text-4xl leading-tight">{article.title}</h1>
-        {article.description && <p className="max-w-3xl text-lg text-muted-foreground">{article.description}</p>}
-        <div className="mt-4 flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
-          <span>{`${article.readTimeMinutes} mins read`}</span>
-          {publishedDate && <time>Published: {publishedDate}</time>}
-          {lastUpdatedDate && <time>Updated: {lastUpdatedDate}</time>}
-        </div>
-      </header>
-
-      <div className="mt-6 grid gap-8 lg:grid-cols-[minmax(0,1fr)_300px]">
-        <div>
-          <div className="mb-4 lg:hidden">
-            <Accordion type="single" collapsible>
-              <AccordionItem value="table-of-contents">
-                <AccordionTrigger>Table of Contents</AccordionTrigger>
-                <AccordionContent>
-                  <TableOfContents chapters={article.headings} />
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
+        <header className="mb-12 border-b border-border/70 pb-8">
+          <div className="mb-4 flex flex-wrap items-center gap-4 text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
+            <div className="inline-flex items-center gap-2">
+              <Layers className="h-3.5 w-3.5" />
+              <span>{article.section}</span>
+            </div>
+            <span className="h-1 w-1 rounded-full bg-muted-foreground/60" />
+            <span>{`Article ${article.sectionOrder}.${article.lessonOrder}`}</span>
           </div>
+          <h1
+            className="max-w-4xl text-4xl leading-tight tracking-[-0.03em] text-foreground md:text-5xl"
+            style={editorialSerif}
+          >
+            {article.title}
+          </h1>
+          {article.description ? (
+            <p className="mt-5 max-w-3xl text-base leading-8 text-muted-foreground">{article.description}</p>
+          ) : null}
+          <div className="mt-6 flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
+            <span className="inline-flex items-center gap-1.5">
+              <Clock className="h-4 w-4" />
+              {article.readTimeMinutes} mins read
+            </span>
+            {publishedDate ? (
+              <span className="inline-flex items-center gap-1.5">
+                <Eye className="h-4 w-4" />
+                Published: {publishedDate}
+              </span>
+            ) : null}
+            {lastUpdatedDate ? (
+              <span className="inline-flex items-center gap-1.5">
+                <BookOpen className="h-4 w-4" />
+                Updated: {lastUpdatedDate}
+              </span>
+            ) : null}
+          </div>
+        </header>
 
-          <article className="prose max-w-none dark:prose-invert hover:prose-a:text-accent-foreground prose-a:prose-headings:mb-3 prose-a:prose-headings:mt-8 prose-a:prose-headings:font-heading prose-a:prose-headings:font-bold prose-a:prose-headings:leading-tight prose-a:prose-headings:no-underline">
-            {article.bodyCode ? (
-              <div dangerouslySetInnerHTML={{ __html: article.bodyCode }} />
-            ) : (
-              article.contentBlocks?.map((block: any, index: number) => {
-                switch (block.type) {
-                  case "heading":
-                    const HeadingTag = `h${block.level}` as keyof JSX.IntrinsicElements;
-                    return <HeadingTag key={index}>{block.content}</HeadingTag>;
-                  case "paragraph":
-                    return <p key={index}>{block.content}</p>;
-                  case "list":
-                    return (
-                      <ul key={index} className="list-inside list-disc">
-                        {block.items.map((item: string, itemIndex: number) => (
-                          <li key={itemIndex}>{item}</li>
-                        ))}
-                      </ul>
-                    );
-                  default:
-                    return null;
-                }
-              })
-            )}
-          </article>
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_280px]">
+          <div>
+            <div className="mb-6 lg:hidden">
+              <Accordion type="single" collapsible>
+                <AccordionItem value="table-of-contents">
+                  <AccordionTrigger>Table of Contents</AccordionTrigger>
+                  <AccordionContent>
+                    <TableOfContents chapters={article.headings} />
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            </div>
 
-          <Separator className="my-6" />
-
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <Button variant="outline" asChild>
-              <Link href="/articles">All Articles</Link>
-            </Button>
-            <div className="flex flex-wrap items-center gap-2">
-              {previous && (
-                <Button variant="outline" asChild>
-                  <Link href={`/articles/${previous.slug}`}>
-                    <ArrowLeft className="mr-2 h-4 w-4" />
-                    Previous: {previous.title}
-                  </Link>
-                </Button>
+            <article className="prose max-w-none dark:prose-invert prose-headings:font-heading prose-headings:font-bold prose-headings:leading-tight prose-p:leading-8 hover:prose-a:text-accent-foreground prose-li:leading-8">
+              {article.bodyCode ? (
+                <div dangerouslySetInnerHTML={{ __html: article.bodyCode }} />
+              ) : (
+                article.contentBlocks?.map((block: any, index: number) => {
+                  switch (block.type) {
+                    case "heading":
+                      const HeadingTag = `h${block.level}` as keyof JSX.IntrinsicElements;
+                      return <HeadingTag key={index}>{block.content}</HeadingTag>;
+                    case "paragraph":
+                      return <p key={index}>{block.content}</p>;
+                    case "list":
+                      return (
+                        <ul key={index} className="list-inside list-disc">
+                          {block.items.map((item: string, itemIndex: number) => (
+                            <li key={itemIndex}>{item}</li>
+                          ))}
+                        </ul>
+                      );
+                    default:
+                      return null;
+                  }
+                })
               )}
-              {next && (
-                <Button asChild>
-                  <Link href={`/articles/${next.slug}`}>
-                    Next: {next.title}
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Link>
-                </Button>
-              )}
+            </article>
+
+            <div className="mt-10 flex flex-wrap items-center justify-between gap-3 border-t border-border/70 pt-8">
+              <Button variant="outline" asChild className="rounded-sm border-border/80">
+                <Link href="/articles">All Articles</Link>
+              </Button>
+              <div className="flex flex-wrap items-center gap-2">
+                {previous ? (
+                  <Button variant="outline" asChild className="rounded-sm border-border/80">
+                    <Link href={`/articles/${previous.slug}`}>
+                      <ArrowLeft className="mr-2 h-4 w-4" />
+                      Previous
+                    </Link>
+                  </Button>
+                ) : null}
+                {next ? (
+                  <Button asChild className="rounded-sm">
+                    <Link href={`/articles/${next.slug}`}>
+                      Next
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Link>
+                  </Button>
+                ) : null}
+              </div>
             </div>
           </div>
+
+          <aside className="hidden lg:block">
+            <div className={cn("sticky top-28 border border-border/70 bg-card/40 p-5")}>
+              <div className="mb-4 border-b border-border/60 pb-4">
+                <LabelRow icon={FileText} label="Table of Contents" />
+              </div>
+              <div className="grid gap-4">
+                <TableOfContents chapters={article.headings} />
+              </div>
+              <div className="mt-6 border-t border-border/60 pt-4 text-sm leading-7 text-muted-foreground">
+                <p>{`${article.readTimeMinutes} mins read`}</p>
+                {publishedDate ? <p>Published: {publishedDate}</p> : null}
+                {lastUpdatedDate ? <p>Updated: {lastUpdatedDate}</p> : null}
+              </div>
+            </div>
+          </aside>
         </div>
 
-        <aside className="hidden lg:block">
-          <Card className={cn("sticky top-28 mb-4")}>
-            <CardHeader>
-              <CardTitle>Table of Contents</CardTitle>
-            </CardHeader>
-            <CardContent className="grid gap-4">
-              <TableOfContents chapters={article.headings} />
-            </CardContent>
-            <Separator />
-            <CardFooter>
-              <div className="mb-4 mt-1 text-sm leading-snug text-muted-foreground">
-                <p className="mb-2">{`${article.readTimeMinutes} mins read`}</p>
-                {publishedDate && <time>Published: {publishedDate} </time>}
-                {publishedDate && lastUpdatedDate && <br />}
-                {lastUpdatedDate && <time>Updated: {lastUpdatedDate}</time>}
-              </div>
-            </CardFooter>
-          </Card>
-        </aside>
-      </div>
-
-      {article.resources && article.resources.length > 0 && (
-        <>
-          <Separator className="my-8" />
-          <Card>
-            <CardHeader>
-              <CardTitle>Resources</CardTitle>
-              <CardDescription>Further reading and references</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ul className="space-y-2">
+        {article.resources && article.resources.length > 0 ? (
+          <section className="mt-12 border-t border-border/70 pt-10">
+            <div className="mb-7">
+              <LabelRow icon={BookOpen} label="Resources" />
+            </div>
+            <div className="border border-border/70 bg-card/40 p-6">
+              <ul className="space-y-3 text-sm leading-7 text-muted-foreground">
                 {article.resources.map((resource, index) => (
-                  <li key={index} className="text-sm">
-                    {resource}
-                  </li>
+                  <li key={index}>{resource}</li>
                 ))}
               </ul>
-            </CardContent>
-          </Card>
-        </>
-      )}
+            </div>
+          </section>
+        ) : null}
 
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <NewsletterSubscribe
-        title="Subscribe for new articles"
-        description="Get new articles and resources in your inbox."
-        buttonText="Subscribe"
-      />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+
+        <section className="mt-12 border-t border-border/70 pt-10">
+          <NewsletterSubscribe
+            title="Get future essays on conditioning, clarity, and independent thinking"
+            description="Subscribe for new articles, references, and practical frameworks drawn from the same core themes behind this piece."
+            buttonText="Subscribe"
+          />
+        </section>
+      </div>
     </div>
   );
 }

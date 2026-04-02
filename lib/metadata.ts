@@ -11,7 +11,7 @@ export const defaultAuthor: AuthorType = {
   name: "Originalform",
   handle: "",
   socialProfiles,
-  email: "definitelyfake@nevermind.com",
+  email: "signal@originalform.org",
   website: "https://nextjs.org",
   jobTitle: "Vision for Digital Age",
   company: "",

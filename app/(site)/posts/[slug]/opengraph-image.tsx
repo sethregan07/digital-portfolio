@@ -1,8 +1,8 @@
 import { ImageResponse } from "next/server";
 import { format, isValid } from "date-fns";
 
-import { prisma } from "@/lib/db";
 import { defaultAuthor } from "@/lib/metadata";
+import { getPublishedPostBySlug } from "@/lib/repositories/content";
 
 export const runtime = "nodejs";
 
@@ -18,21 +18,7 @@ export const revalidate = 300;
 
 // Image generation
 export default async function Image({ params }: { params: { slug: string } }) {
-  if (process.env.SKIP_DB === "true") {
-    return {};
-  }
-  const post = await prisma.post.findFirst({
-    where: {
-      slug: params.slug,
-      status: "published",
-    },
-    select: {
-      title: true,
-      publishedDate: true,
-      lastUpdatedDate: true,
-      readTimeMinutes: true,
-    },
-  });
+  const post = await getPublishedPostBySlug(params.slug);
 
   if (!post) {
     return {};

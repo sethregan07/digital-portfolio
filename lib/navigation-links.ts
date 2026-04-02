@@ -29,7 +29,15 @@ export const navigationLinks: NavItem[] = [
     href: "/resources",
   },
   {
+    title: "About",
+    href: "/about",
+  },
+  {
     title: "Now",
     href: "/now",
+  },
+  {
+    title: "Contact",
+    href: "/contact",
   },
 ];

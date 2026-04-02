@@ -10,10 +10,10 @@ import { cn } from "@/lib/utils";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import NewsletterSubscribe from "@/components/newsletter-subscribe";
 import { PostSeriesBox } from "@/components/post-series-box";
 import { SocialShare } from "@/components/social-share";
 import { TableOfContents } from "@/components/table-of-contents";
-import NewsletterSubscribe from "@/components/newsletter-subscribe";
 
 export const revalidate = 300;
 
@@ -179,10 +179,7 @@ export default async function PostPage({ params }: PostProps) {
                 ))}
               </ul>
             )}
-            <SocialShare
-              text={`${post.title} via ${defaultAuthor.handle}`}
-              url={`${BASE_URL}/posts/${post.slug}`}
-            />
+            <SocialShare text={`${post.title} via ${defaultAuthor.handle}`} url={`${BASE_URL}/posts/${post.slug}`} />
           </div>
         </article>
         <aside className="hidden lg:block">
@@ -207,8 +204,8 @@ export default async function PostPage({ params }: PostProps) {
       </div>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <NewsletterSubscribe
-        title="Subscribe for new posts"
-        description="Get new posts and resources in your inbox."
+        title="Get essays and frameworks on conditioning, clarity, and grounded decision-making"
+        description="Subscribe for new posts, references, and practical tools that help you think independently and act with less noise."
         buttonText="Subscribe"
       />
     </div>

@@ -1,569 +1,311 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import {
-  Brain,
-  Heart,
-  Briefcase,
-  Activity,
-  DollarSign,
-  Users,
-  Target,
+  ArrowRight,
   BookOpen,
-  Lightbulb,
+  Brain,
   Compass,
-  Zap,
-  Shield,
-  TrendingUp,
+  DollarSign,
+  Lightbulb,
   Network,
-  Scale
+  Scale,
+  Target,
+  Users,
+  Zap,
 } from "lucide-react";
 
 import { BASE_URL } from "@/lib/metadata";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const title = "Frameworks - Mental Models & Templates";
+  const title = "Frameworks";
   const description =
-    "Comprehensive collection of frameworks and mental models for personal growth, decision making, and societal understanding.";
+    "Mental models and structured tools for clearer decisions, grounded living, and independent thinking.";
   const url = `${BASE_URL}/frameworks`;
-
   return {
     title,
     description,
-    alternates: {
-      canonical: url,
-    },
-    openGraph: {
-      type: "website",
-      url,
-      title,
-      description,
-    },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-    },
+    alternates: { canonical: url },
+    openGraph: { type: "website", url, title, description },
+    twitter: { card: "summary_large_image", title, description },
   };
 }
 
+const editorialSerif = {
+  fontFamily: '"Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, "Times New Roman", serif',
+};
+
+// Consolidated to 4 meaningful sections, each framework has a "use when" line
+const frameworkSections = [
+  {
+    label: "Thinking & Decisions",
+    icon: Brain,
+    description: "Tools for making clearer choices under uncertainty and noise.",
+    items: [
+      {
+        title: "Rational Choice Under Uncertainty",
+        icon: Target,
+        tags: ["Decision Making", "Analysis"],
+        description:
+          "Systematic framework for decisions under uncertainty using probability assessment and expected value.",
+        useWhen: "You're stuck between options and emotion is drowning out the signal.",
+      },
+      {
+        title: "Long-term Thinking",
+        icon: Compass,
+        tags: ["Strategy", "Future"],
+        description: "Evaluating decisions through second and third-order effects and future scenario planning.",
+        useWhen: "A decision feels urgent but the real cost shows up years later.",
+      },
+      {
+        title: "Ethical Decision Framework",
+        icon: Scale,
+        tags: ["Ethics", "Values"],
+        description: "Multi-dimensional approach considering consequences, principles, and stakeholder impact.",
+        useWhen: "The right answer isn't obvious and competing values are pulling in different directions.",
+      },
+      {
+        title: "Systems Thinking",
+        icon: Network,
+        tags: ["Systems", "Society"],
+        description: "Understanding complex systems, feedback loops, and interconnected structures.",
+        useWhen: "A problem keeps coming back no matter how many times you fix the surface symptom.",
+      },
+    ],
+  },
+  {
+    label: "Conditioning & Identity",
+    icon: Lightbulb,
+    description: "Frameworks for spotting inherited beliefs and rebuilding a grounded worldview.",
+    items: [
+      {
+        title: "Belief Audit",
+        icon: Brain,
+        tags: ["Identity", "Deprogramming"],
+        description: "A structured process for identifying which of your beliefs were chosen and which were installed.",
+        useWhen: "You hold a strong opinion but can't remember where it came from or why.",
+      },
+      {
+        title: "Life Purpose Matrix",
+        icon: Compass,
+        tags: ["Identity", "Values"],
+        description: "Identifying core values and purpose through self-reflection and pattern recognition.",
+        useWhen: "You're productive but not sure what you're building toward or whether it's yours.",
+      },
+      {
+        title: "Cultural Intelligence",
+        icon: Users,
+        tags: ["Culture", "Awareness"],
+        description: "Understanding and navigating cultural differences, scripts, and cross-cultural communication.",
+        useWhen: "You're trying to separate what's universal human behavior from what's culturally installed.",
+      },
+    ],
+  },
+  {
+    label: "Work & Execution",
+    icon: Zap,
+    description: "Practical tools for getting things done without burning out or drifting.",
+    items: [
+      {
+        title: "Goal Setting with OKRs",
+        icon: Target,
+        tags: ["Productivity", "Planning"],
+        description: "Structured approach to setting and tracking meaningful goals with milestones and metrics.",
+        useWhen: "You have ambition but it's scattered — lots of motion, not much direction.",
+      },
+      {
+        title: "Productivity Systems",
+        icon: Zap,
+        tags: ["Productivity", "Efficiency"],
+        description: "Integrated framework combining time management, task prioritization, and energy optimization.",
+        useWhen: "You're always busy but rarely feel like you moved the right things forward.",
+      },
+      {
+        title: "Learning Acceleration",
+        icon: BookOpen,
+        tags: ["Education", "Skills"],
+        description: "Acquiring new skills efficiently through deliberate practice and spaced repetition.",
+        useWhen: "You want to go deep on something fast without the forgetting curve undoing the work.",
+      },
+    ],
+  },
+  {
+    label: "Money & Independence",
+    icon: DollarSign,
+    description: "Tools for separating conditioned money beliefs from grounded financial thinking.",
+    items: [
+      {
+        title: "Money Psychology",
+        icon: DollarSign,
+        tags: ["Psychology", "Mindset"],
+        description: "Understanding money mindset, behavioral economics, and emotional relationships with wealth.",
+        useWhen: "Your financial decisions feel rational in the moment but irrational in retrospect.",
+      },
+      {
+        title: "Wealth Building Framework",
+        icon: ArrowRight,
+        tags: ["Investing", "Wealth"],
+        description: "Systematic approach to building wealth through saving, investing, and risk management.",
+        useWhen: "You earn reasonably but can't explain where the money goes or what it's building.",
+      },
+      {
+        title: "Financial Independence Roadmap",
+        icon: Target,
+        tags: ["Independence", "Planning"],
+        description: "Path to financial independence through budgeting, debt management, and passive income.",
+        useWhen: "You want to make work optional, not just retire — and need a map, not motivation.",
+      },
+    ],
+  },
+];
+
 export default function FrameworksPage() {
+  const totalFrameworks = frameworkSections.reduce((acc, s) => acc + s.items.length, 0);
+
   return (
-    <div className="container max-w-6xl pb-10">
-      {/* Page Header */}
-      <div className="mb-8">
-        <div className="flex items-center gap-2 mb-4">
-          <Badge variant="secondary">Frameworks</Badge>
-          <Badge variant="outline">Mental Models</Badge>
-        </div>
+    <div className="bg-gradient-to-b from-background via-background to-muted/30 pb-16">
+      <div className="container max-w-5xl pt-10">
+        {/* ── HEADER ── */}
+        <section className="mb-16 border-b border-border/70 pb-10 pt-4">
+          <div className="max-w-3xl">
+            <div className="mb-4 flex items-center gap-2">
+              <Lightbulb className="h-3.5 w-3.5 text-muted-foreground" />
+              <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-muted-foreground">Frameworks</p>
+            </div>
+            <h1
+              className="text-4xl leading-tight tracking-[-0.03em] text-foreground md:text-5xl"
+              style={editorialSerif}
+            >
+              Mental models and tools for clearer decisions.
+            </h1>
+            <p className="mt-5 max-w-2xl text-base font-light leading-8 text-muted-foreground">
+              These tools translate the site's core themes into something usable. Each one has a specific situation it's
+              built for — start with the problem in front of you, not the most interesting-looking framework.
+            </p>
 
-        <h1 className="text-4xl font-bold mb-4">Mental Models & Frameworks</h1>
-
-        <p className="text-xl text-muted-foreground mb-6 max-w-3xl">
-          A comprehensive collection of frameworks, templates, and mental models for understanding life,
-          society, decision-making, and personal growth. Each framework provides structured thinking tools
-          to navigate complex situations.
-        </p>
-      </div>
-
-      <Separator className="my-8" />
-
-      {/* Personal Development */}
-      <div className="mb-12">
-        <h2 className="text-2xl font-bold mb-6 flex items-center gap-3">
-          <Brain className="h-6 w-6 text-muted-foreground" />
-          Personal Development
-        </h2>
-
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-3 text-lg">
-                <Target className="h-5 w-5 text-muted-foreground" />
-                Goal Setting Framework
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground mb-4">
-                Structured approach to setting, tracking, and achieving meaningful goals
-                using OKRs, milestones, and progress metrics.
+            {/* How to use note */}
+            <div className="mt-7 border-l-2 border-border/50 pl-5">
+              <p className="text-sm font-light italic leading-7 text-muted-foreground">
+                Each framework includes a "use when" line — that's the most important part. A tool used in the wrong
+                situation produces confident wrong answers.
               </p>
-              <div className="flex items-center gap-2">
-                <Badge variant="outline" className="text-xs">Productivity</Badge>
-                <Badge variant="outline" className="text-xs">Planning</Badge>
-              </div>
-            </CardContent>
-          </Card>
+            </div>
 
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-3 text-lg">
-                <Compass className="h-5 w-5 text-muted-foreground" />
-                Life Purpose Matrix
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground mb-4">
-                Framework for identifying core values, strengths, and life purpose
-                through self-reflection and pattern recognition.
-              </p>
-              <div className="flex items-center gap-2">
-                <Badge variant="outline" className="text-xs">Identity</Badge>
-                <Badge variant="outline" className="text-xs">Values</Badge>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-3 text-lg">
-                <BookOpen className="h-5 w-5 text-muted-foreground" />
-                Learning Acceleration
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground mb-4">
-                Systematic approach to acquiring new skills and knowledge efficiently
-                through deliberate practice and spaced repetition.
-              </p>
-              <div className="flex items-center gap-2">
-                <Badge variant="outline" className="text-xs">Education</Badge>
-                <Badge variant="outline" className="text-xs">Skills</Badge>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-
-      {/* Relationships & Communication */}
-      <div className="mb-12">
-        <h2 className="text-2xl font-bold mb-6 flex items-center gap-3">
-          <Heart className="h-6 w-6 text-muted-foreground" />
-          Relationships & Communication
-        </h2>
-
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-3 text-lg">
-                <Users className="h-5 w-5 text-muted-foreground" />
-                Conflict Resolution
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground mb-4">
-                Structured process for resolving disagreements through active listening,
-                empathy mapping, and collaborative problem-solving.
-              </p>
-              <div className="flex items-center gap-2">
-                <Badge variant="outline" className="text-xs">Communication</Badge>
-                <Badge variant="outline" className="text-xs">Conflict</Badge>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-3 text-lg">
-                <Network className="h-5 w-5 text-muted-foreground" />
-                Social Capital Builder
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground mb-4">
-                Framework for cultivating meaningful relationships and building
-                social networks through value exchange and reciprocity.
-              </p>
-              <div className="flex items-center gap-2">
-                <Badge variant="outline" className="text-xs">Networking</Badge>
-                <Badge variant="outline" className="text-xs">Relationships</Badge>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-3 text-lg">
-                <Shield className="h-5 w-5 text-muted-foreground" />
-                Boundary Setting
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground mb-4">
-                Systematic approach to establishing healthy boundaries in relationships
-                while maintaining empathy and clear communication.
-              </p>
-              <div className="flex items-center gap-2">
-                <Badge variant="outline" className="text-xs">Boundaries</Badge>
-                <Badge variant="outline" className="text-xs">Self-care</Badge>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-
-      {/* Career & Work */}
-      <div className="mb-12">
-        <h2 className="text-2xl font-bold mb-6 flex items-center gap-3">
-          <Briefcase className="h-6 w-6 text-muted-foreground" />
-          Career & Work
-        </h2>
-
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-3 text-lg">
-                <TrendingUp className="h-5 w-5 text-muted-foreground" />
-                Career Navigation
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground mb-4">
-                Framework for career planning, skill development, and opportunity
-                identification in rapidly changing job markets.
-              </p>
-              <div className="flex items-center gap-2">
-                <Badge variant="outline" className="text-xs">Career</Badge>
-                <Badge variant="outline" className="text-xs">Planning</Badge>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-3 text-lg">
-                <Zap className="h-5 w-5 text-muted-foreground" />
-                Productivity Systems
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground mb-4">
-                Integrated productivity framework combining time management,
-                task prioritization, and energy optimization techniques.
-              </p>
-              <div className="flex items-center gap-2">
-                <Badge variant="outline" className="text-xs">Productivity</Badge>
-                <Badge variant="outline" className="text-xs">Efficiency</Badge>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-3 text-lg">
-                <Scale className="h-5 w-5 text-muted-foreground" />
-                Work-Life Integration
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground mb-4">
-                Balanced approach to integrating professional and personal life
-                through boundary setting and intentional prioritization.
-              </p>
-              <div className="flex items-center gap-2">
-                <Badge variant="outline" className="text-xs">Balance</Badge>
-                <Badge variant="outline" className="text-xs">Integration</Badge>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-
-      {/* Health & Wellness */}
-      <div className="mb-12">
-        <h2 className="text-2xl font-bold mb-6 flex items-center gap-3">
-          <Activity className="h-6 w-6 text-muted-foreground" />
-          Health & Wellness
-        </h2>
-
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-3 text-lg">
-                <Activity className="h-5 w-5 text-muted-foreground" />
-                Habit Formation
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground mb-4">
-                Evidence-based framework for building sustainable habits through
-                small changes, environmental design, and behavioral psychology.
-              </p>
-              <div className="flex items-center gap-2">
-                <Badge variant="outline" className="text-xs">Habits</Badge>
-                <Badge variant="outline" className="text-xs">Behavior</Badge>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-3 text-lg">
-                <Brain className="h-5 w-5 text-muted-foreground" />
-                Mental Health Toolkit
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground mb-4">
-                Comprehensive toolkit for mental wellness including stress management,
-                emotional regulation, and cognitive behavioral techniques.
-              </p>
-              <div className="flex items-center gap-2">
-                <Badge variant="outline" className="text-xs">Mental Health</Badge>
-                <Badge variant="outline" className="text-xs">Wellness</Badge>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-3 text-lg">
-                <Target className="h-5 w-5 text-muted-foreground" />
-                Physical Optimization
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground mb-4">
-                Integrated framework for physical health covering nutrition,
-                exercise, sleep, and recovery optimization.
-              </p>
-              <div className="flex items-center gap-2">
-                <Badge variant="outline" className="text-xs">Fitness</Badge>
-                <Badge variant="outline" className="text-xs">Nutrition</Badge>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-
-      {/* Finance & Money */}
-      <div className="mb-12">
-        <h2 className="text-2xl font-bold mb-6 flex items-center gap-3">
-          <DollarSign className="h-6 w-6 text-muted-foreground" />
-          Finance & Money
-        </h2>
-
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-3 text-lg">
-                <TrendingUp className="h-5 w-5 text-muted-foreground" />
-                Wealth Building
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground mb-4">
-                Systematic approach to building wealth through saving, investing,
-                and multiple income streams with risk management.
-              </p>
-              <div className="flex items-center gap-2">
-                <Badge variant="outline" className="text-xs">Investing</Badge>
-                <Badge variant="outline" className="text-xs">Wealth</Badge>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-3 text-lg">
-                <DollarSign className="h-5 w-5 text-muted-foreground" />
-                Money Psychology
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground mb-4">
-                Framework for understanding money mindset, behavioral economics,
-                and emotional relationships with wealth and spending.
-              </p>
-              <div className="flex items-center gap-2">
-                <Badge variant="outline" className="text-xs">Psychology</Badge>
-                <Badge variant="outline" className="text-xs">Mindset</Badge>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-3 text-lg">
-                <Shield className="h-5 w-5 text-muted-foreground" />
-                Financial Independence
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground mb-4">
-                Roadmap to financial independence through budgeting, debt management,
-                and passive income development strategies.
-              </p>
-              <div className="flex items-center gap-2">
-                <Badge variant="outline" className="text-xs">Independence</Badge>
-                <Badge variant="outline" className="text-xs">Planning</Badge>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-
-      {/* Society & Systems */}
-      <div className="mb-12">
-        <h2 className="text-2xl font-bold mb-6 flex items-center gap-3">
-          <Users className="h-6 w-6 text-muted-foreground" />
-          Society & Systems
-        </h2>
-
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-3 text-lg">
-                <Network className="h-5 w-5 text-muted-foreground" />
-                Systems Thinking
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground mb-4">
-                Framework for understanding complex systems, feedback loops,
-                and interconnected societal structures and their dynamics.
-              </p>
-              <div className="flex items-center gap-2">
-                <Badge variant="outline" className="text-xs">Systems</Badge>
-                <Badge variant="outline" className="text-xs">Society</Badge>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-3 text-lg">
-                <Scale className="h-5 w-5 text-muted-foreground" />
-                Social Justice Lens
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground mb-4">
-                Analytical framework for examining social inequalities, power dynamics,
-                and systemic injustices through multiple perspectives.
-              </p>
-              <div className="flex items-center gap-2">
-                <Badge variant="outline" className="text-xs">Justice</Badge>
-                <Badge variant="outline" className="text-xs">Equity</Badge>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-3 text-lg">
-                <Lightbulb className="h-5 w-5 text-muted-foreground" />
-                Cultural Intelligence
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground mb-4">
-                Framework for understanding and navigating cultural differences,
-                communication styles, and cross-cultural collaboration.
-              </p>
-              <div className="flex items-center gap-2">
-                <Badge variant="outline" className="text-xs">Culture</Badge>
-                <Badge variant="outline" className="text-xs">Diversity</Badge>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-
-      {/* Decision Making */}
-      <div className="mb-8">
-        <h2 className="text-2xl font-bold mb-6 flex items-center gap-3">
-          <Target className="h-6 w-6 text-muted-foreground" />
-          Decision Making
-        </h2>
-
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-3 text-lg">
-                <Brain className="h-5 w-5 text-muted-foreground" />
-                Rational Choice Theory
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground mb-4">
-                Systematic framework for making decisions under uncertainty
-                using probability assessment and expected value calculations.
-              </p>
-              <div className="flex items-center gap-2">
-                <Badge variant="outline" className="text-xs">Decision Making</Badge>
-                <Badge variant="outline" className="text-xs">Analysis</Badge>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-3 text-lg">
-                <Scale className="h-5 w-5 text-muted-foreground" />
-                Ethical Decision Framework
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground mb-4">
-                Multi-dimensional approach to ethical decision-making considering
-                consequences, principles, and stakeholder impact analysis.
-              </p>
-              <div className="flex items-center gap-2">
-                <Badge variant="outline" className="text-xs">Ethics</Badge>
-                <Badge variant="outline" className="text-xs">Values</Badge>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-3 text-lg">
-                <Compass className="h-5 w-5 text-muted-foreground" />
-                Long-term Thinking
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground mb-4">
-                Framework for evaluating decisions through long-term consequences,
-                second and third-order effects, and future scenario planning.
-              </p>
-              <div className="flex items-center gap-2">
-                <Badge variant="outline" className="text-xs">Strategy</Badge>
-                <Badge variant="outline" className="text-xs">Future</Badge>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-
-      {/* Call to Action */}
-      <Card>
-        <CardContent className="pt-8 pb-8 text-center">
-          <h3 className="text-2xl font-bold mb-4">Explore & Apply Frameworks</h3>
-          <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
-            These frameworks are designed to be practical tools you can apply immediately.
-            Start with one that resonates with your current challenges or goals.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button asChild size="lg">
-              <Link href="/projects/deprogramming">
-                <BookOpen className="mr-2 h-4 w-4" />
-                Start with Deprogramming
-              </Link>
-            </Button>
-            <Button asChild variant="outline" size="lg">
-              <Link href="/now">
-                <Users className="mr-2 h-4 w-4" />
-                See My Current Focus
-              </Link>
-            </Button>
+            {/* Stats */}
+            <div className="mt-8 grid max-w-xs grid-cols-3 divide-x divide-border/60 rounded-sm border border-border/60">
+              {[
+                { num: totalFrameworks.toString(), label: "frameworks" },
+                { num: frameworkSections.length.toString(), label: "categories" },
+                { num: "Free", label: "to use" },
+              ].map((s) => (
+                <div key={s.label} className="px-4 py-3">
+                  <span
+                    className="mb-1 block text-lg font-semibold leading-none text-foreground"
+                    style={editorialSerif}
+                  >
+                    {s.num}
+                  </span>
+                  <span className="text-[10px] uppercase tracking-widest text-muted-foreground">{s.label}</span>
+                </div>
+              ))}
+            </div>
           </div>
-        </CardContent>
-      </Card>
+        </section>
+
+        {/* ── SECTIONS ── */}
+        {frameworkSections.map((section) => {
+          const SectionIcon = section.icon;
+          return (
+            <section key={section.label} className="mb-20">
+              {/* Section header with description */}
+              <div className="mb-8 border-b border-border/70 pb-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <SectionIcon className="h-3.5 w-3.5 text-muted-foreground" />
+                    <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">{section.label}</p>
+                  </div>
+                  <span className="text-[10px] uppercase tracking-widest text-muted-foreground/40">
+                    {section.items.length} tools
+                  </span>
+                </div>
+                <p className="mt-2 max-w-xl text-sm font-light text-muted-foreground/70">{section.description}</p>
+              </div>
+
+              <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+                {section.items.map((item) => {
+                  const ItemIcon = item.icon;
+                  return (
+                    <article key={item.title} className="bg-card/35 flex flex-col border border-border/70 p-6">
+                      {/* Icon + title */}
+                      <div className="mb-4 flex items-start gap-3">
+                        <div className="flex h-9 w-9 shrink-0 items-center justify-center border border-border/70 bg-muted/20">
+                          <ItemIcon className="h-4 w-4 text-muted-foreground" />
+                        </div>
+                        <h2
+                          className="pt-0.5 text-base leading-snug tracking-[-0.01em] text-foreground"
+                          style={editorialSerif}
+                        >
+                          {item.title}
+                        </h2>
+                      </div>
+
+                      {/* Description */}
+                      <p className="mb-4 text-sm font-light leading-7 text-muted-foreground">{item.description}</p>
+
+                      {/* Use when — the key addition */}
+                      <div className="mt-auto border-t border-border/50 pt-4">
+                        <p className="mb-1.5 text-[10px] uppercase tracking-[0.1em] text-muted-foreground/50">
+                          Use when
+                        </p>
+                        <p className="text-xs font-light italic leading-6 text-muted-foreground/70">{item.useWhen}</p>
+                      </div>
+
+                      {/* Tags */}
+                      <div className="mt-4 flex flex-wrap gap-1.5">
+                        {item.tags.map((tag) => (
+                          <span
+                            key={tag}
+                            className="border border-border/60 px-2 py-0.5 text-[10px] uppercase tracking-[0.1em] text-muted-foreground/60"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
+            </section>
+          );
+        })}
+
+        {/* ── BOTTOM CTA ── */}
+        <section className="border border-border/70 bg-card/40 p-7 md:p-10">
+          <div className="grid gap-8 md:grid-cols-[minmax(0,1fr)_auto] md:items-center">
+            <div>
+              <p className="mb-3 text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Go deeper</p>
+              <h2 className="mb-3 text-2xl tracking-[-0.02em] text-foreground" style={editorialSerif}>
+                The Deprogramming course puts these tools into sequence.
+              </h2>
+              <p className="max-w-md text-sm font-light leading-7 text-muted-foreground">
+                Frameworks are more useful when you understand the conditioning they're working against. The course
+                builds that context across 42 lessons.
+              </p>
+            </div>
+            <div className="flex shrink-0 flex-col gap-3">
+              <Button asChild className="rounded-sm px-6">
+                <Link href="/projects/deprogramming">
+                  Start the course
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+              <Button asChild variant="outline" className="rounded-sm border-border/80 px-6">
+                <Link href="/contact">Work with me</Link>
+              </Button>
+            </div>
+          </div>
+        </section>
+      </div>
     </div>
   );
 }

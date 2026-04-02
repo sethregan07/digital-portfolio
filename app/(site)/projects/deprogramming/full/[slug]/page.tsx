@@ -1,20 +1,18 @@
 import { Metadata } from "next";
+import { cookies } from "next/headers";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { ArrowLeft, ArrowRight, BookOpen, Clock } from "lucide-react";
 
-import { BASE_URL } from "@/lib/metadata";
-import {
-  getDeprogrammingLessonAdjacent,
-  getDeprogrammingLessonBySlug,
-  getDeprogrammingLessonStaticParams,
-} from "@/lib/services/content";
+import { getDeprogrammingLessonAdjacent, getDeprogrammingLessonBySlug } from "@/lib/services/content";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { CourseProgressTracker } from "@/components/course-progress-tracker";
 
-export const revalidate = 300;
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 interface LessonPageProps {
   params: {
@@ -35,45 +33,29 @@ export async function generateMetadata({ params }: LessonPageProps): Promise<Met
   };
 }
 
-export async function generateStaticParams(): Promise<LessonPageProps["params"][]> {
-  return getDeprogrammingLessonStaticParams();
-}
-
 export default async function LessonPage({ params }: LessonPageProps) {
-  const lesson = await getDeprogrammingLessonBySlug(params.slug);
-  const previewCount = 3;
+  const hasAccess = cookies().get("course_access")?.value === "1";
+  if (!hasAccess) {
+    redirect("/projects/deprogramming?access=required");
+  }
 
+  const lesson = await getDeprogrammingLessonBySlug(params.slug);
   if (!lesson) {
     notFound();
-  }
-  if (lesson.lessonOrder > previewCount) {
-    redirect("/projects/deprogramming?locked=1");
   }
 
   const { previous, next } = await getDeprogrammingLessonAdjacent(lesson.slug);
 
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Article",
-    name: lesson.title,
-    description: lesson.description,
-    isPartOf: {
-      "@type": "Course",
-      name: "Deprogramming: Breaking Free from Societal Conditioning",
-      description: "A comprehensive course on breaking free from societal conditioning",
-    },
-  };
-
   return (
     <div className="container max-w-4xl pb-10">
-      {/* Breadcrumb Navigation */}
+      <CourseProgressTracker slug={lesson.slug} lessonOrder={lesson.lessonOrder} />
       <nav className="mb-6">
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <Link href="/projects" className="transition-colors hover:text-foreground">
+          <Link href="/projects/deprogramming" className="transition-colors hover:text-foreground">
             Offerings
           </Link>
           <span>/</span>
-          <Link href="/projects/deprogramming" className="transition-colors hover:text-foreground">
+          <Link href="/projects/deprogramming/full" className="transition-colors hover:text-foreground">
             Deprogramming Course
           </Link>
           <span>/</span>
@@ -81,7 +63,6 @@ export default async function LessonPage({ params }: LessonPageProps) {
         </div>
       </nav>
 
-      {/* Lesson Header */}
       <div className="mb-8">
         <div className="mb-4 flex items-center gap-2">
           <Badge variant="outline">{lesson.section}</Badge>
@@ -91,7 +72,6 @@ export default async function LessonPage({ params }: LessonPageProps) {
         </div>
 
         <h1 className="mb-4 text-3xl font-bold">{lesson.title}</h1>
-
         <p className="mb-6 text-xl text-muted-foreground">{lesson.description}</p>
 
         <div className="flex items-center gap-6 text-sm text-muted-foreground">
@@ -106,12 +86,11 @@ export default async function LessonPage({ params }: LessonPageProps) {
         </div>
       </div>
 
-      {/* Lesson Navigation */}
       <div className="mb-8 flex items-center justify-between">
         <div>
           {previous && (
             <Button variant="outline" asChild>
-              <Link href={`/projects/deprogramming/${previous.slug}`}>
+              <Link href={`/projects/deprogramming/full/${previous.slug}`}>
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Previous: {previous.title}
               </Link>
@@ -120,13 +99,13 @@ export default async function LessonPage({ params }: LessonPageProps) {
         </div>
 
         <Button variant="outline" asChild>
-          <Link href="/projects/deprogramming">Course Overview</Link>
+          <Link href="/projects/deprogramming/full">Course Overview</Link>
         </Button>
 
         <div>
           {next && (
             <Button asChild>
-              <Link href={`/projects/deprogramming/${next.slug}`}>
+              <Link href={`/projects/deprogramming/full/${next.slug}`}>
                 Next: {next.title}
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
@@ -137,7 +116,6 @@ export default async function LessonPage({ params }: LessonPageProps) {
 
       <Separator className="my-8" />
 
-      {/* Lesson Content */}
       <article className="prose max-w-none dark:prose-invert prose-headings:mb-3 prose-headings:mt-8 prose-headings:font-heading prose-headings:font-bold prose-headings:leading-tight hover:prose-a:text-accent-foreground prose-a:prose-headings:no-underline">
         {lesson.contentBlocks?.map((block: any, index: number) => {
           switch (block.type) {
@@ -160,7 +138,6 @@ export default async function LessonPage({ params }: LessonPageProps) {
         })}
       </article>
 
-      {/* Resources Section */}
       {lesson.resources && lesson.resources.length > 0 && (
         <>
           <Separator className="my-8" />
@@ -182,12 +159,11 @@ export default async function LessonPage({ params }: LessonPageProps) {
         </>
       )}
 
-      {/* Lesson Navigation (Bottom) */}
       <div className="mt-12 flex items-center justify-between">
         <div>
           {previous && (
             <Button variant="outline" asChild>
-              <Link href={`/projects/deprogramming/${previous.slug}`}>
+              <Link href={`/projects/deprogramming/full/${previous.slug}`}>
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Previous Lesson
               </Link>
@@ -196,13 +172,13 @@ export default async function LessonPage({ params }: LessonPageProps) {
         </div>
 
         <Button variant="outline" asChild>
-          <Link href="/projects/deprogramming">Back to Course</Link>
+          <Link href="/projects/deprogramming/full">Back to Course</Link>
         </Button>
 
         <div>
           {next && (
             <Button asChild>
-              <Link href={`/projects/deprogramming/${next.slug}`}>
+              <Link href={`/projects/deprogramming/full/${next.slug}`}>
                 Next Lesson
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
@@ -210,8 +186,6 @@ export default async function LessonPage({ params }: LessonPageProps) {
           )}
         </div>
       </div>
-
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
     </div>
   );
 }

@@ -1,11 +1,12 @@
 // Component inspired by Julien https://www.julienthibeaut.xyz/blog/create-modern-spotlight-effect-with-react-css
 "use client";
 
+import type { ReactNode } from "react";
 import { useRef, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
+import { ArrowRight, BookOpen, Lightbulb } from "lucide-react";
 import { useTheme } from "next-themes";
-
-import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 interface SpotlightCardProps {
   title: string;
@@ -13,17 +14,49 @@ interface SpotlightCardProps {
   mediaSrc?: string;
   mediaType?: "image" | "video" | "icon";
   href: string;
-  icon?: React.ReactNode;
+  icon?: ReactNode;
+  iconName?: "book-open" | "lightbulb";
+  tag?: string;
+  highlights?: string[];
+  forWhom?: string;
+  outcome?: string;
+  proof?: string;
+  meta?: string;
+  priceNote?: string;
+  ctaLabel?: string;
 }
 
-export const SpotlightCard = ({ title, description, mediaSrc, mediaType = "image", href, icon }: SpotlightCardProps) => {
+export const SpotlightCard = ({
+  title,
+  description,
+  mediaSrc,
+  mediaType = "image",
+  href,
+  icon,
+  iconName,
+  tag,
+  highlights,
+  forWhom,
+  outcome,
+  proof,
+  meta,
+  priceNote,
+  ctaLabel,
+}: SpotlightCardProps) => {
+  const resolvedIcon =
+    icon ??
+    (iconName === "book-open" ? (
+      <BookOpen className="h-9 w-9" />
+    ) : iconName === "lightbulb" ? (
+      <Lightbulb className="h-9 w-9" />
+    ) : null);
   const { theme } = useTheme();
-  const divRef = useRef<HTMLDivElement>(null);
+  const divRef = useRef<HTMLAnchorElement>(null);
   const [isFocused, setIsFocused] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [opacity, setOpacity] = useState(0);
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleMouseMove = (e: React.MouseEvent<HTMLAnchorElement>) => {
     if (!divRef.current || isFocused) return;
 
     const div = divRef.current;
@@ -50,47 +83,111 @@ export const SpotlightCard = ({ title, description, mediaSrc, mediaType = "image
     setOpacity(0);
   };
 
+  const target = href.startsWith("http") ? "_blank" : undefined;
+  const rel = href.startsWith("http") ? "noreferrer" : undefined;
+
   return (
-    <div
+    <Link
       ref={divRef}
-      onClick={() => window.open(href, "_blank")}
+      href={href}
+      target={target}
+      rel={rel}
       onMouseMove={handleMouseMove}
       onFocus={handleFocus}
       onBlur={handleBlur}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      className="relative flex cursor-pointer flex-col justify-start overflow-hidden rounded-md border border-slate-200 bg-gradient-to-r from-slate-100  to-slate-50 shadow-md dark:border-slate-800 dark:from-slate-900 dark:to-slate-950"
+      className="bg-card/35 group relative flex h-full w-full max-w-none flex-col overflow-hidden rounded-sm border border-border/70 shadow-none transition hover:border-border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
     >
       <div
         className="pointer-events-none absolute -inset-px opacity-0 transition duration-300"
         style={{
           opacity,
-          background: `radial-gradient(500px circle at ${position.x}px ${position.y}px, ${
-            theme !== "dark" ? "hsla(0,0%,60%,.1)" : "hsla(360,100%,100%,.06)"
-          }, transparent 40%)`,
+          background: `radial-gradient(520px circle at ${position.x}px ${position.y}px, ${
+            theme !== "dark" ? "hsla(0,0%,30%,.08)" : "hsla(360,100%,100%,.05)"
+          }, transparent 45%)`,
         }}
       />
 
-      <AspectRatio ratio={16 / 9}>
-        {mediaType === "video" ? (
-          <video autoPlay loop muted playsInline className="m-0 p-0">
-            <source src="/project-garden.webm" type="video/webm" />
-            <source src="/project-garden.mp4" type="video/mp4" />
-          </video>
-        ) : mediaType === "icon" ? (
-          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-slate-100 via-white to-slate-200 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800">
-            <div className="flex h-16 w-16 items-center justify-center rounded-full border border-slate-200 bg-white/80 text-slate-800 shadow-sm dark:border-slate-700 dark:bg-slate-900/80 dark:text-slate-100">
-              {icon}
-            </div>
+      <div className="flex h-full flex-col md:flex-row md:items-stretch">
+        <div className="relative flex items-center justify-center border-b border-border/70 bg-muted/20 px-6 py-6 md:h-full md:w-52 md:self-stretch md:border-b-0 md:border-r md:py-0">
+          <div className="flex h-20 w-20 items-center justify-center border border-border/70 bg-background/70 text-foreground">
+            {mediaType === "video" ? (
+              <video autoPlay loop muted playsInline className="h-20 w-20 rounded-2xl object-cover">
+                <source src="/project-garden.webm" type="video/webm" />
+                <source src="/project-garden.mp4" type="video/mp4" />
+              </video>
+            ) : mediaType === "image" && mediaSrc ? (
+              <Image
+                src={mediaSrc}
+                alt={title}
+                width={120}
+                height={120}
+                className="h-20 w-20 rounded-2xl object-cover"
+              />
+            ) : (
+              resolvedIcon
+            )}
           </div>
-        ) : (
-          mediaSrc && <Image src={mediaSrc} alt={title} width={960} height={540} className="m-0 p-0" />
-        )}
-      </AspectRatio>
-      <div className="p-6">
-        <h2 className="mb-2 line-clamp-1 font-medium tracking-tight text-foreground">{title}</h2>
-        <p className="text-sm text-muted-foreground">{description}</p>
+        </div>
+
+        <div className="flex flex-1 flex-col justify-center gap-4 p-6 md:py-8">
+          <div className="flex flex-wrap items-center gap-2 text-[10px] uppercase tracking-[0.12em] text-muted-foreground">
+            {tag && <span className="border border-border/70 px-2 py-1">{tag}</span>}
+            {meta && <span className="border border-border/70 px-2 py-1">{meta}</span>}
+            {priceNote && <span className="border border-border/70 px-2 py-1">{priceNote}</span>}
+          </div>
+
+          <div>
+            <h2
+              className="text-2xl leading-tight tracking-[-0.02em] text-foreground"
+              style={{
+                fontFamily: '"Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, "Times New Roman", serif',
+              }}
+            >
+              {title}
+            </h2>
+            <p className="mt-3 text-sm leading-7 text-muted-foreground">{description}</p>
+          </div>
+
+          {highlights && highlights.length > 0 && (
+            <ul className="grid gap-2 text-sm text-foreground/90">
+              {highlights.slice(0, 3).map((highlight) => (
+                <li key={highlight} className="flex items-start gap-2">
+                  <span className="mt-2 h-1.5 w-1.5 rounded-full bg-foreground/70" />
+                  <span>{highlight}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+
+          <div className="grid gap-3 text-sm text-muted-foreground">
+            {forWhom && (
+              <p>
+                <span className="font-semibold text-foreground">For:</span> {forWhom}
+              </p>
+            )}
+            {outcome && (
+              <p>
+                <span className="font-semibold text-foreground">Outcome:</span> {outcome}
+              </p>
+            )}
+            {proof && (
+              <p>
+                <span className="font-semibold text-foreground">Proof:</span> {proof}
+              </p>
+            )}
+          </div>
+
+          <div className="mt-auto flex items-center justify-between border-t border-border/60 pt-4">
+            <span className="inline-flex items-center gap-2 text-sm font-medium text-foreground transition group-hover:opacity-70">
+              {ctaLabel ?? "Explore"}
+              <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
+            </span>
+            <span className="text-[11px] uppercase tracking-[0.12em] text-muted-foreground">Open</span>
+          </div>
+        </div>
       </div>
-    </div>
+    </Link>
   );
 };
