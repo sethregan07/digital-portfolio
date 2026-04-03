@@ -186,7 +186,16 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
               </Accordion>
             </div>
 
-            <article className="prose max-w-none dark:prose-invert prose-headings:font-heading prose-headings:font-bold prose-headings:leading-tight prose-p:leading-8 hover:prose-a:text-accent-foreground prose-li:leading-8">
+            <article
+              className={cn(
+                "prose max-w-none dark:prose-invert prose-p:leading-8 hover:prose-a:text-accent-foreground prose-li:leading-8",
+                "prose-headings:font-normal prose-headings:tracking-[-0.02em] prose-headings:text-foreground",
+                "[&_h1]:text-4xl [&_h1]:leading-tight [&_h2]:mt-12 [&_h2]:text-3xl [&_h2]:leading-tight",
+                "[&_blockquote]:border-border/70 [&_blockquote]:text-foreground/80 [&_h3]:text-2xl [&_h3]:leading-snug",
+                "[&_ol]:text-[15px] [&_p]:text-[15px] [&_p]:text-foreground/90 [&_ul]:text-[15px]"
+              )}
+              style={editorialSerif}
+            >
               {article.bodyCode ? (
                 <div dangerouslySetInnerHTML={{ __html: article.bodyCode }} />
               ) : (
@@ -273,8 +282,8 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
         <section className="mt-12 border-t border-border/70 pt-10">
           <NewsletterSubscribe
-            title="Get future essays on conditioning, clarity, and independent thinking"
-            description="Subscribe for new articles, references, and practical frameworks drawn from the same core themes behind this piece."
+            title="Get thoughtful notes on conditioning, clearer decisions, and grounded living"
+            description="Occasional essays and practical frameworks on the three themes that shape the site: deprogramming, decision-making under noise, and living with more independence. Sent roughly 2x per month."
             buttonText="Subscribe"
           />
         </section>

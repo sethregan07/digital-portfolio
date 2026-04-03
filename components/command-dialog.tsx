@@ -3,7 +3,7 @@
 import * as React from "react";
 import { useRouter } from "next/navigation";
 import { DialogProps } from "@radix-ui/react-alert-dialog";
-import { File, Github, Laptop, Mail, Moon, Sun, Twitter, BookOpen, Calendar, Tag } from "lucide-react";
+import { BookOpen, Calendar, File, Github, Laptop, Mail, Moon, Search, Sun, Tag, Twitter } from "lucide-react";
 import { useTheme } from "next-themes";
 import { siGithub, siX } from "simple-icons";
 
@@ -26,7 +26,7 @@ import {
 const allPosts: any[] = [];
 const allPages: any[] = [];
 
-export function CommandDialogComponent({ ...props }: DialogProps) {
+export function CommandDialogComponent({ className, ...props }: DialogProps & { className?: string }) {
   const router = useRouter();
   const [open, setOpen] = React.useState(false);
   const [searchValue, setSearchValue] = React.useState("");
@@ -64,10 +64,11 @@ export function CommandDialogComponent({ ...props }: DialogProps) {
     const searchLower = searchValue.toLowerCase();
     return allPosts
       .filter((post) => post.status === "published")
-      .filter((post) =>
-        post.title.toLowerCase().includes(searchLower) ||
-        post.description?.toLowerCase().includes(searchLower) ||
-        post.tags?.some((tag: string) => tag.toLowerCase().includes(searchLower))
+      .filter(
+        (post) =>
+          post.title.toLowerCase().includes(searchLower) ||
+          post.description?.toLowerCase().includes(searchLower) ||
+          post.tags?.some((tag: string) => tag.toLowerCase().includes(searchLower))
       );
   }, [searchValue]);
 
@@ -75,9 +76,8 @@ export function CommandDialogComponent({ ...props }: DialogProps) {
     if (!searchValue.trim()) return [];
 
     const searchLower = searchValue.toLowerCase();
-    return allPages.filter((page) =>
-      page.title?.toLowerCase().includes(searchLower) ||
-      page.description?.toLowerCase().includes(searchLower)
+    return allPages.filter(
+      (page) => page.title?.toLowerCase().includes(searchLower) || page.description?.toLowerCase().includes(searchLower)
     );
   }, [searchValue]);
 
@@ -88,27 +88,28 @@ export function CommandDialogComponent({ ...props }: DialogProps) {
       <Button
         variant="ghost"
         className={cn(
-          "relative h-9 w-full justify-start rounded-[0.5rem] text-sm text-muted-foreground sm:pr-12 md:w-32 lg:w-64"
+          "relative h-9 w-10 justify-center rounded-[0.5rem] px-0 text-sm text-muted-foreground sm:w-full sm:justify-start sm:px-4 sm:pr-12 md:w-32 lg:w-64",
+          className
         )}
         onClick={() => setOpen(true)}
         {...props}
       >
-        <span className="inline-flex">Search...</span>
+        <Search className="h-4 w-4 sm:hidden" />
+        <span className="hidden sm:inline-flex">Search...</span>
         <kbd className="pointer-events-none absolute right-1.5 top-1.5 hidden h-6 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
           <span className="text-xs">⌘</span>K
         </kbd>
       </Button>
-      <CommandDialog open={open} onOpenChange={(open) => {
-        setOpen(open);
-        if (!open) {
-          setSearchValue("");
-        }
-      }}>
-        <CommandInput
-          placeholder="Type a command or search..."
-          value={searchValue}
-          onValueChange={setSearchValue}
-        />
+      <CommandDialog
+        open={open}
+        onOpenChange={(open) => {
+          setOpen(open);
+          if (!open) {
+            setSearchValue("");
+          }
+        }}
+      >
+        <CommandInput placeholder="Type a command or search..." value={searchValue} onValueChange={setSearchValue} />
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>
 
@@ -128,9 +129,7 @@ export function CommandDialogComponent({ ...props }: DialogProps) {
                       <div className="flex flex-col">
                         <span>{post.title}</span>
                         {post.description && (
-                          <span className="text-xs text-muted-foreground line-clamp-1">
-                            {post.description}
-                          </span>
+                          <span className="line-clamp-1 text-xs text-muted-foreground">{post.description}</span>
                         )}
                       </div>
                     </CommandItem>
@@ -151,9 +150,7 @@ export function CommandDialogComponent({ ...props }: DialogProps) {
                       <div className="flex flex-col">
                         <span>{page.title || page.slug}</span>
                         {page.description && (
-                          <span className="text-xs text-muted-foreground line-clamp-1">
-                            {page.description}
-                          </span>
+                          <span className="line-clamp-1 text-xs text-muted-foreground">{page.description}</span>
                         )}
                       </div>
                     </CommandItem>

@@ -1,20 +1,16 @@
-import "dotenv/config";
-
 import fs from "fs";
 import path from "path";
-import { compile } from "@mdx-js/mdx";
-import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@prisma/client";
 import GithubSlugger from "github-slugger";
 import matter from "gray-matter";
-import { Pool } from "pg";
 import { remark } from "remark";
 import remarkHtml from "remark-html";
 
-const connectionString = process.env.DATABASE_URL!;
-const pool = new Pool({ connectionString });
-// PrismaPg expects a Pool type from its bundled pg types; cast avoids duplicate @types/pg conflicts.
-const adapter = new PrismaPg(pool as unknown as any);
+try {
+  require("dotenv/config");
+} catch {
+  // Allow the seed to run when env vars are already present in the shell.
+}
 
 const prisma = new PrismaClient();
 
@@ -150,7 +146,13 @@ async function main() {
 
     await prisma.page.upsert({
       where: { slug },
-      update: {},
+      update: {
+        title: data.title,
+        description: data.description,
+        lastUpdatedDate: data.lastUpdatedDate ? new Date(data.lastUpdatedDate) : null,
+        status: data.status,
+        body: content,
+      },
       create: {
         title: data.title,
         description: data.description,
@@ -187,7 +189,10 @@ async function main() {
     if (data.author) {
       const author = await prisma.author.upsert({
         where: { id: `${data.author.name}-${data.author.image || ""}` },
-        update: {},
+        update: {
+          name: data.author.name,
+          image: data.author.image,
+        },
         create: {
           name: data.author.name,
           image: data.author.image,
@@ -201,7 +206,10 @@ async function main() {
     if (data.series) {
       const series = await prisma.series.upsert({
         where: { id: `${data.series.title}-${data.series.order}` },
-        update: {},
+        update: {
+          title: data.series.title,
+          order: data.series.order,
+        },
         create: {
           title: data.series.title,
           order: data.series.order,
@@ -212,7 +220,20 @@ async function main() {
 
     await prisma.post.upsert({
       where: { slug },
-      update: {},
+      update: {
+        title: data.title,
+        description: data.description,
+        publishedDate: new Date(data.publishedDate),
+        lastUpdatedDate: data.lastUpdatedDate ? new Date(data.lastUpdatedDate) : null,
+        tags,
+        status: data.status,
+        tagSlugs,
+        readTimeMinutes,
+        headings,
+        body: content,
+        authorId,
+        seriesId,
+      },
       create: {
         title: data.title,
         description: data.description,

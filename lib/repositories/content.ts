@@ -14,7 +14,18 @@ function shouldUseContentFallback(error: unknown): boolean {
   }
 
   const maybePrismaError = error as { code?: string; message?: string };
-  return maybePrismaError.code === "P1010" || maybePrismaError.code === "P1001" || maybePrismaError.code === "P1000";
+  const message = maybePrismaError.message?.toLowerCase() ?? "";
+
+  return (
+    maybePrismaError.code === "P1010" ||
+    maybePrismaError.code === "P1001" ||
+    maybePrismaError.code === "P1000" ||
+    message.includes("was denied access") ||
+    message.includes("denied access on the database") ||
+    message.includes("authentication failed") ||
+    message.includes("can't reach database server") ||
+    message.includes("could not connect")
+  );
 }
 
 function logContentFallback(error: unknown, operation: string) {

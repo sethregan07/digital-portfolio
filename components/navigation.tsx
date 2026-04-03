@@ -56,23 +56,14 @@ export function Navigation() {
 
       <header
         className={cn(
-          "fixed inset-x-0 -bottom-32 z-20 mx-auto mb-4 px-4 transition-all duration-1000 animate-out sm:top-0 sm:h-16 sm:px-0 sm:transition-none",
-          visible && "bottom-0 animate-in",
+          "fixed inset-x-0 top-0 z-20 mx-auto transition-all duration-1000 animate-out sm:h-16 sm:px-0 sm:transition-none",
+          visible && "animate-in",
+          !visible && "-top-32 sm:top-0",
           siteMetadata.activeAnnouncement && "sm:top-28 md:top-20 lg:top-12"
         )}
       >
-        {/* Mobile wordmark — consistent casing with desktop */}
-        <div className="mx-auto mb-2 text-center sm:hidden">
-          <Link href="/" aria-label="Go to Home" className="inline-block">
-            <span className="text-xl font-bold tracking-[-0.02em] text-foreground" style={wordmark}>
-              Originalform
-            </span>
-          </Link>
-        </div>
-
-        <div className="flex items-center gap-2 rounded-full border border-border/70 bg-background/90 px-3 py-2 shadow-sm supports-[backdrop-filter]:bg-background/60 supports-[backdrop-filter]:bg-clip-padding supports-[backdrop-filter]:backdrop-blur sm:justify-between sm:rounded-none sm:border-x-0 sm:border-t-0 sm:px-3">
-          <div className="container mx-auto flex max-w-6xl items-center">
-            {/* Wordmark — desktop */}
+        <div className="flex items-center gap-2 border border-border/70 bg-background/90 px-3 py-2 shadow-sm supports-[backdrop-filter]:bg-background/60 supports-[backdrop-filter]:bg-clip-padding supports-[backdrop-filter]:backdrop-blur sm:justify-between sm:border-x-0 sm:border-t-0 sm:px-3">
+          <div className="container relative mx-auto flex max-w-6xl items-center justify-between">
             <div className="flex shrink-0 items-center justify-start">
               <Link href="/" aria-label="Go to Home">
                 <span
@@ -84,8 +75,13 @@ export function Navigation() {
               </Link>
             </div>
 
-            {/* Main nav — desktop */}
-            <div className="order-3 sm:order-2 sm:ml-auto">
+            <Link href="/" aria-label="Go to Home" className="absolute left-1/2 -translate-x-1/2 sm:hidden">
+              <span className="text-xl font-bold tracking-[-0.02em] text-foreground" style={wordmark}>
+                Originalform
+              </span>
+            </Link>
+
+            <div className="order-1 sm:order-2 sm:ml-auto">
               <nav className="ml-auto hidden space-x-6 text-sm font-medium sm:block sm:w-full">
                 <Navbar />
               </nav>
@@ -95,8 +91,8 @@ export function Navigation() {
             </div>
 
             {/* Actions — search + mode toggle */}
-            <div className="order-2 flex w-full items-center justify-end gap-2 sm:order-3 sm:ml-4 sm:w-fit">
-              <CommandDialogComponent />
+            <div className="order-2 ml-auto flex w-auto items-center justify-end gap-2 sm:order-3 sm:ml-4 sm:w-fit">
+              <CommandDialogComponent className="border border-border/70 bg-background/70 hover:bg-accent sm:border-0 sm:bg-transparent" />
               <ModeToggle />
             </div>
           </div>

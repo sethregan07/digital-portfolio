@@ -1,22 +1,21 @@
-import {
-  DbPostPreview,
-  DbPageDetail,
-  getPublishedCourseLessonBySlug,
-  getPublishedCourseLessonSlugs,
-  getPublishedCourseLessons,
-  getPublishedCourseArticles,
-  getPublishedPages,
-  getPublishedPageBySlug,
-  getPublishedPostBySlug,
-  getPublishedPostsBySeriesId,
-  getPublishedPostSlugs,
-  getPublishedPosts,
-} from "@/lib/repositories/content";
 import { cache } from "react";
-import { PostSeries, SeriesItem } from "@/types";
-import { PostHeading } from "@/types";
+import { PostHeading, PostSeries, SeriesItem } from "@/types";
 import { remark } from "remark";
 import remarkHtml from "remark-html";
+
+import {
+  DbPageDetail,
+  DbPostPreview,
+  getPublishedCourseLessonBySlug,
+  getPublishedCourseLessons,
+  getPublishedCourseLessonSlugs,
+  getPublishedPageBySlug,
+  getPublishedPages,
+  getPublishedPostBySlug,
+  getPublishedPosts,
+  getPublishedPostsBySeriesId,
+  getPublishedPostSlugs,
+} from "@/lib/repositories/content";
 
 export type ContentTagCount = Record<string, number>;
 export type ArticleSource = "course" | "post";
@@ -50,19 +49,47 @@ export type UnifiedArticle = {
   resources: string[];
 };
 
-export const fallbackSections = ["Society & Politics", "Economics & History", "Development", "General"] as const;
+export const fallbackSections = [
+  "Media & Narrative",
+  "Power & Institutions",
+  "Political Economy",
+  "Culture & Conditioning",
+] as const;
+export const articleCategorySlugs: Record<(typeof fallbackSections)[number], string> = {
+  "Media & Narrative": "media-narrative",
+  "Power & Institutions": "power-institutions",
+  "Political Economy": "political-economy",
+  "Culture & Conditioning": "culture-conditioning",
+};
+
+export function getArticleCategorySlug(section: string): string {
+  return articleCategorySlugs[section as keyof typeof articleCategorySlugs] ?? "general";
+}
+
+export function getArticleCategoryNameFromSlug(slug: string): string | null {
+  const match = Object.entries(articleCategorySlugs).find(([, value]) => value === slug);
+  return match?.[0] ?? null;
+}
 
 export function getFallbackSectionFromTags(tags: string[]): string {
-  if (tags.some((tag) => ["society", "politics", "democracy", "inequality", "decentralisation"].includes(tag))) {
-    return "Society & Politics";
+  if (tags.some((tag) => ["media", "propaganda", "language", "narrative"].includes(tag))) {
+    return "Media & Narrative";
   }
   if (tags.some((tag) => ["economics", "history"].includes(tag))) {
-    return "Economics & History";
+    return "Political Economy";
   }
-  if (tags.some((tag) => ["development", "docs", "starter"].includes(tag))) {
-    return "Development";
+  if (tags.some((tag) => ["politics", "democracy", "education", "decentralisation"].includes(tag))) {
+    return "Power & Institutions";
   }
-  return "General";
+  if (tags.some((tag) => ["identity", "development", "society"].includes(tag))) {
+    return "Culture & Conditioning";
+  }
+  return "Power & Institutions";
+}
+
+function isEditorialArticle(post: DbPostPreview): boolean {
+  const tags = post.tags || [];
+  return !tags.includes("docs") && !tags.includes("starter");
 }
 
 export async function getRecentPosts(limit = 3): Promise<DbPostPreview[]> {
@@ -88,22 +115,7 @@ export async function getTagCounts(): Promise<ContentTagCount> {
 }
 
 export async function getArticlesForListing(): Promise<ArticleListItem[]> {
-  const courseArticles = await getPublishedCourseArticles("articles");
-
-  if (courseArticles.length > 0) {
-    return courseArticles.map((article) => ({
-      slug: article.slug,
-      title: article.title,
-      description: article.description,
-      readTimeMinutes: article.readTimeMinutes,
-      section: article.section,
-      sectionOrder: article.sectionOrder,
-      lessonOrder: article.lessonOrder,
-      href: `/articles/${article.slug}`,
-    }));
-  }
-
-  const posts = await getPublishedPosts();
+  const posts = (await getPublishedPosts()).filter(isEditorialArticle);
   const sectionCounters: Record<string, number> = {};
 
   return posts.map((post) => {
@@ -121,6 +133,31 @@ export async function getArticlesForListing(): Promise<ArticleListItem[]> {
       href: `/articles/${post.slug}`,
     };
   });
+}
+
+export async function getArticleCategoryCounts(): Promise<Array<{ name: string; slug: string; count: number }>> {
+  const articles = await getArticlesForListing();
+  const counts = new Map<string, number>();
+
+  for (const article of articles) {
+    counts.set(article.section, (counts.get(article.section) ?? 0) + 1);
+  }
+
+  return fallbackSections
+    .map((section) => ({
+      name: section,
+      slug: getArticleCategorySlug(section),
+      count: counts.get(section) ?? 0,
+    }))
+    .filter((item) => item.count > 0);
+}
+
+export async function getArticlesByCategorySlug(slug: string): Promise<ArticleListItem[]> {
+  const category = getArticleCategoryNameFromSlug(slug);
+  if (!category) return [];
+
+  const articles = await getArticlesForListing();
+  return articles.filter((article) => article.section === category);
 }
 
 async function markdownToHtml(markdown: string): Promise<string> {
@@ -165,31 +202,6 @@ export const getPostStaticParams = cache(async (): Promise<{ slug: string }[]> =
 });
 
 export const getUnifiedArticleBySlug = cache(async (slug: string): Promise<UnifiedArticle | null> => {
-  const courseArticle = await getPublishedCourseLessonBySlug("articles", slug);
-
-  if (courseArticle) {
-    return {
-      source: "course",
-      slug: courseArticle.slug,
-      title: courseArticle.title,
-      description: courseArticle.description,
-      section: courseArticle.section,
-      sectionOrder: courseArticle.sectionOrder,
-      lessonOrder: courseArticle.lessonOrder,
-      readTimeMinutes: courseArticle.estimatedReadTime || courseArticle.readTimeMinutes,
-      publishedDate: null,
-      lastUpdatedDate: null,
-      headings: Array.isArray(courseArticle.headings)
-        ? (courseArticle.headings as Array<any>).filter(
-            (h) => typeof h?.heading === "number" && typeof h?.text === "string" && typeof h?.slug === "string"
-          )
-        : [],
-      bodyCode: courseArticle.bodyCode,
-      contentBlocks: Array.isArray(courseArticle.contentBlocks) ? (courseArticle.contentBlocks as any[]) : null,
-      resources: courseArticle.resources || [],
-    };
-  }
-
   const post = await getPublishedPostBySlug(slug);
   if (!post) {
     return null;
@@ -221,16 +233,7 @@ export const getUnifiedArticleBySlug = cache(async (slug: string): Promise<Unifi
 });
 
 export const getUnifiedArticleAdjacent = cache(async (source: ArticleSource, slug: string) => {
-  if (source === "course") {
-    const allArticles = await getPublishedCourseLessons("articles");
-    const currentIndex = allArticles.findIndex((article) => article.slug === slug);
-    return {
-      previous: currentIndex > 0 ? allArticles[currentIndex - 1] : null,
-      next: currentIndex < allArticles.length - 1 ? allArticles[currentIndex + 1] : null,
-    };
-  }
-
-  const allPosts = await getPublishedPosts();
+  const allPosts = (await getPublishedPosts()).filter(isEditorialArticle);
   const currentIndex = allPosts.findIndex((post) => post.slug === slug);
   return {
     previous: currentIndex > 0 ? allPosts[currentIndex - 1] : null,
@@ -239,9 +242,8 @@ export const getUnifiedArticleAdjacent = cache(async (source: ArticleSource, slu
 });
 
 export const getUnifiedArticleStaticParams = cache(async (): Promise<{ slug: string }[]> => {
-  const courseSlugs = await getPublishedCourseLessonSlugs("articles");
-  const postSlugs = await getPublishedPostSlugs();
-  const unique = new Set([...courseSlugs, ...postSlugs]);
+  const postSlugs = (await getPublishedPosts()).filter(isEditorialArticle).map((post) => post.slug);
+  const unique = new Set(postSlugs);
   return Array.from(unique).map((slug) => ({ slug }));
 });
 

@@ -4,6 +4,7 @@ import { ArrowRight, BookOpen, Calendar, Lightbulb } from "lucide-react";
 
 import { BASE_URL, defaultAuthor } from "@/lib/metadata";
 import { Button } from "@/components/ui/button";
+import NewsletterSubscribe from "@/components/newsletter-subscribe";
 
 export async function generateMetadata(): Promise<Metadata> {
   const title = "Contact";
@@ -148,16 +149,38 @@ export default function ContactPage() {
           </div>
         </section>
 
-        <section className="flex flex-col gap-4 border-t border-border/70 pt-10 sm:flex-row sm:items-center sm:justify-between">
-          <p className="max-w-sm text-sm font-light text-muted-foreground">
-            Not ready to email? Read the work first. The course is free to start.
-          </p>
-          <Button asChild variant="outline" className="shrink-0 rounded-sm border-border/80 px-6">
-            <Link href="/projects/deprogramming">
-              Start the course
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Link>
-          </Button>
+        <section className="mb-20 rounded-sm border border-border/70 bg-card/40 p-7 md:p-10">
+          <div className="grid gap-8 md:grid-cols-[minmax(0,1fr)_auto] md:items-center">
+            <div>
+              <p className="mb-3 text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Working Together</p>
+              <h2 className="mb-4 text-3xl tracking-[-0.03em] text-foreground md:text-4xl" style={editorialSerif}>
+                Best fit: people who want clearer decisions, not more noise.
+              </h2>
+              <p className="max-w-xl text-base font-light leading-8 text-muted-foreground">
+                If you&apos;re building something meaningful and need sharper thinking around strategy, positioning, or
+                execution, email is the best starting point.
+              </p>
+            </div>
+            <div className="flex shrink-0 flex-col gap-3">
+              <Button asChild className="rounded-sm px-6">
+                <a href={`mailto:${defaultAuthor.email}`}>
+                  Send a message
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </a>
+              </Button>
+              <Button asChild variant="outline" className="rounded-sm border-border/80 px-6">
+                <Link href="/projects/deprogramming">Explore the course</Link>
+              </Button>
+            </div>
+          </div>
+        </section>
+
+        <section className="border-t border-border/70 pt-10">
+          <NewsletterSubscribe
+            title="Get thoughtful notes on conditioning, clearer decisions, and grounded living"
+            description="Occasional essays and practical frameworks on the three themes that shape the site: deprogramming, decision-making under noise, and living with more independence. Sent roughly 2x per month."
+            buttonText="Subscribe"
+          />
         </section>
       </div>
     </div>

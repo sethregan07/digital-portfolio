@@ -144,6 +144,31 @@ sudo apt install -y certbot python3-certbot-nginx
 sudo certbot --nginx -d your-domain.com
 ```
 
+## 9) One-command local sync + deploy
+
+From your local machine, you can sync the current workspace to the VPS and deploy in one step:
+
+```bash
+./scripts/sync-and-deploy.sh
+```
+
+Optional overrides:
+
+```bash
+VPS_USER=user \
+VPS_HOST=31.57.241.122 \
+VPS_APP_DIR=/home/user/Documents/digital-portfolio \
+VPS_SERVICE=digital-portfolio \
+REMOTE_NODE_BIN=/home/user/.config/nvm/versions/node/v20.19.0/bin \
+./scripts/sync-and-deploy.sh
+```
+
+If your server needs a specific SSH key:
+
+```bash
+SSH_KEY=~/.ssh/vps_key ./scripts/sync-and-deploy.sh
+```
+
 ---
 
 ## Add-ons (Hosted)
@@ -152,11 +177,11 @@ These are the light‑weight hosted options we chose.
 
 ### Umami Cloud (analytics)
 
-1) In Umami Cloud, create a Website.
-2) Copy:
+1. In Umami Cloud, create a Website.
+2. Copy:
    - Website ID
    - Script URL (ends with `/script.js`)
-3) Set in `.env`:
+3. Set in `.env`:
 
 ```
 NEXT_PUBLIC_UMAMI_SCRIPT_URL=https://cloud.umami.is/script.js
@@ -165,15 +190,15 @@ NEXT_PUBLIC_UMAMI_WEBSITE_ID=YOUR_UMAMI_WEBSITE_ID
 
 **Test Umami**
 
-1) Open your site in a browser.
-2) In Umami Cloud, go to the website → **Realtime** and confirm you see an active visitor.
-3) If not, open DevTools → Network and confirm the script is loaded from the Script URL.
+1. Open your site in a browser.
+2. In Umami Cloud, go to the website → **Realtime** and confirm you see an active visitor.
+3. If not, open DevTools → Network and confirm the script is loaded from the Script URL.
 
 ### MailerLite (newsletter)
 
-1) Create a MailerLite account and generate an API key.
-2) Create a Group and copy its Group ID.
-3) Set in `.env`:
+1. Create a MailerLite account and generate an API key.
+2. Create a Group and copy its Group ID.
+3. Set in `.env`:
 
 ```
 NEWSLETTER_PROVIDER=mailerlite
@@ -201,9 +226,9 @@ curl -s -X POST http://127.0.0.1:3000/newsletter \
 
 ### PostHog Cloud (heatmaps + session replay)
 
-1) Create a PostHog Cloud project.
-2) Copy the Project API Key.
-3) Set in `.env`:
+1. Create a PostHog Cloud project.
+2. Copy the Project API Key.
+3. Set in `.env`:
 
 ```
 NEXT_PUBLIC_POSTHOG_KEY=phc_...
