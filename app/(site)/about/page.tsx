@@ -26,7 +26,6 @@ export default function AboutPage() {
   return (
     <div className="bg-gradient-to-b from-background via-background to-muted/30 pb-16">
       <div className="container max-w-5xl pt-10">
-        {/* ── HEADER ── */}
         <section className="mb-16 border-b border-border/70 pb-10 pt-4">
           <div className="max-w-2xl">
             <p className="mb-4 text-[11px] font-medium uppercase tracking-[0.2em] text-muted-foreground">About</p>
@@ -37,24 +36,22 @@ export default function AboutPage() {
               A practical editorial space, not a personal brand brochure.
             </h1>
             <p className="mt-5 max-w-xl text-base font-light leading-8 text-muted-foreground">
-              Everything here is meant to earn its place through usefulness. If it doesn't help you think more clearly,
-              it shouldn't be here.
+              Everything here is meant to earn its place through usefulness. If it doesn&apos;t help readers think more
+              clearly, it shouldn&apos;t be here.
             </p>
           </div>
         </section>
 
-        {/* ── TWO COLUMN — story + quick facts ── */}
         <section className="mb-20 grid gap-12 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,0.6fr)]">
-          {/* Story */}
           <div className="space-y-6 text-base font-light leading-8 text-muted-foreground">
             <p>
-              Originalform started as a question: how much of what I believe did I actually choose? Most of our
-              assumptions about work, relationships, money, politics, and identity were installed before we had the
-              tools to examine them. This site is the ongoing attempt to examine them anyway.
+              Originalform started as a question: how much of what people believe did they actually choose? Most
+              assumptions about work, relationships, money, politics, and identity arrive before there are tools to
+              examine them. This site is the ongoing attempt to examine them anyway.
             </p>
             <p>
-              The writing here sits inside three recurring territories — conditioning and deprogramming, decision-making
-              under noise, and frameworks for grounded living. They're not separate topics. They're the same problem
+              The writing here sits inside three recurring territories: conditioning and deprogramming, decision-making
+              under noise, and frameworks for grounded living. They are not separate topics. They are the same problem
               looked at from different angles.
             </p>
             <p>
@@ -63,12 +60,11 @@ export default function AboutPage() {
               without falling into cynicism or isolation.
             </p>
             <p>
-              Nothing here is finished. The frameworks get updated. The essays get corrected. If something is wrong, I
-              want to know. If something helped, I'd like to hear that too.
+              Nothing here is finished. The frameworks get updated. The essays get corrected. If something is wrong, the
+              work should improve. If something helped, that matters too.
             </p>
           </div>
 
-          {/* Quick facts sidebar */}
           <div className="border-t border-border/60 pt-8 lg:border-l lg:border-t-0 lg:pl-10 lg:pt-0">
             <div className="space-y-8">
               <div>
@@ -82,7 +78,9 @@ export default function AboutPage() {
               </div>
 
               <div>
-                <p className="mb-3 text-[10px] uppercase tracking-[0.14em] text-muted-foreground/50">What's here</p>
+                <p className="mb-3 text-[10px] uppercase tracking-[0.14em] text-muted-foreground/50">
+                  What&apos;s here
+                </p>
                 <div className="space-y-2">
                   {[
                     { label: "Essays", href: "/articles" },
@@ -105,16 +103,15 @@ export default function AboutPage() {
               <div>
                 <p className="mb-3 text-[10px] uppercase tracking-[0.14em] text-muted-foreground/50">Commitments</p>
                 <div className="space-y-2 text-sm font-light text-muted-foreground">
-                  <p>No spin — I say what I know, what I don't, and what I'm still testing.</p>
-                  <p>Proof over promise — if I recommend something, I show the logic.</p>
-                  <p>Corrections welcome — if I'm wrong, I'll update and credit.</p>
+                  <p>No spin. What is known, what is uncertain, and what is still being tested should stay visible.</p>
+                  <p>Proof over promise. If something is recommended, the logic should be shown.</p>
+                  <p>Corrections welcome. If the work is wrong, it should be updated and credited.</p>
                 </div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* ── BOTTOM CTAS ── */}
         <section className="flex flex-col gap-4 border-t border-border/70 pt-10 sm:flex-row">
           <Button asChild className="rounded-sm px-6">
             <Link href="/projects/deprogramming">
@@ -130,7 +127,7 @@ export default function AboutPage() {
             variant="ghost"
             className="rounded-sm px-0 text-muted-foreground hover:bg-transparent hover:text-foreground"
           >
-            <Link href="/now">See what I'm working on →</Link>
+            <Link href="/now">See current focus →</Link>
           </Button>
         </section>
       </div>

@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 
 export async function generateMetadata(): Promise<Metadata> {
   const title = "Contact";
-  const description = "Get in touch — consulting, mentoring, or just a message.";
+  const description = "Get in touch — consulting, mentoring, course questions, or a note.";
   const url = `${BASE_URL}/contact`;
   return {
     title,
@@ -41,7 +41,6 @@ export default function ContactPage() {
   return (
     <div className="bg-gradient-to-b from-background via-background to-muted/30 pb-16">
       <div className="container max-w-5xl pt-10">
-        {/* ── HEADER ── */}
         <section className="mb-16 border-b border-border/70 pb-10 pt-4">
           <div className="max-w-2xl">
             <p className="mb-4 text-[11px] font-medium uppercase tracking-[0.2em] text-muted-foreground">Contact</p>
@@ -52,11 +51,10 @@ export default function ContactPage() {
               Get in touch.
             </h1>
             <p className="mt-5 max-w-xl text-base font-light leading-8 text-muted-foreground">
-              For consulting, mentoring, course questions, or anything else — email is the best way to reach me. I read
-              every message and reply to most.
+              For consulting, mentoring, course questions, or anything else, email is the best way to reach the desk.
+              Every message gets read, and most receive a reply.
             </p>
 
-            {/* Direct email — visible, no form friction */}
             <div className="mt-8 flex items-center gap-4">
               <a
                 href={`mailto:${defaultAuthor.email}`}
@@ -72,7 +70,6 @@ export default function ContactPage() {
           </div>
         </section>
 
-        {/* ── CONSULTING ── */}
         <section className="mb-20">
           <div className="mb-7 flex items-baseline justify-between border-b border-border/70 pb-3">
             <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Consulting & Mentoring</p>
@@ -113,7 +110,6 @@ export default function ContactPage() {
           </Button>
         </section>
 
-        {/* ── GOOD FIT / NOT A FIT ── */}
         <section className="mb-20">
           <div className="mb-7 border-b border-border/70 pb-3">
             <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Good fit</p>
@@ -121,11 +117,11 @@ export default function ContactPage() {
 
           <div className="mb-10 grid gap-0 divide-y divide-border/60 rounded-sm border border-border/60">
             {[
-              "You're building something and need clearer thinking around strategy or positioning.",
-              "You've read the essays and want to go deeper on a specific idea.",
+              "You are building something and need clearer thinking around strategy or positioning.",
+              "You have read the essays and want to go deeper on a specific idea.",
               "You have a question about the course or a framework.",
-              "You want to suggest a resource or flag something I got wrong.",
-              "You just want to say something — that's fine too.",
+              "You want to suggest a resource or flag something that needs correction.",
+              "You just want to say something. That is fine too.",
             ].map((item) => (
               <div key={item} className="flex items-start gap-4 px-6 py-4">
                 <span className="mt-1 shrink-0 text-xs text-muted-foreground/30">→</span>
@@ -140,7 +136,7 @@ export default function ContactPage() {
 
           <div className="grid gap-0 divide-y divide-border/60 rounded-sm border border-border/60">
             {[
-              "Pitches, sponsorships, or paid placements — this site doesn't carry ads.",
+              "Pitches, sponsorships, or paid placements. This site does not carry ads.",
               "Requests to ghostwrite or produce content under another name.",
               "Bulk outreach or templated partnership requests.",
             ].map((item) => (
@@ -152,10 +148,9 @@ export default function ContactPage() {
           </div>
         </section>
 
-        {/* ── ELSEWHERE ── */}
         <section className="flex flex-col gap-4 border-t border-border/70 pt-10 sm:flex-row sm:items-center sm:justify-between">
           <p className="max-w-sm text-sm font-light text-muted-foreground">
-            Not ready to email? Read the work first — the course is free to start.
+            Not ready to email? Read the work first. The course is free to start.
           </p>
           <Button asChild variant="outline" className="shrink-0 rounded-sm border-border/80 px-6">
             <Link href="/projects/deprogramming">
