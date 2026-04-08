@@ -20,7 +20,7 @@ import NewsletterSubscribe from "@/components/newsletter-subscribe";
 export const revalidate = 300;
 
 const editorialSerif = {
-  fontFamily: '"Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, "Times New Roman", serif',
+  fontFamily: "var(--font-serif), Georgia, serif",
 };
 
 const startHereLinks = [
@@ -59,15 +59,15 @@ export default async function Home() {
   const [leadPost, ...sidePosts] = posts;
 
   return (
-    <div className="bg-gradient-to-b from-background via-background to-muted/30 pb-16">
+    <div className="bg-background pb-20">
       {/* ── COURSE ANNOUNCEMENT BAR ── */}
-      <div className="border-b border-border/60 bg-muted/30 px-6 py-2.5">
+      <div className="premium-panel border-b border-border/80 px-6 py-3">
         <div className="container flex max-w-5xl items-center justify-between gap-4">
-          <p className="text-xs text-muted-foreground">
+          <p className="text-[12px] uppercase tracking-[0.12em] text-muted-foreground">
             <span className="font-medium text-foreground">New:</span> Deprogramming — a 42-lesson course on clear
             thinking. Free to start.
           </p>
-          <Button asChild variant="outline" size="sm" className="h-7 shrink-0 rounded-sm px-3 text-xs">
+          <Button asChild variant="outline" size="sm" className="h-8 shrink-0 px-3">
             <Link href="/projects/deprogramming">
               Start the course <ArrowRight className="ml-1.5 h-3 w-3" />
             </Link>
@@ -75,31 +75,30 @@ export default async function Home() {
         </div>
       </div>
 
-      <div className="container max-w-5xl pt-10">
+      <div className="container max-w-5xl pt-14">
         {/* ── HERO ── */}
-        <section className="mb-20 pt-4">
+        <section className="fade-up mb-24 pt-6">
           <div className="max-w-3xl">
-            <div className="mb-5 inline-flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.2em] text-muted-foreground">
-              <FileText className="h-3.5 w-3.5" />
+            <div className="mb-8 inline-flex items-center gap-2 text-[12px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
               <p>Editorial Notes, Essays, and Tools</p>
             </div>
             <h1
-              className="max-w-4xl text-5xl leading-[1.04] tracking-[-0.04em] text-foreground md:text-7xl"
+              className="max-w-4xl text-[3.5rem] leading-[0.94] tracking-[-0.06em] text-foreground md:text-[5.6rem]"
               style={editorialSerif}
             >
               Clear thinking for people trying to live outside borrowed scripts.
             </h1>
-            <p className="mt-7 max-w-2xl text-lg leading-8 text-muted-foreground">
+            <p className="mt-8 max-w-2xl text-[1.15rem] leading-[1.65] text-muted-foreground">
               Essays build the argument, frameworks make it usable, and the course turns it into a deeper path.
             </p>
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
-              <Button asChild className="rounded-sm px-6">
+            <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center">
+              <Button asChild className="h-12 px-7">
                 <Link href="/projects/deprogramming">
                   Start Deprogramming
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
-              <Button asChild variant="outline" className="rounded-sm border-border/80 px-6">
+              <Button asChild variant="outline" className="h-12 px-7">
                 <Link href="/articles">
                   Browse Essays
                   <Newspaper className="ml-2 h-4 w-4" />
@@ -108,21 +107,21 @@ export default async function Home() {
             </div>
 
             {/* ── PROOF STRIP ── */}
-            <div className="mt-10 grid max-w-sm grid-cols-4 divide-x divide-border/60 rounded-sm border border-border/60">
+            <div className="mt-12 grid max-w-sm grid-cols-4 divide-x divide-border rounded-sm border border-border">
               {[
                 { num: "42", label: "lessons" },
                 { num: "3", label: "territories" },
                 { num: "Free", label: "to start" },
                 { num: "Weekly", label: "essays" },
               ].map((s) => (
-                <div key={s.label} className="px-4 py-3">
+                <div key={s.label} className="px-4 py-3.5">
                   <span
-                    className="mb-1 block text-lg font-semibold leading-none text-foreground"
+                    className="mb-1 block text-xl font-semibold leading-none text-foreground"
                     style={editorialSerif}
                   >
                     {s.num}
                   </span>
-                  <span className="text-[10px] uppercase tracking-widest text-muted-foreground">{s.label}</span>
+                  <span className="text-[11px] uppercase tracking-[0.12em] text-muted-foreground">{s.label}</span>
                 </div>
               ))}
             </div>
@@ -130,54 +129,47 @@ export default async function Home() {
         </section>
 
         {/* ── READER QUOTE ── */}
-        <div className="mb-20 flex items-start gap-4 border-y border-border/60 bg-muted/20 px-6 py-5">
+        <div className="fade-up-delayed premium-surface mb-24 flex items-start gap-4 border-y border-border/80 px-5 py-6">
           <span className="mt-0.5 shrink-0 text-4xl leading-none text-muted-foreground/30" style={editorialSerif}>
             "
           </span>
           <div>
-            <p className="max-w-2xl text-sm font-light italic leading-7 text-muted-foreground">
+            <p className="max-w-2xl text-[0.98rem] font-light italic leading-7 text-muted-foreground">
               The most useful thing I've read on breaking out of inherited thinking. Every framework is something you
               can actually use the same day.
             </p>
-            <p className="mt-2 text-[11px] text-muted-foreground/50">— Reader, via email</p>
+            <p className="mt-2 text-[12px] text-muted-foreground/60">— Reader, via email</p>
           </div>
         </div>
 
         {/* ── START HERE ── */}
-        <section className="mb-20">
-          <div className="mb-7 flex items-end justify-between border-b border-border/70 pb-3">
+        <section className="fade-up-delayed mb-24">
+          <div className="mb-8 flex items-end justify-between border-b border-border pb-3">
             <div className="flex items-center gap-2">
-              <Compass className="h-3.5 w-3.5 text-muted-foreground" />
-              <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Start Here</p>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">Start Here</p>
             </div>
             <Link
               href="/articles"
-              className="inline-flex items-center gap-1.5 text-xs text-muted-foreground transition-colors hover:text-foreground"
+              className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.12em] text-muted-foreground transition-colors hover:text-foreground"
             >
               Read the library
               <ArrowRight className="h-3.5 w-3.5" />
             </Link>
           </div>
 
-          <div className="grid gap-y-8 md:grid-cols-2 xl:grid-cols-4 xl:gap-x-8">
+          <div className="grid gap-y-10 border-b border-border pb-2 md:grid-cols-2 xl:grid-cols-4 xl:gap-x-8">
             {startHereLinks.map((item, index) => {
-              const Icon = item.icon;
               return (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`group border-border/70 pr-6 transition-opacity hover:opacity-75 xl:min-h-[180px] ${
+                  className={`group pr-6 transition-opacity hover:opacity-75 xl:min-h-[170px] ${
                     index < startHereLinks.length - 1 ? "xl:border-r" : ""
                   }`}
                 >
-                  <p className="mb-4 text-[11px] uppercase tracking-[0.14em] text-muted-foreground">{item.number}</p>
-                  <div className="mb-3 flex items-center gap-3">
-                    <Icon className="h-4 w-4 text-muted-foreground" />
-                    <h2 className="text-2xl tracking-[-0.02em] text-foreground" style={editorialSerif}>
-                      {item.title}
-                    </h2>
-                  </div>
-                  <p className="max-w-xs text-sm leading-7 text-muted-foreground">{item.description}</p>
+                  <p className="mb-4 text-[12px] uppercase tracking-[0.14em] text-muted-foreground">{item.number}</p>
+                  <h2 className="mb-3 text-[1.8rem] font-semibold tracking-[-0.03em] text-foreground">{item.title}</h2>
+                  <p className="max-w-xs text-[1.02rem] leading-[1.65] text-muted-foreground">{item.description}</p>
                 </Link>
               );
             })}
@@ -185,15 +177,16 @@ export default async function Home() {
         </section>
 
         {/* ── RECENT ESSAYS ── */}
-        <section className="mb-20">
-          <div className="mb-7 flex items-end justify-between border-b border-border/70 pb-3">
+        <section className="fade-up-delayed mb-24">
+          <div className="mb-8 flex items-end justify-between border-b border-border pb-3">
             <div className="flex items-center gap-2">
-              <Newspaper className="h-3.5 w-3.5 text-muted-foreground" />
-              <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Recent Essays</p>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                Recent Essays
+              </p>
             </div>
             <Link
               href="/articles"
-              className="inline-flex items-center gap-1.5 text-xs text-muted-foreground transition-colors hover:text-foreground"
+              className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.12em] text-muted-foreground transition-colors hover:text-foreground"
             >
               View all essays
               <ArrowRight className="h-3.5 w-3.5" />
@@ -201,21 +194,23 @@ export default async function Home() {
           </div>
 
           {leadPost ? (
-            <div className="grid gap-10 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
-              <article className="border-b border-border/60 pb-8 lg:border-b-0 lg:border-r lg:pb-0 lg:pr-10">
-                <p className="mb-3 text-[11px] uppercase tracking-[0.16em] text-muted-foreground">Lead Essay</p>
+            <div className="grid gap-10 lg:grid-cols-[minmax(0,1.02fr)_minmax(0,0.98fr)] lg:border-b lg:border-border lg:pb-4">
+              <article className="border-b border-border pb-8 lg:border-b-0 lg:border-r lg:pb-0 lg:pr-10">
+                <p className="mb-3 text-[12px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                  Featured
+                </p>
                 <Link href={`/articles/${leadPost.slug}`} className="block">
                   <h2
-                    className="max-w-2xl text-3xl leading-[1.18] tracking-[-0.03em] text-foreground transition-opacity hover:opacity-75 md:text-5xl"
+                    className="max-w-2xl text-[2.45rem] font-extrabold leading-[0.98] tracking-[-0.05em] text-foreground transition-opacity hover:opacity-75 md:text-[3.7rem]"
                     style={editorialSerif}
                   >
                     {leadPost.title}
                   </h2>
                 </Link>
-                <p className="mt-5 max-w-xl text-base leading-8 text-muted-foreground">
+                <p className="mt-5 max-w-xl text-[1.02rem] leading-[1.7] text-muted-foreground">
                   {leadPost.description || "A long-form essay from the working library."}
                 </p>
-                <div className="mt-6 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+                <div className="mt-6 flex flex-wrap items-center gap-3 text-[12px] uppercase tracking-[0.1em] text-muted-foreground">
                   <span className="inline-flex items-center gap-1.5">
                     <Clock className="h-3.5 w-3.5" />
                     {leadPost.readTimeMinutes} min read
@@ -232,20 +227,19 @@ export default async function Home() {
                 {sidePosts.map((post, index) => (
                   <article
                     key={post.id}
-                    className={`py-4 ${index < sidePosts.length - 1 ? "border-b border-border/60" : ""} ${
+                    className={`py-5 ${index < sidePosts.length - 1 ? "border-b border-border" : ""} ${
                       index === 0 ? "pt-0" : ""
                     }`}
                   >
-                    <p className="mb-2 text-[10px] uppercase tracking-[0.14em] text-muted-foreground">Essay</p>
                     <Link href={`/articles/${post.slug}`} className="block">
-                      <h3 className="text-lg font-medium leading-7 text-foreground transition-opacity hover:opacity-75">
+                      <h3 className="text-[1.45rem] font-semibold leading-[1.1] tracking-[-0.03em] text-foreground transition-opacity hover:opacity-75">
                         {post.title}
                       </h3>
                     </Link>
-                    <p className="mt-2 text-sm leading-7 text-muted-foreground">
+                    <p className="mt-3 text-[1rem] leading-[1.65] text-muted-foreground">
                       {post.description || "A shorter field note from the current writing desk."}
                     </p>
-                    <div className="mt-3 flex items-center gap-3 text-[11px] text-muted-foreground">
+                    <div className="mt-3 flex items-center gap-3 text-[12px] uppercase tracking-[0.1em] text-muted-foreground">
                       <span>{post.readTimeMinutes} min</span>
                       <span className="h-1 w-1 rounded-full bg-muted-foreground/60" />
                       <span>{post.publishedDate.toLocaleDateString()}</span>
@@ -258,7 +252,7 @@ export default async function Home() {
         </section>
 
         {/* ── FLAGSHIP COURSE ── */}
-        <section className="mb-20 border border-border/70 bg-card/40 p-7 md:p-10">
+        <section className="fade-up-delayed mb-20 border border-border/70 p-7 md:p-10">
           <div className="grid gap-8 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
             <div>
               <div className="mb-3 flex items-center gap-2">
@@ -282,7 +276,7 @@ export default async function Home() {
                     <span className="mb-1 block text-2xl leading-none text-foreground" style={editorialSerif}>
                       {s.num}
                     </span>
-                    <span className="text-[10px] uppercase tracking-widest text-muted-foreground">{s.label}</span>
+                    <span className="text-[11px] uppercase tracking-[0.14em] text-muted-foreground">{s.label}</span>
                   </div>
                 ))}
               </div>
@@ -302,7 +296,7 @@ export default async function Home() {
         </section>
 
         {/* ── ABOUT ── */}
-        <section className="mb-20 grid gap-10 border-t border-border/70 pt-10 lg:grid-cols-[minmax(0,1fr)_320px]">
+        <section className="fade-up-delayed mb-20 grid gap-10 border-t border-border/70 pt-10 lg:grid-cols-[minmax(0,1fr)_320px]">
           <div>
             <div className="mb-3 flex items-center gap-2">
               <FileText className="h-3.5 w-3.5 text-muted-foreground" />
@@ -344,7 +338,7 @@ export default async function Home() {
               {defaultAuthor.jobTitle}
               {defaultAuthor.company ? ` at ${defaultAuthor.company}` : ""}
             </p>
-            <div className="mt-6 flex flex-col gap-3 text-sm text-muted-foreground">
+            <div className="mt-6 flex flex-col gap-3 text-[1rem] text-muted-foreground">
               <Link href="/contact" className="inline-flex items-center gap-2 transition-colors hover:text-foreground">
                 <Mail className="h-4 w-4" />
                 Contact
@@ -362,8 +356,9 @@ export default async function Home() {
         </section>
 
         {/* ── NEWSLETTER ── */}
-        <section className="border-t border-border/70 pt-10">
+        <section className="fade-up-delayed border-t border-border/70 pt-10">
           <NewsletterSubscribe
+            provider="mailerlite"
             title="Get essays and frameworks on conditioning, clarity, and independent thinking"
             description="A thoughtful note when there is something worth sending — original essays, practical frameworks, and sharper ways to think through noise. Sent roughly 2× per month."
             buttonText="Subscribe"

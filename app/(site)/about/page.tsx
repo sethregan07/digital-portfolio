@@ -19,23 +19,20 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 const editorialSerif = {
-  fontFamily: '"Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, "Times New Roman", serif',
+  fontFamily: "var(--font-serif), Georgia, serif",
 };
 
 export default function AboutPage() {
   return (
-    <div className="bg-gradient-to-b from-background via-background to-muted/30 pb-16">
-      <div className="container max-w-5xl pt-10">
-        <section className="mb-16 border-b border-border/70 pb-10 pt-4">
+    <div className="bg-background pb-16">
+      <div className="container max-w-5xl pt-14">
+        <section className="mb-16 border-b border-border pb-10 pt-6">
           <div className="max-w-2xl">
-            <p className="mb-4 text-[11px] font-medium uppercase tracking-[0.2em] text-muted-foreground">About</p>
-            <h1
-              className="text-4xl leading-tight tracking-[-0.03em] text-foreground md:text-5xl"
-              style={editorialSerif}
-            >
+            <p className="page-kicker mb-4">About</p>
+            <h1 className="page-title" style={editorialSerif}>
               A practical editorial space, not a personal brand brochure.
             </h1>
-            <p className="mt-5 max-w-xl text-base font-light leading-8 text-muted-foreground">
+            <p className="page-intro max-w-xl font-light">
               Everything here is meant to earn its place through usefulness. If it doesn&apos;t help readers think more
               clearly, it shouldn&apos;t be here.
             </p>
@@ -43,7 +40,7 @@ export default function AboutPage() {
         </section>
 
         <section className="mb-20 grid gap-12 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,0.6fr)]">
-          <div className="space-y-6 text-base font-light leading-8 text-muted-foreground">
+          <div className="space-y-6 text-[1.0625rem] font-light leading-8 text-muted-foreground">
             <p>
               Originalform started as a question: how much of what people believe did they actually choose? Most
               assumptions about work, relationships, money, politics, and identity arrive before there are tools to
@@ -68,17 +65,17 @@ export default function AboutPage() {
           <div className="border-t border-border/60 pt-8 lg:border-l lg:border-t-0 lg:pl-10 lg:pt-0">
             <div className="space-y-8">
               <div>
-                <p className="mb-3 text-[10px] uppercase tracking-[0.14em] text-muted-foreground/50">Editor</p>
-                <p className="text-lg font-semibold text-foreground" style={editorialSerif}>
-                  {defaultAuthor.name}
-                </p>
+                <p className="mb-3 text-[11px] uppercase tracking-[0.16em] text-muted-foreground/60">Editor</p>
+                <p className="text-[1.2rem] font-semibold tracking-[-0.02em] text-foreground">{defaultAuthor.name}</p>
                 {defaultAuthor.jobTitle && (
-                  <p className="mt-1 text-sm font-light text-muted-foreground">{defaultAuthor.jobTitle}</p>
+                  <p className="mt-1 text-[1.0625rem] font-light leading-8 text-muted-foreground">
+                    {defaultAuthor.jobTitle}
+                  </p>
                 )}
               </div>
 
               <div>
-                <p className="mb-3 text-[10px] uppercase tracking-[0.14em] text-muted-foreground/50">
+                <p className="mb-3 text-[11px] uppercase tracking-[0.16em] text-muted-foreground/60">
                   What&apos;s here
                 </p>
                 <div className="space-y-2">
@@ -89,10 +86,10 @@ export default function AboutPage() {
                     { label: "Resources shelf", href: "/resources" },
                   ].map((item) => (
                     <Link key={item.href} href={item.href} className="group flex items-center justify-between">
-                      <span className="text-sm font-light text-muted-foreground transition-colors group-hover:text-foreground">
+                      <span className="text-[1.0625rem] font-light leading-8 text-muted-foreground transition-colors group-hover:text-foreground">
                         {item.label}
                       </span>
-                      <span className="text-xs text-muted-foreground/30 transition-colors group-hover:text-muted-foreground">
+                      <span className="text-muted-foreground/35 text-sm transition-colors group-hover:text-muted-foreground">
                         →
                       </span>
                     </Link>
@@ -101,8 +98,8 @@ export default function AboutPage() {
               </div>
 
               <div>
-                <p className="mb-3 text-[10px] uppercase tracking-[0.14em] text-muted-foreground/50">Commitments</p>
-                <div className="space-y-2 text-sm font-light text-muted-foreground">
+                <p className="mb-3 text-[11px] uppercase tracking-[0.16em] text-muted-foreground/60">Commitments</p>
+                <div className="space-y-3 text-[1.0625rem] font-light leading-8 text-muted-foreground">
                   <p>No spin. What is known, what is uncertain, and what is still being tested should stay visible.</p>
                   <p>Proof over promise. If something is recommended, the logic should be shown.</p>
                   <p>Corrections welcome. If the work is wrong, it should be updated and credited.</p>
@@ -112,7 +109,7 @@ export default function AboutPage() {
           </div>
         </section>
 
-        <section className="flex flex-col gap-4 border-t border-border/70 pt-10 sm:flex-row">
+        <section className="flex flex-col gap-4 border-t border-border pt-10 sm:flex-row">
           <Button asChild className="rounded-sm px-6">
             <Link href="/projects/deprogramming">
               Start the course

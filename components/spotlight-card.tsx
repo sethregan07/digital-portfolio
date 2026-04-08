@@ -97,7 +97,7 @@ export const SpotlightCard = ({
       onBlur={handleBlur}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      className="bg-card/35 group relative flex h-full w-full max-w-none flex-col overflow-hidden rounded-sm border border-border/70 shadow-none transition hover:border-border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+      className="premium-surface group relative flex h-full w-full max-w-none flex-col overflow-hidden rounded-sm border border-border/70 shadow-none transition-all duration-300 ease-out hover:-translate-y-1 hover:border-border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
     >
       <div
         className="pointer-events-none absolute -inset-px opacity-0 transition duration-300"
@@ -110,8 +110,8 @@ export const SpotlightCard = ({
       />
 
       <div className="flex h-full flex-col md:flex-row md:items-stretch">
-        <div className="relative flex items-center justify-center border-b border-border/70 bg-muted/20 px-6 py-6 md:h-full md:w-52 md:self-stretch md:border-b-0 md:border-r md:py-0">
-          <div className="flex h-20 w-20 items-center justify-center border border-border/70 bg-background/70 text-foreground">
+        <div className="relative flex items-center justify-center border-b border-border/70 bg-muted/10 px-6 py-6 md:h-full md:w-52 md:self-stretch md:border-b-0 md:border-r md:py-0">
+          <div className="bg-background/55 flex h-20 w-20 items-center justify-center border border-border/70 text-foreground">
             {mediaType === "video" ? (
               <video autoPlay loop muted playsInline className="h-20 w-20 rounded-2xl object-cover">
                 <source src="/project-garden.webm" type="video/webm" />
@@ -132,7 +132,7 @@ export const SpotlightCard = ({
         </div>
 
         <div className="flex flex-1 flex-col justify-center gap-4 p-6 md:py-8">
-          <div className="flex flex-wrap items-center gap-2 text-[10px] uppercase tracking-[0.12em] text-muted-foreground">
+          <div className="flex flex-wrap items-center gap-2 text-[11px] uppercase tracking-[0.12em] text-muted-foreground">
             {tag && <span className="border border-border/70 px-2 py-1">{tag}</span>}
             {meta && <span className="border border-border/70 px-2 py-1">{meta}</span>}
             {priceNote && <span className="border border-border/70 px-2 py-1">{priceNote}</span>}
@@ -142,16 +142,16 @@ export const SpotlightCard = ({
             <h2
               className="text-2xl leading-tight tracking-[-0.02em] text-foreground"
               style={{
-                fontFamily: '"Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, "Times New Roman", serif',
+                fontFamily: "var(--font-serif), Georgia, serif",
               }}
             >
               {title}
             </h2>
-            <p className="mt-3 text-sm leading-7 text-muted-foreground">{description}</p>
+            <p className="mt-3 text-[1rem] leading-8 text-muted-foreground">{description}</p>
           </div>
 
           {highlights && highlights.length > 0 && (
-            <ul className="grid gap-2 text-sm text-foreground/90">
+            <ul className="grid gap-2 text-[1rem] leading-7 text-foreground/90">
               {highlights.slice(0, 3).map((highlight) => (
                 <li key={highlight} className="flex items-start gap-2">
                   <span className="mt-2 h-1.5 w-1.5 rounded-full bg-foreground/70" />
@@ -161,7 +161,7 @@ export const SpotlightCard = ({
             </ul>
           )}
 
-          <div className="grid gap-3 text-sm text-muted-foreground">
+          <div className="grid gap-3 text-[1rem] leading-7 text-muted-foreground">
             {forWhom && (
               <p>
                 <span className="font-semibold text-foreground">For:</span> {forWhom}
@@ -184,7 +184,7 @@ export const SpotlightCard = ({
               {ctaLabel ?? "Explore"}
               <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
             </span>
-            <span className="text-[11px] uppercase tracking-[0.12em] text-muted-foreground">Open</span>
+            <span className="text-[12px] uppercase tracking-[0.12em] text-muted-foreground">Open</span>
           </div>
         </div>
       </div>

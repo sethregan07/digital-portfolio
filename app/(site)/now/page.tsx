@@ -21,7 +21,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 const editorialSerif = {
-  fontFamily: '"Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, "Times New Roman", serif',
+  fontFamily: "var(--font-serif), Georgia, serif",
 };
 
 const consulting = [
@@ -66,10 +66,13 @@ const changelog = [
 
 function SectionHeader({ label, link, linkLabel }: { label: string; link?: string; linkLabel?: string }) {
   return (
-    <div className="mb-7 flex items-end justify-between border-b border-border/70 pb-3">
-      <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">{label}</p>
+    <div className="mb-7 flex items-end justify-between border-b border-border pb-3">
+      <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">{label}</p>
       {link && linkLabel ? (
-        <Link href={link} className="text-xs text-muted-foreground transition-colors hover:text-foreground">
+        <Link
+          href={link}
+          className="text-[12px] uppercase tracking-[0.1em] text-muted-foreground transition-colors hover:text-foreground"
+        >
           {linkLabel}
         </Link>
       ) : null}
@@ -79,14 +82,14 @@ function SectionHeader({ label, link, linkLabel }: { label: string; link?: strin
 
 export default function NowPage() {
   return (
-    <div className="bg-gradient-to-b from-background via-background to-muted/30 pb-16">
-      <div className="container max-w-5xl pt-10">
+    <div className="bg-background pb-16">
+      <div className="container max-w-5xl pt-14">
         {/* ── HEADER ── */}
-        <section className="mb-16 border-b border-border/70 pb-10 pt-4">
+        <section className="mb-16 border-b border-border pb-10 pt-6">
           <div className="max-w-3xl">
-            <p className="mb-4 text-[11px] font-medium uppercase tracking-[0.2em] text-muted-foreground">Now</p>
+            <p className="mb-4 text-[12px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">Now</p>
             <h1
-              className="text-4xl leading-tight tracking-[-0.03em] text-foreground md:text-5xl"
+              className="text-[3rem] leading-[0.96] tracking-[-0.05em] text-foreground md:text-[4.2rem]"
               style={editorialSerif}
             >
               What I'm focused on right now.
@@ -96,7 +99,7 @@ export default function NowPage() {
               regularly.
             </p>
             {/* Last updated signal — builds trust */}
-            <p className="mt-3 text-xs uppercase tracking-widest text-muted-foreground/40">
+            <p className="mt-3 text-sm uppercase tracking-[0.12em] text-muted-foreground/50">
               Last updated: February 2026
             </p>
           </div>
@@ -126,7 +129,7 @@ export default function NowPage() {
             ].map(({ status, item }) => (
               <div key={item} className="flex items-start gap-5 px-6 py-4">
                 <span
-                  className={`mt-0.5 min-w-[72px] shrink-0 text-[10px] font-medium uppercase tracking-widest ${
+                  className={`mt-0.5 min-w-[80px] shrink-0 text-[11px] font-medium uppercase tracking-[0.12em] ${
                     status === "Active"
                       ? "text-foreground"
                       : status === "In progress"
@@ -136,7 +139,7 @@ export default function NowPage() {
                 >
                   {status}
                 </span>
-                <p className="text-sm font-light leading-7 text-muted-foreground">{item}</p>
+                <p className="text-[1rem] font-light leading-8 text-muted-foreground">{item}</p>
               </div>
             ))}
           </div>
@@ -154,12 +157,10 @@ export default function NowPage() {
           <div className="mb-10 grid gap-6 md:grid-cols-2">
             {consulting.map((item) => (
               <div key={item.title} className="rounded-sm border border-border/60 bg-card/40 p-6">
-                <p className="mb-2 text-[10px] uppercase tracking-[0.14em] text-muted-foreground">Advisory</p>
-                <h2 className="mb-1 text-xl tracking-[-0.02em] text-foreground" style={editorialSerif}>
-                  {item.title}
-                </h2>
-                <p className="mb-4 text-[10px] uppercase tracking-[0.1em] text-muted-foreground/60">{item.audience}</p>
-                <p className="text-sm font-light leading-7 text-muted-foreground">{item.description}</p>
+                <p className="mb-2 text-[12px] uppercase tracking-[0.12em] text-muted-foreground">Advisory</p>
+                <h2 className="mb-1 text-[1.35rem] font-semibold tracking-[-0.03em] text-foreground">{item.title}</h2>
+                <p className="mb-4 text-[11px] uppercase tracking-[0.08em] text-muted-foreground/70">{item.audience}</p>
+                <p className="text-[1rem] font-light leading-8 text-muted-foreground">{item.description}</p>
               </div>
             ))}
           </div>
@@ -172,7 +173,7 @@ export default function NowPage() {
                 Request a Session
               </a>
             </Button>
-            <p className="text-xs text-muted-foreground/50">Email directly — I read every message.</p>
+            <p className="text-sm text-muted-foreground/60">Email directly — I read every message.</p>
           </div>
         </section>
 
@@ -193,10 +194,10 @@ export default function NowPage() {
                 <div key={entry.version} className="flex gap-0 py-6 sm:gap-8">
                   {/* Date + version — left column */}
                   <div className="hidden w-20 shrink-0 flex-col items-end gap-1 pt-0.5 sm:flex">
-                    <span className="text-sm font-semibold text-foreground" style={editorialSerif}>
-                      {entry.version}
+                    <span className="text-sm font-semibold tracking-[-0.02em] text-foreground">{entry.version}</span>
+                    <span className="text-[11px] uppercase tracking-[0.12em] text-muted-foreground/60">
+                      {entry.date}
                     </span>
-                    <span className="text-[10px] uppercase tracking-widest text-muted-foreground/50">{entry.date}</span>
                   </div>
 
                   {/* Dot */}
@@ -212,10 +213,8 @@ export default function NowPage() {
                   <div className="flex-1">
                     {/* Mobile header */}
                     <div className="mb-3 flex items-baseline justify-between sm:hidden">
-                      <span className="text-sm font-semibold text-foreground" style={editorialSerif}>
-                        {entry.version}
-                      </span>
-                      <span className="text-[10px] uppercase tracking-widest text-muted-foreground/50">
+                      <span className="text-sm font-semibold tracking-[-0.02em] text-foreground">{entry.version}</span>
+                      <span className="text-[11px] uppercase tracking-[0.12em] text-muted-foreground/60">
                         {entry.date}
                       </span>
                     </div>
@@ -223,7 +222,7 @@ export default function NowPage() {
                       {entry.items.map((item) => (
                         <span
                           key={item}
-                          className="rounded-sm border border-border/60 px-3 py-1 text-xs font-light text-muted-foreground"
+                          className="rounded-sm border border-border/60 px-3 py-1 text-sm font-light text-muted-foreground"
                         >
                           {item}
                         </span>
@@ -240,7 +239,7 @@ export default function NowPage() {
         <section className="mb-20 rounded-sm border border-border/70 bg-card/40 p-7 md:p-10" id="contact">
           <div className="grid gap-8 md:grid-cols-[minmax(0,1fr)_auto] md:items-center">
             <div>
-              <p className="mb-3 text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Working Together</p>
+              <p className="mb-3 text-[12px] uppercase tracking-[0.16em] text-muted-foreground">Working Together</p>
               <h2 className="mb-4 text-3xl tracking-[-0.03em] text-foreground md:text-4xl" style={editorialSerif}>
                 Best fit: people who want clearer decisions, not more noise.
               </h2>
@@ -266,6 +265,7 @@ export default function NowPage() {
         {/* ── NEWSLETTER ── */}
         <section className="border-t border-border/70 pt-10">
           <NewsletterSubscribe
+            provider="mailerlite"
             title="Get thoughtful notes on conditioning, clearer decisions, and grounded living"
             description="Occasional essays and practical frameworks on the three themes that shape the site: deprogramming, decision-making under noise, and living with more independence. Sent roughly 2× per month."
             buttonText="Subscribe"

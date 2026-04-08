@@ -21,7 +21,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 const editorialSerif = {
-  fontFamily: '"Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, "Times New Roman", serif',
+  fontFamily: "var(--font-serif), Georgia, serif",
 };
 
 const books = [
@@ -79,10 +79,10 @@ const articles = [
 
 function SectionHeader({ label, count }: { label: string; count?: number }) {
   return (
-    <div className="mb-8 flex items-baseline justify-between border-b border-border/70 pb-3">
-      <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">{label}</p>
+    <div className="mb-8 flex items-baseline justify-between border-b border-border pb-3">
+      <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">{label}</p>
       {count !== undefined && (
-        <span className="text-[10px] uppercase tracking-widest text-muted-foreground/40">
+        <span className="text-[11px] uppercase tracking-[0.12em] text-muted-foreground/50">
           {count} {count === 1 ? "item" : "items"}
         </span>
       )}
@@ -92,16 +92,16 @@ function SectionHeader({ label, count }: { label: string; count?: number }) {
 
 export default function ResourcesPage() {
   return (
-    <div className="bg-gradient-to-b from-background via-background to-muted/30 pb-16">
-      <div className="container max-w-5xl pt-10">
+    <div className="bg-background pb-16">
+      <div className="container max-w-5xl pt-14">
         {/* ── HEADER ── */}
-        <section className="mb-16 border-b border-border/70 pb-10 pt-4">
+        <section className="mb-16 border-b border-border pb-10 pt-6">
           <div className="max-w-3xl">
-            <p className="mb-4 text-[11px] font-medium uppercase tracking-[0.2em] text-muted-foreground">
+            <p className="mb-4 text-[12px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
               Reading Shelf, Watch List, and Reference Desk
             </p>
             <h1
-              className="text-4xl leading-tight tracking-[-0.03em] text-foreground md:text-5xl"
+              className="text-[3rem] leading-[0.96] tracking-[-0.05em] text-foreground md:text-[4.2rem]"
               style={editorialSerif}
             >
               Books, talks, and essays that shaped how I think.
@@ -113,7 +113,7 @@ export default function ResourcesPage() {
 
             {/* Curation note */}
             <div className="mt-8 border-l-2 border-border/50 pl-5">
-              <p className="text-sm font-light italic leading-7 text-muted-foreground">
+              <p className="text-[1rem] font-light italic leading-8 text-muted-foreground">
                 I only add something here if I'd recommend it to a person I respect. No affiliate links, no sponsored
                 picks — just the things that actually changed how I see.
               </p>
@@ -141,23 +141,21 @@ export default function ResourcesPage() {
 
                 {/* Content */}
                 <div>
-                  <p className="mb-1.5 text-[10px] uppercase tracking-[0.14em] text-muted-foreground">Book</p>
-                  <h2 className="mb-1 text-xl tracking-[-0.02em] text-foreground" style={editorialSerif}>
-                    {book.title}
-                  </h2>
-                  <p className="mb-3 text-[11px] uppercase tracking-[0.1em] text-muted-foreground/60">{book.author}</p>
+                  <p className="mb-2 text-[12px] uppercase tracking-[0.12em] text-muted-foreground">Book</p>
+                  <h2 className="mb-1 text-[1.35rem] font-semibold tracking-[-0.03em] text-foreground">{book.title}</h2>
+                  <p className="mb-3 text-[12px] uppercase tracking-[0.08em] text-muted-foreground/70">{book.author}</p>
 
                   {/* Why I picked it */}
-                  <p className="mb-2 border-l border-border/50 pl-3 text-sm font-light italic leading-7 text-muted-foreground/70">
+                  <p className="mb-3 border-l border-border/50 pl-3 text-[1rem] font-light italic leading-8 text-muted-foreground/75">
                     {book.why}
                   </p>
 
-                  <p className="mb-4 text-sm font-light leading-7 text-muted-foreground">{book.description}</p>
+                  <p className="mb-4 text-[1rem] font-light leading-8 text-muted-foreground">{book.description}</p>
 
                   <Link
                     href={book.link}
                     target="_blank"
-                    className="inline-flex items-center gap-1.5 text-xs text-foreground/70 transition-opacity hover:opacity-70"
+                    className="inline-flex items-center gap-1.5 text-sm text-foreground/80 transition-opacity hover:opacity-70"
                   >
                     Open reference
                     <ExternalLink className="h-3 w-3" />
@@ -190,24 +188,24 @@ export default function ResourcesPage() {
                   />
                 </Link>
 
-                <p className="mb-1.5 text-[10px] uppercase tracking-[0.14em] text-muted-foreground">Video</p>
-                <h2 className="mb-3 text-xl tracking-[-0.02em] text-foreground" style={editorialSerif}>
+                <p className="mb-2 text-[12px] uppercase tracking-[0.12em] text-muted-foreground">Video</p>
+                <h2 className="mb-3 text-[1.35rem] font-semibold tracking-[-0.03em] text-foreground">
                   <Link href={video.link} target="_blank" className="transition-opacity hover:opacity-70">
                     {video.title}
                   </Link>
                 </h2>
 
                 {/* Why I picked it */}
-                <p className="mb-2 border-l border-border/50 pl-3 text-sm font-light italic leading-7 text-muted-foreground/70">
+                <p className="mb-3 border-l border-border/50 pl-3 text-[1rem] font-light italic leading-8 text-muted-foreground/75">
                   {video.why}
                 </p>
 
-                <p className="mb-4 text-sm font-light leading-7 text-muted-foreground">{video.description}</p>
+                <p className="mb-4 text-[1rem] font-light leading-8 text-muted-foreground">{video.description}</p>
 
                 <Link
                   href={video.link}
                   target="_blank"
-                  className="inline-flex items-center gap-1.5 text-xs text-foreground/70 transition-opacity hover:opacity-70"
+                  className="inline-flex items-center gap-1.5 text-sm text-foreground/80 transition-opacity hover:opacity-70"
                 >
                   Watch talk
                   <PlayCircle className="h-3.5 w-3.5" />
@@ -227,9 +225,9 @@ export default function ResourcesPage() {
                 <div className="flex items-start justify-between gap-6">
                   <div className="flex-1">
                     <div className="mb-2 flex items-center gap-3">
-                      <p className="text-[10px] uppercase tracking-[0.14em] text-muted-foreground">Essay</p>
-                      <span className="text-[10px] text-muted-foreground/40">·</span>
-                      <p className="text-[10px] uppercase tracking-[0.1em] text-muted-foreground/50">
+                      <p className="text-[12px] uppercase tracking-[0.12em] text-muted-foreground">Essay</p>
+                      <span className="text-[12px] text-muted-foreground/40">·</span>
+                      <p className="text-[12px] uppercase tracking-[0.08em] text-muted-foreground/60">
                         {article.source}
                       </p>
                     </div>
@@ -238,12 +236,12 @@ export default function ResourcesPage() {
                         {article.title}
                       </Link>
                     </h2>
-                    <p className="text-sm font-light leading-7 text-muted-foreground">{article.description}</p>
+                    <p className="text-[1rem] font-light leading-8 text-muted-foreground">{article.description}</p>
                   </div>
                   <Link
                     href={article.link}
                     target="_blank"
-                    className="mt-1 shrink-0 text-xs text-muted-foreground/40 transition-colors hover:text-muted-foreground"
+                    className="mt-1 shrink-0 text-sm text-muted-foreground/50 transition-colors hover:text-muted-foreground"
                   >
                     ↗
                   </Link>
@@ -257,13 +255,13 @@ export default function ResourcesPage() {
         <section className="rounded-sm border border-border/60 bg-card/40 p-7 md:p-10">
           <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
             <div>
-              <p className="mb-3 text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
+              <p className="mb-3 text-[12px] uppercase tracking-[0.12em] text-muted-foreground">
                 Got a recommendation?
               </p>
               <h2 className="mb-3 text-2xl tracking-[-0.02em] text-foreground" style={editorialSerif}>
                 Send something worth reading.
               </h2>
-              <p className="max-w-md text-sm font-light leading-7 text-muted-foreground">
+              <p className="max-w-md text-[1rem] font-light leading-8 text-muted-foreground">
                 If you've read or watched something that changed how you think about conditioning, systems, or
                 independent living — I'd genuinely like to hear about it.
               </p>

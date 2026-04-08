@@ -13,7 +13,7 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 const editorialSerif = {
-  fontFamily: '"Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, "Times New Roman", serif',
+  fontFamily: "var(--font-serif), Georgia, serif",
 };
 
 interface LessonPageProps {
@@ -49,8 +49,8 @@ export default async function LessonPage({ params }: LessonPageProps) {
   const { previous, next } = await getDeprogrammingLessonAdjacent(lesson.slug);
 
   return (
-    <div className="bg-gradient-to-b from-background via-background to-muted/30 pb-16">
-      <div className="container max-w-6xl pt-10">
+    <div className="bg-background pb-16">
+      <div className="container max-w-6xl pt-14">
         <CourseProgressTracker slug={lesson.slug} lessonOrder={lesson.lessonOrder} />
         <nav aria-label="Breadcrumb" className="mb-6">
           <ol
@@ -84,7 +84,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
           </ol>
         </nav>
 
-        <header className="mb-12 border-b border-border/70 pb-8">
+        <header className="mb-12 border-b border-border pb-8">
           <div className="mb-4 flex flex-wrap items-center gap-4 text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
             <div className="inline-flex items-center gap-2">
               <Layers className="h-3.5 w-3.5" />
@@ -94,7 +94,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
             <span>{`Lesson ${lesson.sectionOrder}.${lesson.lessonOrder}`}</span>
           </div>
           <h1
-            className="max-w-4xl text-4xl leading-tight tracking-[-0.03em] text-foreground md:text-5xl"
+            className="max-w-4xl text-[3rem] leading-[0.96] tracking-[-0.05em] text-foreground md:text-[4.2rem]"
             style={editorialSerif}
           >
             {lesson.title}
@@ -142,12 +142,11 @@ export default async function LessonPage({ params }: LessonPageProps) {
             <article
               className={cn(
                 "prose max-w-none dark:prose-invert prose-p:leading-8 hover:prose-a:text-accent-foreground prose-li:leading-8",
-                "prose-headings:font-normal prose-headings:tracking-[-0.02em] prose-headings:text-foreground",
+                "prose-headings:font-heading prose-headings:font-bold prose-headings:tracking-[-0.03em] prose-headings:text-foreground",
                 "[&_h1]:text-4xl [&_h1]:leading-tight [&_h2]:mt-12 [&_h2]:text-3xl [&_h2]:leading-tight",
                 "[&_blockquote]:border-border/70 [&_blockquote]:text-foreground/80 [&_h3]:text-2xl [&_h3]:leading-snug",
-                "[&_ol]:text-[15px] [&_p]:text-[15px] [&_p]:text-foreground/90 [&_ul]:text-[15px]"
+                "[&_ol]:text-[16px] [&_p]:text-[16px] [&_p]:text-foreground/90 [&_ul]:text-[16px]"
               )}
-              style={editorialSerif}
             >
               {lesson.contentBlocks?.map((block: any, index: number) => {
                 switch (block.type) {
@@ -216,7 +215,9 @@ export default async function LessonPage({ params }: LessonPageProps) {
               <div className="mb-4 border-b border-border/60 pb-4">
                 <div className="flex items-center gap-2">
                   <FileText className="h-3.5 w-3.5 text-muted-foreground" />
-                  <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Lesson Notes</p>
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                    Lesson Notes
+                  </p>
                 </div>
               </div>
               <div className="space-y-3 text-sm leading-7 text-muted-foreground">

@@ -177,11 +177,29 @@ Supporting other analytics providers are in progress. Feel free to open an issue
 MailerLite is a simple email marketing tool for all types of businesses. You can read more about it on [MailerLite website](https://www.mailerlite.com/).
 
 Configure:
-Set `EMAIL_API_BASE`, `EMAIL_API_KEY`, and `EMAIL_GROUP_ID` environment variables on your `.env.local` file and on Vercel dashboard.
+Set `EMAIL_API_BASE`, `EMAIL_API_KEY`, and `EMAIL_LIST_UUIDS` environment variables on your `.env.local` file and on Vercel dashboard.
+
+For product-specific email sequences, set `EMAIL_GROUP_MAP` with aliases like `newsletter:group_id,deprogramming:group_id`. Then pass the alias from the relevant signup form, and let your MailerLite automation trigger when a subscriber joins that group.
 
 #### Other newsletter providers
 
 Supporting other newsletter providers are in progress. Feel free to open an issue if you have any suggestions or a PR if you want to implement it yourself.
+
+#### Local Listmonk
+
+This repo also works with a local [Listmonk](https://listmonk.app/) instance. A ready-to-run Docker Compose stack lives in [`infra/listmonk/docker-compose.yml`](./infra/listmonk/docker-compose.yml).
+
+1. Copy `infra/listmonk/.env.example` to `infra/listmonk/.env`
+2. Start Listmonk with `docker compose --env-file infra/listmonk/.env -f infra/listmonk/docker-compose.yml up -d`
+3. Open `http://localhost:9000` and finish setup, or use the seeded admin credentials from `infra/listmonk/.env`
+4. In the app `.env`, set `NEWSLETTER_PROVIDER=listmonk`
+5. Set `EMAIL_API_BASE=http://localhost:9000/`
+6. Create a Listmonk list, copy its UUID, and set `EMAIL_LIST_UUIDS=<your-list-uuid>`
+
+Notes:
+
+- The Listmonk Postgres container is exposed on `127.0.0.1:9432` to avoid colliding with any local database already using port `5432`.
+- The compose file mounts `infra/listmonk/uploads/` into the container so uploaded assets persist across restarts.
 
 ### Hero section
 
@@ -208,7 +226,6 @@ Note: DO NOT overdo it. You can easily make images look bad with lossy compressi
 - [Praveen kumars's Blog](https://sumandeepuniversity.org) - [Source](https://github.com/gramythedj/digital-garden)
 - [Steven Selolo's Blog](https://stevenselolo.com/) - [Source](https://github.com/StevenPss/website-2023)
 - [Marton's Blog](https://www.martondobos.com/) - [Source](https://github.com/dobosmarton/digital-garden)
-
 
 **Create a PR and add your blog to this list if you're using the template!**
 

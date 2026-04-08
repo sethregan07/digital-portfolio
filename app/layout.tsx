@@ -1,12 +1,34 @@
 import "./globals.css";
 
 import { Metadata } from "next";
+import { Bitter, IBM_Plex_Sans_Condensed, Source_Sans_3 } from "next/font/google";
 
 import siteMetadata, { BASE_URL, defaultAuthor } from "@/lib/metadata";
 import { Toaster } from "@/components/ui/toaster";
 import { Analytics } from "@/components/analytics";
 import { BackTopButton } from "@/components/back-to-top";
 import { ThemeProvider } from "@/components/theme-provider";
+
+const sans = IBM_Plex_Sans_Condensed({
+  subsets: ["latin"],
+  variable: "--font-sans",
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+});
+
+const body = Source_Sans_3({
+  subsets: ["latin"],
+  variable: "--font-body",
+  weight: ["400", "500", "600"],
+  display: "swap",
+});
+
+const serif = Bitter({
+  subsets: ["latin"],
+  variable: "--font-serif",
+  weight: ["700", "800"],
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
@@ -61,7 +83,9 @@ interface RootLayoutProps {
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="min-h-screen bg-gradient-to-b from-slate-100 to-white text-slate-900 antialiased dark:bg-gradient-to-b dark:from-gray-900 dark:to-gray-800 dark:text-slate-50">
+      <body
+        className={`${sans.variable} ${body.variable} ${serif.variable} min-h-screen bg-background text-foreground antialiased`}
+      >
         <ThemeProvider
           storageKey="digital-garden-theme"
           attribute="class"

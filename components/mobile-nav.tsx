@@ -21,22 +21,24 @@ export function MobileNav() {
       <SheetTrigger asChild>
         <Button
           variant="ghost"
-          className="mr-2 px-0 hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 md:hidden"
+          className="mr-2 h-8 border border-border/80 px-2 hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 md:hidden"
         >
           <Menu className="h-6 w-6" />
           <span className="sr-only">Toggle Menu</span>
         </Button>
       </SheetTrigger>
-      <SheetContent side="bottom" className="pr-0">
+      <SheetContent side="bottom" className="border-border bg-background pr-0">
         <MobileLink href="/" className="flex items-center" onOpenChange={setOpen} aria-label="Go to Home">
-          <span className="font-bold">{siteMetadata.title.default}</span>
+          <span className="font-heading text-2xl font-semibold tracking-[-0.03em]">{siteMetadata.title.default}</span>
         </MobileLink>
         <ScrollArea className="my-4 max-h-96 overflow-y-scroll pb-10">
           <div className="flex flex-col space-y-3">
             {navigationLinks?.map((item) =>
               item.content ? (
                 <div className="order-1 mt-3 flex flex-col space-y-3" key={item.title.trim()}>
-                  <p className="font-bold">{item.title}</p>
+                  <p className="font-sans text-[12px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                    {item.title}
+                  </p>
                   {item.content.map((subItem) => (
                     <MobileLink key={subItem.href} href={subItem.href} onOpenChange={setOpen}>
                       {subItem.title}
@@ -81,6 +83,7 @@ function MobileLink({ href, onOpenChange, className, children, ...props }: Mobil
         onOpenChange?.(false);
       }}
       className={cn(
+        "border-b border-border/60 pb-2 font-sans text-lg tracking-[-0.02em]",
         className,
         href.toString() !== "/" &&
           pathname.substring(2).startsWith(href.toString().substring(2)) &&

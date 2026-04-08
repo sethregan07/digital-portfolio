@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { format, parseISO } from "date-fns";
+
 import { getStaticPageBySlug, getStaticPageParams } from "@/lib/services/content";
 
 interface PageProps {
@@ -36,8 +37,8 @@ export default async function PagePage({ params }: PageProps) {
   }
 
   return (
-    <div className="container max-w-6xl pb-10">
-      <article className="prose mx-auto max-w-5xl dark:prose-invert prose-headings:mb-3 prose-headings:mt-8 prose-headings:font-heading prose-headings:font-bold prose-headings:leading-tight hover:prose-a:text-accent-foreground prose-a:prose-headings:no-underline">
+    <div className="container max-w-6xl pb-10 pt-14">
+      <article className="prose mx-auto max-w-5xl dark:prose-invert prose-headings:mb-3 prose-headings:mt-8 prose-headings:font-heading prose-headings:font-bold prose-headings:leading-tight hover:prose-a:text-accent-foreground prose-a:prose-headings:no-underline [&_ol]:text-[16px] [&_p]:text-[16px] [&_ul]:text-[16px]">
         <h1 className="mt-0">{page.title}</h1>
         {page.description && <p className="m-0 text-xl">{page.description}</p>}
         {page.lastUpdatedDate && (

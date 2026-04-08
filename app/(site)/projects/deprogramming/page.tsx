@@ -4,12 +4,13 @@ import { ArrowRight, Award, BookOpen, Calendar, CheckCircle2, Clock, Eye, Lock, 
 
 import { getPublishedCourseArticles } from "@/lib/repositories/content";
 import { Button } from "@/components/ui/button";
+import NewsletterSubscribe from "@/components/newsletter-subscribe";
 import { PreloadLink } from "@/components/preload-link";
 
 export const revalidate = 300;
 
 const editorialSerif = {
-  fontFamily: '"Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, "Times New Roman", serif',
+  fontFamily: "var(--font-serif), Georgia, serif",
 };
 
 const learnings = [
@@ -37,8 +38,8 @@ const learnings = [
 
 function SectionHeader({ label }: { label: string }) {
   return (
-    <div className="mb-7 flex items-end justify-between border-b border-border/70 pb-3">
-      <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">{label}</p>
+    <div className="mb-7 flex items-end justify-between border-b border-border pb-3">
+      <p className="section-label">{label}</p>
     </div>
   );
 }
@@ -73,26 +74,23 @@ export default async function DeprogrammingCoursePage() {
   const sectionCount = Object.keys(sections).length;
 
   return (
-    <div className="bg-gradient-to-b from-background via-background to-muted/30 pb-16">
-      <div className="container max-w-5xl pt-10">
+    <div className="bg-background pb-16">
+      <div className="container max-w-5xl pt-14">
         {/* ── HERO ── */}
-        <section className="mb-16 border-b border-border/70 pb-10 pt-4">
+        <section className="mb-16 border-b border-border pb-10 pt-6">
           <div className="max-w-4xl">
-            <p className="mb-4 text-[11px] font-medium uppercase tracking-[0.2em] text-muted-foreground">Course</p>
-            <h1
-              className="text-4xl leading-tight tracking-[-0.03em] text-foreground md:text-5xl"
-              style={editorialSerif}
-            >
+            <p className="page-kicker mb-5">Course</p>
+            <h1 className="page-title" style={editorialSerif}>
               Deprogramming: breaking free from societal conditioning.
             </h1>
-            <p className="mt-5 max-w-3xl text-base leading-8 text-muted-foreground">
+            <p className="page-intro">
               A structured course for examining the inherited beliefs, social scripts, and institutional pressures that
               shape thought and behavior — and for building a more grounded way of seeing.
             </p>
           </div>
 
           {/* ── STAT STRIP — editorial style, not icon-row ── */}
-          <div className="mt-8 grid max-w-xl grid-cols-2 divide-x divide-border/60 rounded-sm border border-border/60 sm:grid-cols-4">
+          <div className="mt-8 grid max-w-xl grid-cols-2 divide-x divide-border rounded-sm border border-border sm:grid-cols-4">
             {[
               { num: totalLessons.toString(), label: "lessons" },
               { num: `${totalReadTime} min`, label: "reading time" },
@@ -106,7 +104,7 @@ export default async function DeprogrammingCoursePage() {
                 >
                   {s.num}
                 </span>
-                <span className="text-[10px] uppercase tracking-widest text-muted-foreground">{s.label}</span>
+                <span className="text-[11px] uppercase tracking-[0.12em] text-muted-foreground">{s.label}</span>
               </div>
             ))}
           </div>
@@ -123,22 +121,22 @@ export default async function DeprogrammingCoursePage() {
               <Link href="/projects/deprogramming/what-is-deprogramming">Start free preview</Link>
             </Button>
           </div>
-          <p className="mt-3 text-xs text-muted-foreground/60">
+          <p className="mt-3 text-sm text-muted-foreground/60">
             Purchased already? Use your private access link to unlock the full course.
           </p>
         </section>
 
         {/* ── READER QUOTE — social proof before curriculum ── */}
-        <div className="mb-16 flex items-start gap-4 border-y border-border/60 bg-muted/20 px-6 py-5">
+        <div className="mb-16 flex items-start gap-4 border-y border-border px-0 py-6">
           <span className="mt-0.5 shrink-0 text-4xl leading-none text-muted-foreground/30" style={editorialSerif}>
             "
           </span>
           <div>
-            <p className="max-w-2xl text-sm font-light italic leading-7 text-muted-foreground">
+            <p className="max-w-2xl text-[0.98rem] font-light italic leading-7 text-muted-foreground">
               This course changed how I read the news, talk to my family, and make decisions. It's the clearest map I've
               found for understanding why I think the way I do.
             </p>
-            <p className="mt-2 text-[11px] text-muted-foreground/50">— Course reader, via email</p>
+            <p className="mt-2 text-[12px] text-muted-foreground/60">— Course reader, via email</p>
           </div>
         </div>
 
@@ -160,11 +158,11 @@ export default async function DeprogrammingCoursePage() {
             ].map((item) => {
               const Icon = item.icon;
               return (
-                <div key={item.title} className="flex items-start gap-4 px-6 py-5">
+                <div key={item.title} className="flex items-start gap-4 px-6 py-6">
                   <Icon className="mt-1 h-4 w-4 shrink-0 text-muted-foreground" />
                   <div>
-                    <p className="mb-1 text-sm font-medium text-foreground">{item.title}</p>
-                    <p className="text-sm font-light leading-7 text-muted-foreground">{item.description}</p>
+                    <p className="mb-1 text-[1rem] font-medium text-foreground">{item.title}</p>
+                    <p className="text-[0.98rem] font-light leading-7 text-muted-foreground">{item.description}</p>
                   </div>
                 </div>
               );
@@ -175,15 +173,15 @@ export default async function DeprogrammingCoursePage() {
         {/* ── WHAT YOU'LL LEARN ── */}
         <section className="mb-16">
           <SectionHeader label="What You'll Learn" />
-          <div className="grid gap-6 md:grid-cols-2">
+          <div className="grid gap-8 md:grid-cols-2">
             {learnings.map((item) => {
               const Icon = item.icon;
               return (
-                <div key={item.title} className="flex items-start gap-4 border-b border-border/60 pb-6">
+                <div key={item.title} className="flex items-start gap-4 border-b border-border/60 pb-7">
                   <Icon className="mt-1 h-4 w-4 shrink-0 text-muted-foreground" />
                   <div>
-                    <p className="mb-1 text-sm font-medium text-foreground">{item.title}</p>
-                    <p className="text-sm font-light leading-7 text-muted-foreground">{item.description}</p>
+                    <p className="mb-1 text-[1rem] font-medium text-foreground">{item.title}</p>
+                    <p className="text-[0.98rem] font-light leading-7 text-muted-foreground">{item.description}</p>
                   </div>
                 </div>
               );
@@ -192,7 +190,7 @@ export default async function DeprogrammingCoursePage() {
         </section>
 
         {/* ── HOW TO USE ── */}
-        <section className="mb-16 rounded-sm border border-border/70 bg-card/40 p-7 md:p-10">
+        <section className="mb-16 rounded-sm border border-border/70 bg-card/40 p-8 md:p-11">
           <SectionHeader label="How To Use This Course" />
           <p className="max-w-3xl text-base leading-8 text-muted-foreground">
             Move lesson by lesson, pause often, and write down your own examples. The goal is not speed — it is clarity.
@@ -201,29 +199,40 @@ export default async function DeprogrammingCoursePage() {
           </p>
         </section>
 
+        <section className="mb-16">
+          <NewsletterSubscribe
+            provider="mailerlite"
+            title="Join the Deprogramming email sequence"
+            description="Subscribe for the product funnel: free lessons, deeper prompts, launch updates, and reminders tied to the course."
+            buttonText="Join the sequence"
+            group="deprogramming"
+            source="deprogramming-course-page"
+            successMessage="You're in. If your MailerLite automation is attached to the Deprogramming group, the sequence will start from your inbox."
+            finePrint="Map the `deprogramming` alias in `EMAIL_GROUP_MAP` to the MailerLite group that should trigger the course automation."
+          />
+        </section>
+
         {/* ── CURRICULUM ── */}
         <section className="mb-16">
-          <div className="mb-8 flex items-baseline justify-between border-b border-border/70 pb-3">
-            <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Course Curriculum</p>
-            <span className="text-[10px] uppercase tracking-widest text-muted-foreground/50">
+          <div className="mb-8 flex items-baseline justify-between border-b border-border pb-3">
+            <p className="section-label">Course Curriculum</p>
+            <span className="text-[11px] uppercase tracking-[0.12em] text-muted-foreground/50">
               {totalLessons} lessons · {sectionCount} sections
             </span>
           </div>
 
-          <div className="space-y-10">
+          <div className="space-y-12">
             {(Object.entries(sections) as [string, (typeof courseLessons)[number][]][]).map(
               ([sectionName, lessons], sectionIndex) => (
                 <section key={sectionName} className="border-b border-border/60 pb-8 last:border-b-0">
                   <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex items-center gap-3">
-                      <span className="rounded-sm border border-border/70 px-3 py-1 text-[11px] uppercase tracking-[0.12em] text-muted-foreground">
+                      <span className="rounded-sm border border-border/70 px-3 py-1 text-[12px] uppercase tracking-[0.1em] text-muted-foreground">
                         {sectionIndex + 1}
                       </span>
-                      <h2 className="text-2xl tracking-[-0.02em] text-foreground" style={editorialSerif}>
-                        {sectionName}
-                      </h2>
+                      <h2 className="card-title">{sectionName}</h2>
                     </div>
-                    <p className="text-[11px] uppercase tracking-[0.12em] text-muted-foreground">
+                    <p className="text-[12px] uppercase tracking-[0.1em] text-muted-foreground">
                       {lessons.length} lessons
                     </p>
                   </div>
@@ -257,7 +266,7 @@ export default async function DeprogrammingCoursePage() {
                                     >
                                       {lesson.title}
                                     </PreloadLink>
-                                    <span className="rounded-sm border border-border/50 px-1.5 py-0.5 text-[10px] uppercase tracking-widest text-muted-foreground/50">
+                                    <span className="rounded-sm border border-border/50 px-1.5 py-0.5 text-[11px] uppercase tracking-[0.1em] text-muted-foreground/50">
                                       Free
                                     </span>
                                   </>
@@ -268,7 +277,7 @@ export default async function DeprogrammingCoursePage() {
                               )}
                             </div>
                           </div>
-                          <div className="flex shrink-0 items-center gap-1.5 pl-9 text-xs text-muted-foreground/50 sm:pl-0">
+                          <div className="flex shrink-0 items-center gap-1.5 pl-9 text-sm text-muted-foreground/50 sm:pl-0">
                             <Clock className="h-3 w-3" />
                             <span>{lesson.readTimeMinutes} min</span>
                           </div>
@@ -286,8 +295,8 @@ export default async function DeprogrammingCoursePage() {
         <section className="mb-16 rounded-sm border border-border/70 bg-card/40 p-7 md:p-10">
           <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
             <div>
-              <p className="mb-3 text-[11px] uppercase tracking-[0.14em] text-muted-foreground">Ready to start?</p>
-              <h2 className="mb-3 text-2xl tracking-[-0.02em] text-foreground" style={editorialSerif}>
+              <p className="mb-3 text-[12px] uppercase tracking-[0.12em] text-muted-foreground">Ready to start?</p>
+              <h2 className="section-title mb-3" style={editorialSerif}>
                 The first three lessons are free.
               </h2>
               <p className="max-w-md text-sm leading-7 text-muted-foreground">
@@ -309,15 +318,13 @@ export default async function DeprogrammingCoursePage() {
         </section>
 
         {/* ── COURSE OVERVIEW — moved to bottom ── */}
-        <section className="border-t border-border/70 pt-10">
+        <section className="border-t border-border pt-10">
           <SectionHeader label="Course Overview" />
           <div className="grid gap-8 md:grid-cols-2">
             <article className="border-b border-border/60 pb-8 md:border-b-0 md:border-r md:pr-8">
               <div className="mb-3 flex items-center gap-3">
                 <BookOpen className="h-4 w-4 text-muted-foreground" />
-                <h2 className="text-xl tracking-[-0.02em] text-foreground" style={editorialSerif}>
-                  A guided deprogramming journey
-                </h2>
+                <h2 className="card-title">A guided deprogramming journey</h2>
               </div>
               <p className="text-sm leading-7 text-muted-foreground">
                 This course is designed to help you examine the invisible forces that shape thoughts, beliefs, and
@@ -328,9 +335,7 @@ export default async function DeprogrammingCoursePage() {
             <article className="pb-8 md:pl-2">
               <div className="mb-3 flex items-center gap-3">
                 <Calendar className="h-4 w-4 text-muted-foreground" />
-                <h2 className="text-xl tracking-[-0.02em] text-foreground" style={editorialSerif}>
-                  Learn at a reflective pace
-                </h2>
+                <h2 className="card-title">Learn at a reflective pace</h2>
               </div>
               <p className="text-sm leading-7 text-muted-foreground">
                 Each lesson includes core concepts, reflection exercises, practical applications, and further resources

@@ -17,7 +17,7 @@ import NewsletterSubscribe from "@/components/newsletter-subscribe";
 export const revalidate = 300;
 
 const editorialSerif = {
-  fontFamily: '"Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, "Times New Roman", serif',
+  fontFamily: "var(--font-serif), Georgia, serif",
 };
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
@@ -54,9 +54,9 @@ export default async function ArticleCategoryPage({ params }: { params: { slug: 
   }
 
   return (
-    <div className="bg-gradient-to-b from-background via-background to-muted/30 pb-16">
-      <div className="container max-w-5xl pt-10">
-        <section className="mb-16 border-b border-border/70 pb-10 pt-4">
+    <div className="bg-background pb-16">
+      <div className="container max-w-5xl pt-14">
+        <section className="mb-16 border-b border-border pb-10 pt-6">
           <Link
             href="/articles"
             className="mb-5 inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.16em] text-muted-foreground transition-colors hover:text-foreground"
@@ -68,12 +68,9 @@ export default async function ArticleCategoryPage({ params }: { params: { slug: 
           <div className="max-w-3xl">
             <div className="mb-4 flex items-center gap-2">
               <Layers className="h-3.5 w-3.5 text-muted-foreground" />
-              <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-muted-foreground">Category</p>
+              <p className="page-kicker">Category</p>
             </div>
-            <h1
-              className="text-4xl leading-tight tracking-[-0.03em] text-foreground md:text-5xl"
-              style={editorialSerif}
-            >
+            <h1 className="page-title" style={editorialSerif}>
               {categoryName}
             </h1>
             <p className="mt-5 max-w-2xl text-base leading-8 text-muted-foreground">
@@ -91,7 +88,7 @@ export default async function ArticleCategoryPage({ params }: { params: { slug: 
                   <Link
                     key={category.slug}
                     href={`/articles/category/${category.slug}`}
-                    className={`rounded-sm border px-3 py-1 text-[11px] tracking-wide transition-colors ${
+                    className={`rounded-sm border px-3 py-1 font-sans text-[11px] tracking-wide transition-colors ${
                       active
                         ? "border-foreground bg-foreground text-background"
                         : "border-border/60 text-muted-foreground hover:border-border hover:text-foreground"
@@ -113,12 +110,7 @@ export default async function ArticleCategoryPage({ params }: { params: { slug: 
                 className={`py-5 ${index < articles.length - 1 ? "border-b border-border/60" : ""}`}
               >
                 <Link href={article.href} className="block">
-                  <h2
-                    className="text-2xl leading-[1.25] tracking-[-0.02em] text-foreground transition-opacity hover:opacity-75"
-                    style={editorialSerif}
-                  >
-                    {article.title}
-                  </h2>
+                  <h2 className="card-title leading-[1.12] transition-opacity hover:opacity-75">{article.title}</h2>
                 </Link>
                 {article.description ? (
                   <p className="mt-3 text-sm leading-7 text-muted-foreground">{article.description}</p>
@@ -140,8 +132,9 @@ export default async function ArticleCategoryPage({ params }: { params: { slug: 
           </div>
         </section>
 
-        <section className="border-t border-border/70 pt-10">
+        <section className="border-t border-border pt-10">
           <NewsletterSubscribe
+            provider="mailerlite"
             title="Get thoughtful notes on conditioning, clearer decisions, and grounded living"
             description="Occasional essays and practical frameworks on the three themes that shape the site: deprogramming, decision-making under noise, and living with more independence. Sent roughly 2x per month."
             buttonText="Subscribe"

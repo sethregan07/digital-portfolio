@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowRight, Mail } from "lucide-react";
 import { useForm } from "react-hook-form";
@@ -18,6 +19,12 @@ export type CTAProps = {
   title: string;
   description?: string;
   buttonText: string;
+  provider?: "mailerlite" | "listmonk";
+  group?: string;
+  source?: string;
+  successMessage?: string;
+  finePrint?: string;
+  redirectTo?: string;
 };
 
 const formSchema = z.object({
@@ -28,9 +35,16 @@ const NewsletterSubscribe = ({
   title,
   description,
   buttonText,
+  provider,
+  group,
+  source,
+  successMessage,
+  finePrint,
+  redirectTo,
   className,
   ...props
 }: CTAProps & React.HTMLAttributes<HTMLDivElement>) => {
+  const router = useRouter();
   const { toast } = useToast();
   const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
   const [statusMessage, setStatusMessage] = useState<string>("");
@@ -53,6 +67,9 @@ const NewsletterSubscribe = ({
       },
       body: JSON.stringify({
         email: values.email,
+        provider,
+        group,
+        source,
       }),
     });
 
@@ -69,30 +86,37 @@ const NewsletterSubscribe = ({
     }
 
     setStatus("success");
-    setStatusMessage("You're subscribed. Check your inbox for a welcome email if enabled.");
-    return toast({
+    const resolvedSuccessMessage =
+      successMessage || "You're subscribed. Check your inbox for a welcome email if enabled.";
+    setStatusMessage(resolvedSuccessMessage);
+    toast({
       title: "🎉 Nice!",
-      description: "You'll get the emails now.",
+      description: resolvedSuccessMessage,
     });
+
+    if (redirectTo) {
+      router.push(redirectTo);
+      return;
+    }
+
+    return;
   };
 
   return (
-    <section
-      className={cn(
-        "border border-border/70 bg-gradient-to-b from-background via-background to-muted/30 text-card-foreground",
-        className
-      )}
-      {...props}
-    >
+    <section className={cn("premium-surface-soft border border-border/70 text-card-foreground", className)} {...props}>
       <div className="p-7 md:p-10">
         <div className="mx-auto max-w-2xl text-center">
-          <div className="mb-3 flex items-center justify-center gap-2 text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+          <div className="mb-3 flex items-center justify-center gap-2 text-[12px] uppercase tracking-[0.16em] text-muted-foreground">
             <Mail className="h-3.5 w-3.5" />
             <span>Newsletter</span>
           </div>
-          <h2 className="font-heading text-2xl font-bold tracking-tight md:text-3xl">{title}</h2>
+          <h2 className="text-[1.75rem] font-semibold leading-[1.08] tracking-[-0.025em] text-foreground md:text-[2.1rem]">
+            {title}
+          </h2>
 
-          <p className="mt-4 hidden text-sm leading-7 text-muted-foreground sm:block">{description}</p>
+          <p className="mt-4 hidden max-w-[58ch] text-[0.98rem] leading-7 text-muted-foreground sm:block">
+            {description}
+          </p>
         </div>
 
         <div className="mx-auto mt-8 max-w-2xl border-t border-border/60 pt-6">
@@ -110,7 +134,7 @@ const NewsletterSubscribe = ({
                       <Input
                         type="email"
                         placeholder="you@example.com"
-                        className="h-11 rounded-sm border-border/80 bg-background/70"
+                        className="h-11 rounded-sm border-border/80 bg-[#0c1630]/90 text-foreground placeholder:text-muted-foreground/75 focus-visible:ring-foreground/20"
                         {...field}
                       />
                     </FormControl>
@@ -128,6 +152,7 @@ const NewsletterSubscribe = ({
               {statusMessage}
             </p>
           )}
+          {finePrint ? <p className="mt-3 text-sm leading-6 text-muted-foreground">{finePrint}</p> : null}
           {siteMetadata.newsletterUrl && (
             <div className="mt-5 flex items-center justify-center">
               <Button

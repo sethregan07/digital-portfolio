@@ -17,7 +17,7 @@ const CommandDialogComponent = dynamic(
 );
 
 const wordmark = {
-  fontFamily: '"Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, "Times New Roman", serif',
+  fontFamily: "var(--font-serif), Georgia, serif",
 };
 
 export function Navigation() {
@@ -62,12 +62,12 @@ export function Navigation() {
           siteMetadata.activeAnnouncement && "sm:top-28 md:top-20 lg:top-12"
         )}
       >
-        <div className="flex items-center gap-2 border border-border/70 bg-background/90 px-3 py-2 shadow-sm supports-[backdrop-filter]:bg-background/60 supports-[backdrop-filter]:bg-clip-padding supports-[backdrop-filter]:backdrop-blur sm:justify-between sm:border-x-0 sm:border-t-0 sm:px-3">
+        <div className="premium-panel flex items-center gap-2 border-b border-border/80 px-3 py-2.5 supports-[backdrop-filter]:bg-background/90 sm:justify-between sm:px-3">
           <div className="container relative mx-auto flex max-w-6xl items-center justify-between">
             <div className="flex shrink-0 items-center justify-start">
               <Link href="/" aria-label="Go to Home">
                 <span
-                  className="hidden text-base font-bold tracking-[-0.02em] text-foreground sm:block"
+                  className="hidden text-[1.35rem] font-semibold tracking-[-0.03em] text-foreground sm:block"
                   style={wordmark}
                 >
                   Originalform
@@ -76,13 +76,13 @@ export function Navigation() {
             </div>
 
             <Link href="/" aria-label="Go to Home" className="absolute left-1/2 -translate-x-1/2 sm:hidden">
-              <span className="text-xl font-bold tracking-[-0.02em] text-foreground" style={wordmark}>
+              <span className="text-[1.45rem] font-semibold tracking-[-0.03em] text-foreground" style={wordmark}>
                 Originalform
               </span>
             </Link>
 
             <div className="order-1 sm:order-2 sm:ml-auto">
-              <nav className="ml-auto hidden space-x-6 text-sm font-medium sm:block sm:w-full">
+              <nav className="ml-auto hidden font-sans text-sm font-medium sm:block sm:w-full">
                 <Navbar />
               </nav>
               <nav className="sm:hidden">
@@ -92,7 +92,7 @@ export function Navigation() {
 
             {/* Actions — search + mode toggle */}
             <div className="order-2 ml-auto flex w-auto items-center justify-end gap-2 sm:order-3 sm:ml-4 sm:w-fit">
-              <CommandDialogComponent className="border border-border/70 bg-background/70 hover:bg-accent sm:border-0 sm:bg-transparent" />
+              <CommandDialogComponent className="border border-border/70 bg-background/60 text-muted-foreground hover:bg-accent hover:text-foreground sm:bg-background/30" />
               <ModeToggle />
             </div>
           </div>

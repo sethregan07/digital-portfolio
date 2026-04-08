@@ -94,7 +94,7 @@ export default async function PostPage({ params }: PostProps) {
   const lastUpdatedDate = formatPostDate(post.lastUpdatedDate);
 
   return (
-    <div className="container max-w-6xl pb-10">
+    <div className="container max-w-6xl pb-10 pt-14">
       <nav aria-label="Breadcrumb">
         <ol role="list" className="hidden items-center gap-1 text-sm text-muted-foreground md:flex md:flex-row">
           <li>
@@ -154,7 +154,7 @@ export default async function PostPage({ params }: PostProps) {
             </AccordionItem>
           </Accordion>
         </div>
-        <article className="prose max-w-7xl dark:prose-invert hover:prose-a:text-accent-foreground prose-a:prose-headings:mb-3 prose-a:prose-headings:mt-8 prose-a:prose-headings:font-heading prose-a:prose-headings:font-bold prose-a:prose-headings:leading-tight prose-a:prose-headings:no-underline lg:max-w-2xl lg:pr-8">
+        <article className="prose max-w-7xl dark:prose-invert prose-headings:font-heading prose-headings:font-bold prose-headings:leading-tight hover:prose-a:text-accent-foreground prose-a:prose-headings:no-underline lg:max-w-2xl lg:pr-8 [&_ol]:text-[16px] [&_p]:text-[16px] [&_ul]:text-[16px]">
           <h1 className="mb-2 font-heading">{post.title}</h1>
           {post.description && (
             <p className="mb-2 mt-0 text-xl text-slate-700 dark:text-slate-200">{post.description}</p>
@@ -204,6 +204,7 @@ export default async function PostPage({ params }: PostProps) {
       </div>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <NewsletterSubscribe
+        provider="mailerlite"
         title="Get essays and frameworks on conditioning, clarity, and grounded decision-making"
         description="Subscribe for new posts, references, and practical tools that help you think independently and act with less noise."
         buttonText="Subscribe"

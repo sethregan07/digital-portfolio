@@ -10,7 +10,7 @@ import NewsletterSubscribe from "@/components/newsletter-subscribe";
 export const revalidate = 300;
 
 const editorialSerif = {
-  fontFamily: '"Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, "Times New Roman", serif',
+  fontFamily: "var(--font-serif), Georgia, serif",
 };
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -29,19 +29,19 @@ export async function generateMetadata(): Promise<Metadata> {
 
 function EditorialArticleSplit({ lead, supporting }: { lead: ArticleListItem; supporting: ArticleListItem[] }) {
   return (
-    <div className="grid gap-10 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,0.7fr)]">
-      <article>
+    <div className="grid gap-12 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,0.7fr)]">
+      <article className="pr-2">
         <p className="mb-3 text-[10px] uppercase tracking-[0.14em] text-muted-foreground">{lead.section}</p>
         <Link href={lead.href} className="block">
           <h2
-            className="text-3xl leading-[1.1] tracking-[-0.03em] text-foreground transition-opacity hover:opacity-75 md:text-4xl"
+            className="text-[2.2rem] font-extrabold leading-[0.98] tracking-[-0.05em] text-foreground transition-opacity hover:opacity-75 md:text-[3rem]"
             style={editorialSerif}
           >
             {lead.title}
           </h2>
         </Link>
         {lead.description ? (
-          <p className="mt-4 max-w-xl text-base leading-8 text-muted-foreground">{lead.description}</p>
+          <p className="mt-5 max-w-xl text-[1.02rem] leading-8 text-muted-foreground">{lead.description}</p>
         ) : null}
         <div className="mt-5 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
           <span className="inline-flex items-center gap-1.5">
@@ -64,20 +64,17 @@ function EditorialArticleSplit({ lead, supporting }: { lead: ArticleListItem; su
       </article>
 
       {supporting.length > 0 ? (
-        <div className="flex flex-col divide-y divide-border/60 border-t border-border/60 pt-6 lg:border-l lg:border-t-0 lg:pl-10 lg:pt-0">
+        <div className="flex flex-col divide-y divide-border/60 border-t border-border/60 pt-8 lg:border-l lg:border-t-0 lg:pl-12 lg:pt-0">
           {supporting.map((article) => (
-            <article key={article.slug} className="py-5 first:pt-0 last:pb-0">
+            <article key={article.slug} className="py-6 first:pt-0 last:pb-0">
               <p className="mb-1.5 text-[10px] uppercase tracking-[0.14em] text-muted-foreground">{article.section}</p>
               <Link href={article.href} className="block">
-                <h3
-                  className="text-base leading-snug tracking-[-0.01em] text-foreground transition-opacity hover:opacity-75"
-                  style={editorialSerif}
-                >
+                <h3 className="text-[1.15rem] font-semibold leading-[1.15] tracking-[-0.02em] text-foreground transition-opacity hover:opacity-75">
                   {article.title}
                 </h3>
               </Link>
               {article.description ? (
-                <p className="mt-2 line-clamp-2 text-sm leading-6 text-muted-foreground">{article.description}</p>
+                <p className="mt-3 line-clamp-2 text-sm leading-7 text-muted-foreground">{article.description}</p>
               ) : null}
               <div className="mt-2 flex items-center gap-2 text-[11px] text-muted-foreground">
                 <span>{article.readTimeMinutes} min</span>
@@ -106,21 +103,18 @@ export default async function Articles() {
   }));
 
   return (
-    <div className="bg-gradient-to-b from-background via-background to-muted/30 pb-16">
-      <div className="container max-w-5xl pt-10">
-        <section className="mb-16 border-b border-border/70 pb-10 pt-4">
+    <div className="bg-background pb-16">
+      <div className="container max-w-5xl pt-14">
+        <section className="mb-16 border-b border-border pb-10 pt-6">
           <div className="max-w-3xl">
             <div className="mb-4 flex items-center gap-2">
               <FileText className="h-3.5 w-3.5 text-muted-foreground" />
-              <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-muted-foreground">Articles</p>
+              <p className="page-kicker">Articles</p>
             </div>
-            <h1
-              className="text-4xl leading-tight tracking-[-0.03em] text-foreground md:text-5xl"
-              style={editorialSerif}
-            >
+            <h1 className="page-title" style={editorialSerif}>
               Essays and field notes for clearer thinking.
             </h1>
-            <p className="mt-5 max-w-2xl text-base leading-8 text-muted-foreground">
+            <p className="page-intro max-w-2xl">
               A growing editorial library on conditioning, institutions, media, power, and the habits of independent
               judgment.
             </p>
@@ -147,10 +141,10 @@ export default async function Articles() {
 
         {leadArticle ? (
           <section className="mb-16">
-            <div className="mb-8 flex items-baseline justify-between border-b border-border/70 pb-3">
+            <div className="mb-8 flex items-baseline justify-between border-b border-border pb-3">
               <div className="flex items-center gap-2">
                 <Newspaper className="h-3.5 w-3.5 text-muted-foreground" />
-                <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Latest Essay</p>
+                <p className="section-label">Latest Essay</p>
               </div>
             </div>
 
@@ -173,10 +167,10 @@ export default async function Articles() {
 
           return (
             <section key={category.slug} className="mb-20">
-              <div className="mb-8 flex items-baseline justify-between border-b border-border/70 pb-3">
+              <div className="mb-8 flex items-baseline justify-between border-b border-border pb-3">
                 <div className="flex items-center gap-2">
                   <Newspaper className="h-3.5 w-3.5 text-muted-foreground" />
-                  <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">{category.name}</p>
+                  <p className="section-label">{category.name}</p>
                 </div>
                 <div className="flex items-center gap-4">
                   <span className="text-[10px] uppercase tracking-widest text-muted-foreground/40">
@@ -197,8 +191,9 @@ export default async function Articles() {
           );
         })}
 
-        <section className="border-t border-border/70 pt-10">
+        <section className="border-t border-border pt-10">
           <NewsletterSubscribe
+            provider="mailerlite"
             title="Get thoughtful notes on conditioning, clearer decisions, and grounded living"
             description="Occasional essays and practical frameworks on the three themes that shape the site: deprogramming, decision-making under noise, and living with more independence. Sent roughly 2x per month."
             buttonText="Subscribe"

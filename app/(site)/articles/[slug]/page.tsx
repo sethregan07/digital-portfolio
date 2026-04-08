@@ -19,7 +19,7 @@ import { TableOfContents } from "@/components/table-of-contents";
 export const revalidate = 300;
 
 const editorialSerif = {
-  fontFamily: '"Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, "Times New Roman", serif',
+  fontFamily: "var(--font-serif), Georgia, serif",
 };
 
 interface ArticlePageProps {
@@ -45,7 +45,7 @@ function LabelRow({ icon: Icon, label }: { icon: typeof FileText; label: string 
   return (
     <div className="flex items-center gap-2">
       <Icon className="h-3.5 w-3.5 text-muted-foreground" />
-      <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">{label}</p>
+      <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">{label}</p>
     </div>
   );
 }
@@ -107,12 +107,12 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   const lastUpdatedDate = formatPostDate(article.lastUpdatedDate);
 
   return (
-    <div className="bg-gradient-to-b from-background via-background to-muted/30 pb-16">
-      <div className="container max-w-6xl pt-10">
+    <div className="bg-background pb-16">
+      <div className="container max-w-6xl pt-14">
         <nav aria-label="Breadcrumb" className="mb-6">
           <ol
             role="list"
-            className="flex flex-wrap items-center gap-2 text-[11px] uppercase tracking-[0.12em] text-muted-foreground"
+            className="flex flex-wrap items-center gap-2 text-[12px] uppercase tracking-[0.1em] text-muted-foreground"
           >
             <li>
               <Link
@@ -135,8 +135,8 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           </ol>
         </nav>
 
-        <header className="mb-12 border-b border-border/70 pb-8">
-          <div className="mb-4 flex flex-wrap items-center gap-4 text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
+        <header className="mb-12 border-b border-border pb-8">
+          <div className="mb-4 flex flex-wrap items-center gap-4 text-[12px] uppercase tracking-[0.12em] text-muted-foreground">
             <div className="inline-flex items-center gap-2">
               <Layers className="h-3.5 w-3.5" />
               <span>{article.section}</span>
@@ -145,15 +145,15 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
             <span>{`Article ${article.sectionOrder}.${article.lessonOrder}`}</span>
           </div>
           <h1
-            className="max-w-4xl text-4xl leading-tight tracking-[-0.03em] text-foreground md:text-5xl"
+            className="max-w-4xl text-[3rem] leading-[0.96] tracking-[-0.05em] text-foreground md:text-[4.2rem]"
             style={editorialSerif}
           >
             {article.title}
           </h1>
           {article.description ? (
-            <p className="mt-5 max-w-3xl text-base leading-8 text-muted-foreground">{article.description}</p>
+            <p className="mt-5 max-w-3xl text-[1.05rem] leading-8 text-muted-foreground">{article.description}</p>
           ) : null}
-          <div className="mt-6 flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
+          <div className="mt-6 flex flex-wrap items-center gap-4 text-[0.98rem] text-muted-foreground">
             <span className="inline-flex items-center gap-1.5">
               <Clock className="h-4 w-4" />
               {article.readTimeMinutes} mins read
@@ -189,12 +189,11 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
             <article
               className={cn(
                 "prose max-w-none dark:prose-invert prose-p:leading-8 hover:prose-a:text-accent-foreground prose-li:leading-8",
-                "prose-headings:font-normal prose-headings:tracking-[-0.02em] prose-headings:text-foreground",
+                "prose-headings:font-heading prose-headings:font-bold prose-headings:tracking-[-0.03em] prose-headings:text-foreground",
                 "[&_h1]:text-4xl [&_h1]:leading-tight [&_h2]:mt-12 [&_h2]:text-3xl [&_h2]:leading-tight",
                 "[&_blockquote]:border-border/70 [&_blockquote]:text-foreground/80 [&_h3]:text-2xl [&_h3]:leading-snug",
-                "[&_ol]:text-[15px] [&_p]:text-[15px] [&_p]:text-foreground/90 [&_ul]:text-[15px]"
+                "[&_ol]:text-[16px] [&_p]:text-[16px] [&_p]:text-foreground/90 [&_ul]:text-[16px]"
               )}
-              style={editorialSerif}
             >
               {article.bodyCode ? (
                 <div dangerouslySetInnerHTML={{ __html: article.bodyCode }} />
@@ -282,6 +281,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
         <section className="mt-12 border-t border-border/70 pt-10">
           <NewsletterSubscribe
+            provider="mailerlite"
             title="Get thoughtful notes on conditioning, clearer decisions, and grounded living"
             description="Occasional essays and practical frameworks on the three themes that shape the site: deprogramming, decision-making under noise, and living with more independence. Sent roughly 2x per month."
             buttonText="Subscribe"

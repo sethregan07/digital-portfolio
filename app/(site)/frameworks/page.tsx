@@ -32,7 +32,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 const editorialSerif = {
-  fontFamily: '"Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, "Times New Roman", serif',
+  fontFamily: "var(--font-serif), Georgia, serif",
 };
 
 // Consolidated to 4 meaningful sections, each framework has a "use when" line
@@ -163,17 +163,17 @@ export default function FrameworksPage() {
   const totalFrameworks = frameworkSections.reduce((acc, s) => acc + s.items.length, 0);
 
   return (
-    <div className="bg-gradient-to-b from-background via-background to-muted/30 pb-16">
-      <div className="container max-w-5xl pt-10">
+    <div className="bg-background pb-16">
+      <div className="container max-w-5xl pt-14">
         {/* ── HEADER ── */}
-        <section className="mb-16 border-b border-border/70 pb-10 pt-4">
+        <section className="mb-16 border-b border-border pb-10 pt-6">
           <div className="max-w-3xl">
             <div className="mb-4 flex items-center gap-2">
               <Lightbulb className="h-3.5 w-3.5 text-muted-foreground" />
-              <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-muted-foreground">Frameworks</p>
+              <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">Frameworks</p>
             </div>
             <h1
-              className="text-4xl leading-tight tracking-[-0.03em] text-foreground md:text-5xl"
+              className="text-[3rem] leading-[0.96] tracking-[-0.05em] text-foreground md:text-[4.2rem]"
               style={editorialSerif}
             >
               Mental models and tools for clearer decisions.
@@ -185,14 +185,14 @@ export default function FrameworksPage() {
 
             {/* How to use note */}
             <div className="mt-7 border-l-2 border-border/50 pl-5">
-              <p className="text-sm font-light italic leading-7 text-muted-foreground">
+              <p className="text-[1rem] font-light italic leading-8 text-muted-foreground">
                 Each framework includes a "use when" line — that's the most important part. A tool used in the wrong
                 situation produces confident wrong answers.
               </p>
             </div>
 
             {/* Stats */}
-            <div className="mt-8 grid max-w-xs grid-cols-3 divide-x divide-border/60 rounded-sm border border-border/60">
+            <div className="mt-8 grid max-w-xs grid-cols-3 divide-x divide-border rounded-sm border border-border">
               {[
                 { num: totalFrameworks.toString(), label: "frameworks" },
                 { num: frameworkSections.length.toString(), label: "categories" },
@@ -205,7 +205,7 @@ export default function FrameworksPage() {
                   >
                     {s.num}
                   </span>
-                  <span className="text-[10px] uppercase tracking-widest text-muted-foreground">{s.label}</span>
+                  <span className="text-[11px] uppercase tracking-[0.12em] text-muted-foreground">{s.label}</span>
                 </div>
               ))}
             </div>
@@ -222,13 +222,15 @@ export default function FrameworksPage() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <SectionIcon className="h-3.5 w-3.5 text-muted-foreground" />
-                    <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">{section.label}</p>
+                    <p className="text-[12px] uppercase tracking-[0.16em] text-muted-foreground">{section.label}</p>
                   </div>
-                  <span className="text-[10px] uppercase tracking-widest text-muted-foreground/40">
+                  <span className="text-[11px] uppercase tracking-[0.12em] text-muted-foreground/50">
                     {section.items.length} tools
                   </span>
                 </div>
-                <p className="mt-2 max-w-xl text-sm font-light text-muted-foreground/70">{section.description}</p>
+                <p className="mt-2 max-w-xl text-[1rem] font-light leading-7 text-muted-foreground/75">
+                  {section.description}
+                </p>
               </div>
 
               <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
@@ -242,7 +244,7 @@ export default function FrameworksPage() {
                           <ItemIcon className="h-4 w-4 text-muted-foreground" />
                         </div>
                         <h2
-                          className="pt-0.5 text-base leading-snug tracking-[-0.01em] text-foreground"
+                          className="pt-0.5 text-[1.12rem] leading-snug tracking-[-0.01em] text-foreground"
                           style={editorialSerif}
                         >
                           {item.title}
@@ -250,14 +252,14 @@ export default function FrameworksPage() {
                       </div>
 
                       {/* Description */}
-                      <p className="mb-4 text-sm font-light leading-7 text-muted-foreground">{item.description}</p>
+                      <p className="mb-4 text-[1rem] font-light leading-8 text-muted-foreground">{item.description}</p>
 
                       {/* Use when — the key addition */}
                       <div className="mt-auto border-t border-border/50 pt-4">
-                        <p className="mb-1.5 text-[10px] uppercase tracking-[0.1em] text-muted-foreground/50">
+                        <p className="mb-1.5 text-[11px] uppercase tracking-[0.1em] text-muted-foreground/60">
                           Use when
                         </p>
-                        <p className="text-xs font-light italic leading-6 text-muted-foreground/70">{item.useWhen}</p>
+                        <p className="text-sm font-light italic leading-7 text-muted-foreground/75">{item.useWhen}</p>
                       </div>
 
                       {/* Tags */}
@@ -265,7 +267,7 @@ export default function FrameworksPage() {
                         {item.tags.map((tag) => (
                           <span
                             key={tag}
-                            className="border border-border/60 px-2 py-0.5 text-[10px] uppercase tracking-[0.1em] text-muted-foreground/60"
+                            className="border border-border/60 px-2 py-0.5 text-[11px] uppercase tracking-[0.08em] text-muted-foreground/70"
                           >
                             {tag}
                           </span>
@@ -283,11 +285,11 @@ export default function FrameworksPage() {
         <section className="border border-border/70 bg-card/40 p-7 md:p-10">
           <div className="grid gap-8 md:grid-cols-[minmax(0,1fr)_auto] md:items-center">
             <div>
-              <p className="mb-3 text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Go deeper</p>
+              <p className="mb-3 text-[12px] uppercase tracking-[0.16em] text-muted-foreground">Go deeper</p>
               <h2 className="mb-3 text-2xl tracking-[-0.02em] text-foreground" style={editorialSerif}>
                 The Deprogramming course puts these tools into sequence.
               </h2>
-              <p className="max-w-md text-sm font-light leading-7 text-muted-foreground">
+              <p className="max-w-md text-[1rem] font-light leading-8 text-muted-foreground">
                 Frameworks are more useful when you understand the conditioning they're working against. The course
                 builds that context across 42 lessons.
               </p>

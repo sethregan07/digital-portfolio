@@ -23,7 +23,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 const editorialSerif = {
-  fontFamily: '"Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, "Times New Roman", serif',
+  fontFamily: "var(--font-serif), Georgia, serif",
 };
 
 const iconMap = {
@@ -43,25 +43,27 @@ export default async function SocialPage() {
   );
 
   return (
-    <div className="bg-gradient-to-b from-background via-background to-muted/30 pb-16">
-      <div className="container max-w-5xl pt-10">
+    <div className="bg-background pb-16">
+      <div className="container max-w-5xl pt-14">
         {/* ── PAGE HEADER ── */}
-        <section className="mb-16 border-b border-border/70 pb-10 pt-4">
+        <section className="mb-16 border-b border-border pb-10 pt-6">
           <div className="max-w-3xl">
-            <p className="mb-4 text-[11px] font-medium uppercase tracking-[0.2em] text-muted-foreground">Offerings</p>
+            <p className="mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+              Offerings
+            </p>
             <h1
-              className="text-4xl leading-tight tracking-[-0.03em] text-foreground md:text-5xl"
+              className="text-[3rem] leading-[0.96] tracking-[-0.05em] text-foreground md:text-[4.2rem]"
               style={editorialSerif}
             >
               Courses and tools designed to help you think more clearly and act with more independence.
             </h1>
-            <p className="mt-5 max-w-2xl text-base leading-8 text-muted-foreground">
+            <p className="mt-5 max-w-2xl text-[1.0625rem] leading-8 text-muted-foreground">
               Practical learning paths and decision tools for people trying to question assumptions, reduce noise, and
               build more grounded judgment.
             </p>
 
             {/* Quick-glance strip */}
-            <div className="mt-8 grid max-w-xs grid-cols-3 divide-x divide-border/60 rounded-sm border border-border/60">
+            <div className="mt-8 grid max-w-xs grid-cols-3 divide-x divide-border rounded-sm border border-border">
               {[
                 { num: "42", label: "lessons" },
                 { num: "Free", label: "to start" },
@@ -74,7 +76,7 @@ export default async function SocialPage() {
                   >
                     {s.num}
                   </span>
-                  <span className="text-[10px] uppercase tracking-widest text-muted-foreground">{s.label}</span>
+                  <span className="text-[11px] uppercase tracking-[0.14em] text-muted-foreground">{s.label}</span>
                 </div>
               ))}
             </div>
@@ -86,9 +88,11 @@ export default async function SocialPage() {
           return (
             <section key={category} className="mb-20">
               {/* Section label */}
-              <div className="mb-8 flex items-baseline justify-between border-b border-border/70 pb-3">
-                <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">{category}</p>
-                <span className="text-[10px] uppercase tracking-widest text-muted-foreground/40">
+              <div className="mb-8 flex items-baseline justify-between border-b border-border pb-3">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                  {category}
+                </p>
+                <span className="text-[11px] uppercase tracking-[0.14em] text-muted-foreground/50">
                   {categoryProjects.length} {categoryProjects.length === 1 ? "offering" : "offerings"}
                 </span>
               </div>
@@ -104,13 +108,13 @@ export default async function SocialPage() {
               {category === "Frameworks" && (
                 <div className="mt-12 border-t border-border/60 pt-10">
                   <div className="mb-8">
-                    <p className="mb-2 text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
+                    <p className="mb-2 text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
                       Standalone tools
                     </p>
-                    <h3 className="text-2xl tracking-[-0.02em] text-foreground" style={editorialSerif}>
+                    <h3 className="text-[1.6rem] font-semibold tracking-[-0.03em] text-foreground">
                       Smaller tools with a single, useful outcome.
                     </h3>
-                    <p className="mt-3 max-w-xl text-sm leading-7 text-muted-foreground">
+                    <p className="mt-3 max-w-xl text-[1.0625rem] leading-8 text-muted-foreground">
                       Focused tools you can use quickly without committing to a larger program. More are on the way.
                     </p>
                   </div>
@@ -123,7 +127,7 @@ export default async function SocialPage() {
                         {["Workbook", "Gumroad"].map((tag) => (
                           <span
                             key={tag}
-                            className="rounded-sm border border-border/60 px-2 py-0.5 text-[10px] uppercase tracking-[0.1em] text-muted-foreground"
+                            className="rounded-sm border border-border/60 px-2 py-1 text-[11px] uppercase tracking-[0.12em] text-muted-foreground"
                           >
                             {tag}
                           </span>
@@ -135,7 +139,7 @@ export default async function SocialPage() {
                         </span>
                         <h4 className="text-base font-medium text-foreground">False Needs</h4>
                       </div>
-                      <p className="text-sm leading-7 text-muted-foreground">
+                      <p className="text-[1.0625rem] leading-8 text-muted-foreground">
                         A short workbook to separate real needs from manufactured wants and make more grounded
                         decisions.
                       </p>
@@ -156,10 +160,12 @@ export default async function SocialPage() {
                     {/* Coming soon slot */}
                     <div className="flex items-center justify-center rounded-sm border border-dashed border-border/50 px-6 py-10 text-center">
                       <div>
-                        <p className="mb-2 text-[11px] uppercase tracking-[0.14em] text-muted-foreground/50">
+                        <p className="mb-2 text-[11px] uppercase tracking-[0.16em] text-muted-foreground/60">
                           More tools
                         </p>
-                        <p className="text-sm font-light text-muted-foreground/40">In progress — check back soon.</p>
+                        <p className="text-muted-foreground/55 text-[1.0625rem] font-light leading-8">
+                          In progress — check back soon.
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -170,13 +176,13 @@ export default async function SocialPage() {
         })}
 
         {/* ── BOTTOM CTA ── */}
-        <section className="border-t border-border/70 pt-10">
+        <section className="border-t border-border pt-10">
           <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="mb-2 text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
                 Not sure where to start?
               </p>
-              <p className="max-w-md text-base leading-7 text-muted-foreground">
+              <p className="max-w-md text-[1.0625rem] leading-8 text-muted-foreground">
                 The Deprogramming course is the best entry point — it connects all three territories into a single path.
               </p>
             </div>
