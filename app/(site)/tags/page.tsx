@@ -10,7 +10,7 @@ export const revalidate = 300;
 
 export async function generateMetadata(): Promise<Metadata> {
   const title = "Tags";
-  const description = `All tags in ${siteMetadata.title}`;
+  const description = `All topics and tags used across ${siteMetadata.title.default}.`;
   const url = `${BASE_URL}/tags`;
 
   return {

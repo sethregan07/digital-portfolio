@@ -7,7 +7,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: "/private/",
+      disallow: ["/private/", "/projects/deprogramming/full/", "/course-access"],
     },
     sitemap: `${BASE_URL}/sitemap.xml`,
     host: BASE_URL,

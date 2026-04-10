@@ -2,11 +2,12 @@ import RSS from "rss";
 
 import siteMetadata, { BASE_URL, defaultAuthor } from "@/lib/metadata";
 import { getPublishedPosts } from "@/lib/repositories/content";
+import { getCanonicalPostPath, isTemplatePost } from "@/lib/services/content";
 
 export const revalidate = 300;
 
 export async function GET(request: Request) {
-  const posts = await getPublishedPosts();
+  const posts = (await getPublishedPosts()).filter((post) => !isTemplatePost(post));
   const feed = new RSS({
     title: siteMetadata.title.default,
     description: siteMetadata.description,
@@ -18,16 +19,18 @@ export async function GET(request: Request) {
   });
 
   posts.map((post) => {
-      feed.item({
-        title: post.title,
-        guid: `${BASE_URL}/posts/${post.slug}`,
-        url: `${BASE_URL}/posts/${post.slug}`,
-        date: post.lastUpdatedDate || post.publishedDate,
-        description: post.description || "",
-        author: defaultAuthor.name,
-        categories: post?.tags?.map((tag) => tag) || [],
-      });
+    const url = `${BASE_URL}${getCanonicalPostPath(post)}`;
+
+    feed.item({
+      title: post.title,
+      guid: url,
+      url,
+      date: post.lastUpdatedDate || post.publishedDate,
+      description: post.description || "",
+      author: defaultAuthor.name,
+      categories: post?.tags?.map((tag) => tag) || [],
     });
+  });
 
   return new Response(feed.xml({ indent: true }), {
     headers: {

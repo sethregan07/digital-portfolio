@@ -1,54 +1,87 @@
 import { MetadataRoute } from "next";
 
-import { tagOptions } from "@/lib/content-definitions/post";
 import { BASE_URL } from "@/lib/metadata";
-import { getPublishedPages, getPublishedPosts } from "@/lib/repositories/content";
+import { getPublishedCourseArticles, getPublishedPages, getPublishedPosts } from "@/lib/repositories/content";
+import { getArticleCategoryCounts, getTagCounts, isEditorialArticle, isPublicLegacyPost } from "@/lib/services/content";
 
 export const revalidate = 300;
+
+const previewLessonCount = 3;
+const staticRouteEntries = [
+  "/",
+  "/articles",
+  "/contact",
+  "/frameworks",
+  "/projects",
+  "/projects/deprogramming",
+  "/resources",
+  "/uses",
+];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
   const loadedPosts = await getPublishedPosts();
   const loadedPages = await getPublishedPages();
-  const tags = tagOptions.map((tag: string) => ({
-    url: `${BASE_URL}/tags/${tag}`,
-    lastModified: now,
-  }));
-  const posts = loadedPosts.map((post) => ({
+  const courseLessons = await getPublishedCourseArticles("deprogramming");
+  const tagCounts = await getTagCounts();
+  const articleCategories = await getArticleCategoryCounts();
+
+  const editorialPosts = loadedPosts.filter(isEditorialArticle);
+  const legacyPosts = loadedPosts.filter(isPublicLegacyPost);
+  const tags = Object.keys(tagCounts)
+    .sort((left, right) => left.localeCompare(right))
+    .map((tag) => ({
+      url: `${BASE_URL}/tags/${tag}`,
+      lastModified: now,
+    }));
+  const posts = legacyPosts.map((post) => ({
     url: `${BASE_URL}/posts/${post.slug}`,
     lastModified: post.lastUpdatedDate || post.publishedDate || now,
   }));
+  const articles = editorialPosts.map((post) => ({
+    url: `${BASE_URL}/articles/${post.slug}`,
+    lastModified: post.lastUpdatedDate || post.publishedDate || now,
+  }));
+  const previewLessons = courseLessons
+    .filter((lesson) => lesson.lessonOrder <= previewLessonCount)
+    .map((lesson) => ({
+      url: `${BASE_URL}/projects/deprogramming/${lesson.slug}`,
+      lastModified: now,
+    }));
   const pages = loadedPages.map((page: { slug: string; lastUpdatedDate: Date | null }) => ({
     url: `${BASE_URL}/${page.slug}`,
     lastModified: page.lastUpdatedDate || now,
   }));
+
   return [
-    {
-      url: BASE_URL,
+    ...staticRouteEntries.map((route) => ({
+      url: `${BASE_URL}${route === "/" ? "" : route}`,
       lastModified: now,
-    },
-    {
-      url: `${BASE_URL}/projects`,
-      lastModified: now,
-    },
-    {
-      url: `${BASE_URL}/uses`,
-      lastModified: now,
-    },
-    {
-      url: `${BASE_URL}/social`,
-      lastModified: now,
-    },
+    })),
     ...pages,
-    {
-      url: `${BASE_URL}/posts`,
+    ...articleCategories.map((category) => ({
+      url: `${BASE_URL}/articles/category/${category.slug}`,
       lastModified: now,
-    },
+    })),
+    ...articles,
+    ...previewLessons,
+    ...(legacyPosts.length > 0
+      ? [
+          {
+            url: `${BASE_URL}/posts`,
+            lastModified: now,
+          },
+        ]
+      : []),
     ...posts,
-    {
-      url: `${BASE_URL}/tags`,
-      lastModified: now,
-    },
+    ...(tags.length > 0
+      ? [
+          {
+            url: `${BASE_URL}/tags`,
+            lastModified: now,
+          },
+        ]
+      : []),
     ...tags,
   ];
 }

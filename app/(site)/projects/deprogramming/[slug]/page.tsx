@@ -3,9 +3,15 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { ArrowLeft, ArrowRight, BookOpen, Clock, FileText, Home, Layers } from "lucide-react";
 
-import { getDeprogrammingLessonAdjacent, getDeprogrammingLessonBySlug } from "@/lib/services/content";
+import { BASE_URL, defaultAuthor } from "@/lib/metadata";
+import {
+  getDeprogrammingLessonAdjacent,
+  getDeprogrammingLessonBySlug,
+  getDeprogrammingLessonStaticParams,
+} from "@/lib/services/content";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { ServerMdx } from "@/components/mdx/server";
 
 export const revalidate = 300;
 
@@ -28,10 +34,32 @@ export async function generateMetadata({ params }: LessonPageProps): Promise<Met
     return {};
   }
 
+  const title = `${lesson.title} - Deprogramming Preview`;
+  const description = lesson.description;
+  const url = `${BASE_URL}/projects/deprogramming/${params.slug}`;
+
   return {
-    title: `${lesson.title} - Deprogramming Preview`,
-    description: lesson.description,
+    title,
+    description,
+    alternates: {
+      canonical: url,
+    },
+    openGraph: {
+      type: "article",
+      url,
+      title,
+      description,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+    },
   };
+}
+
+export async function generateStaticParams(): Promise<LessonPageProps["params"][]> {
+  return getDeprogrammingLessonStaticParams();
 }
 
 export default async function PreviewLessonPage({ params }: LessonPageProps) {
@@ -47,6 +75,25 @@ export default async function PreviewLessonPage({ params }: LessonPageProps) {
   const { previous, next } = await getDeprogrammingLessonAdjacent(lesson.slug);
   const nextPreviewLesson = next && next.lessonOrder <= previewLessonCount ? next : null;
   const previousPreviewLesson = previous && previous.lessonOrder <= previewLessonCount ? previous : null;
+  const lessonUrl = `${BASE_URL}/projects/deprogramming/${lesson.slug}`;
+  const lessonJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: lesson.title,
+    description: lesson.description,
+    url: lessonUrl,
+    mainEntityOfPage: lessonUrl,
+    author: {
+      "@type": "Person",
+      name: defaultAuthor.name,
+      url: defaultAuthor.website,
+    },
+    publisher: {
+      "@type": "Organization",
+      name: defaultAuthor.name,
+      url: BASE_URL,
+    },
+  };
 
   return (
     <div className="bg-background pb-16">
@@ -147,25 +194,7 @@ export default async function PreviewLessonPage({ params }: LessonPageProps) {
                 "[&_ol]:text-[16px] [&_p]:text-[16px] [&_p]:text-foreground/90 [&_ul]:text-[16px]"
               )}
             >
-              {lesson.contentBlocks?.map((block: any, index: number) => {
-                switch (block.type) {
-                  case "heading":
-                    const HeadingTag = `h${block.level}` as keyof JSX.IntrinsicElements;
-                    return <HeadingTag key={index}>{block.content}</HeadingTag>;
-                  case "paragraph":
-                    return <p key={index}>{block.content}</p>;
-                  case "list":
-                    return (
-                      <ul key={index} className="list-inside list-disc">
-                        {block.items.map((item: string, itemIndex: number) => (
-                          <li key={itemIndex}>{item}</li>
-                        ))}
-                      </ul>
-                    );
-                  default:
-                    return null;
-                }
-              })}
+              <ServerMdx source={lesson.body} stripFirstHeading />
             </article>
 
             {lesson.resources && lesson.resources.length > 0 ? (
@@ -228,6 +257,7 @@ export default async function PreviewLessonPage({ params }: LessonPageProps) {
             </div>
           </aside>
         </div>
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(lessonJsonLd) }} />
       </div>
     </div>
   );

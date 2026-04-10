@@ -1,15 +1,22 @@
 import { Metadata } from "next";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { format, isValid, parseISO } from "date-fns";
 import { Home } from "lucide-react";
 
 import { BASE_URL, defaultAuthor } from "@/lib/metadata";
-import { getPostDetailBySlug, getPostStaticParams } from "@/lib/services/content";
+import {
+  getCanonicalPostPath,
+  getPostDetailBySlug,
+  getPostStaticParams,
+  isEditorialArticle,
+  isTemplatePost,
+} from "@/lib/services/content";
 import { cn } from "@/lib/utils";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { ServerMdx } from "@/components/mdx/server";
 import NewsletterSubscribe from "@/components/newsletter-subscribe";
 import { PostSeriesBox } from "@/components/post-series-box";
 import { SocialShare } from "@/components/social-share";
@@ -44,7 +51,7 @@ export async function generateMetadata({ params }: PostProps): Promise<Metadata>
     return {};
   }
 
-  const url = `${BASE_URL}/posts/${params.slug}`;
+  const url = `${BASE_URL}${getCanonicalPostPath(post)}`;
   const ogImage = `${BASE_URL}/posts/${params.slug}/opengraph-image`;
   const twitterImage = `${BASE_URL}/posts/${params.slug}/twitter-image`;
 
@@ -69,6 +76,12 @@ export async function generateMetadata({ params }: PostProps): Promise<Metadata>
       description: post.description || undefined,
       images: [twitterImage],
     },
+    robots: isEditorialArticle(post)
+      ? {
+          index: false,
+          follow: true,
+        }
+      : undefined,
   };
 }
 
@@ -83,15 +96,40 @@ export default async function PostPage({ params }: PostProps) {
     notFound();
   }
 
+  if (isTemplatePost(post)) {
+    notFound();
+  }
+
+  if (isEditorialArticle(post)) {
+    redirect(`/articles/${post.slug}`);
+  }
+
+  const articleUrl = `${BASE_URL}/posts/${post.slug}`;
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
-    name: post?.title,
-    description: post?.description,
+    headline: post.title,
+    description: post.description,
+    url: articleUrl,
+    mainEntityOfPage: articleUrl,
+    datePublished: post.publishedDate?.toISOString(),
+    dateModified: post.lastUpdatedDate?.toISOString() || post.publishedDate?.toISOString(),
+    keywords: post.tags,
+    author: {
+      "@type": "Person",
+      name: post?.author?.name || defaultAuthor.name,
+      url: defaultAuthor.website,
+    },
+    publisher: {
+      "@type": "Organization",
+      name: defaultAuthor.name,
+      url: BASE_URL,
+    },
   };
 
   const publishedDate = formatPostDate(post.publishedDate);
   const lastUpdatedDate = formatPostDate(post.lastUpdatedDate);
+  const shareLabel = defaultAuthor.handle || defaultAuthor.name;
 
   return (
     <div className="container max-w-6xl pb-10 pt-14">
@@ -165,7 +203,7 @@ export default async function PostPage({ params }: PostProps) {
               <PostSeriesBox data={post.series} />
             </div>
           )}
-          <div dangerouslySetInnerHTML={{ __html: post.body }} />
+          <ServerMdx source={post.body} stripFirstHeading />
           <hr className="my-4" />
           <div className="flex flex-row items-center justify-between">
             {post.tags && (
@@ -179,7 +217,7 @@ export default async function PostPage({ params }: PostProps) {
                 ))}
               </ul>
             )}
-            <SocialShare text={`${post.title} via ${defaultAuthor.handle}`} url={`${BASE_URL}/posts/${post.slug}`} />
+            <SocialShare text={`${post.title} via ${shareLabel}`} url={articleUrl} />
           </div>
         </article>
         <aside className="hidden lg:block">

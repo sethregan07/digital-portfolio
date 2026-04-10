@@ -4,9 +4,9 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Award, BookOpen, Clock, Users } from "lucide-react";
 
+import { BASE_URL } from "@/lib/metadata";
 import { getPublishedCourseArticles } from "@/lib/repositories/content";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { CourseLessonList } from "@/components/course-lesson-list";
@@ -16,9 +16,18 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export async function generateMetadata(): Promise<Metadata> {
+  const url = `${BASE_URL}/projects/deprogramming/full`;
+
   return {
     title: "Deprogramming Course (Full Access)",
     description: "Full access to the Deprogramming course content.",
+    alternates: {
+      canonical: url,
+    },
+    robots: {
+      index: false,
+      follow: false,
+    },
   };
 }
 

@@ -8,6 +8,7 @@ type SubscribePayload = {
   provider?: "mailerlite" | "listmonk";
   group?: string;
   groups?: string[];
+  includeDefaultGroups?: boolean;
   source?: string;
 };
 
@@ -53,9 +54,9 @@ function getProviderEnv(provider: "mailerlite" | "listmonk") {
   };
 }
 
-function resolveListIds(provider: "mailerlite" | "listmonk", requestedGroups: string[]) {
+function resolveListIds(provider: "mailerlite" | "listmonk", requestedGroups: string[], includeDefaultGroups = true) {
   const env = getProviderEnv(provider);
-  const configuredDefaults = splitCsv(env.listIds);
+  const configuredDefaults = includeDefaultGroups ? splitCsv(env.listIds) : [];
   const groupMap = parseGroupMap(env.groupMap);
   const mappedGroups = requestedGroups.flatMap((group) => splitCsv(groupMap[group.toLowerCase()] || group));
 
@@ -88,7 +89,13 @@ async function getErrorMessage(response: Response) {
 }
 
 export async function POST(request: Request) {
-  const { email, provider: requestedProvider, group, groups = [] } = (await request.json()) as SubscribePayload;
+  const {
+    email,
+    provider: requestedProvider,
+    group,
+    groups = [],
+    includeDefaultGroups = true,
+  } = (await request.json()) as SubscribePayload;
 
   if (!email) {
     return NextResponse.json({ error: "Email is required" }, { status: 400 });
@@ -99,7 +106,7 @@ export async function POST(request: Request) {
       | "listmonk";
     const requestedGroups = [group, ...groups].filter((value): value is string => Boolean(value?.trim()));
     const env = getProviderEnv(provider);
-    const listIds = resolveListIds(provider, requestedGroups);
+    const listIds = resolveListIds(provider, requestedGroups, includeDefaultGroups);
 
     if (provider === "mailerlite") {
       if (!env.apiKey) {

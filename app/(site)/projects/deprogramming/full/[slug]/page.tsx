@@ -4,10 +4,12 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { ArrowLeft, ArrowRight, BookOpen, Clock, FileText, Home, Layers } from "lucide-react";
 
+import { BASE_URL } from "@/lib/metadata";
 import { getDeprogrammingLessonAdjacent, getDeprogrammingLessonBySlug } from "@/lib/services/content";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { CourseProgressTracker } from "@/components/course-progress-tracker";
+import { ServerMdx } from "@/components/mdx/server";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -29,9 +31,18 @@ export async function generateMetadata({ params }: LessonPageProps): Promise<Met
     return {};
   }
 
+  const url = `${BASE_URL}/projects/deprogramming/full/${params.slug}`;
+
   return {
     title: `${lesson.title} - Deprogramming Course`,
     description: lesson.description,
+    alternates: {
+      canonical: url,
+    },
+    robots: {
+      index: false,
+      follow: false,
+    },
   };
 }
 
@@ -148,25 +159,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
                 "[&_ol]:text-[16px] [&_p]:text-[16px] [&_p]:text-foreground/90 [&_ul]:text-[16px]"
               )}
             >
-              {lesson.contentBlocks?.map((block: any, index: number) => {
-                switch (block.type) {
-                  case "heading":
-                    const HeadingTag = `h${block.level}` as keyof JSX.IntrinsicElements;
-                    return <HeadingTag key={index}>{block.content}</HeadingTag>;
-                  case "paragraph":
-                    return <p key={index}>{block.content}</p>;
-                  case "list":
-                    return (
-                      <ul key={index} className="list-inside list-disc">
-                        {block.items.map((item: string, itemIndex: number) => (
-                          <li key={itemIndex}>{item}</li>
-                        ))}
-                      </ul>
-                    );
-                  default:
-                    return null;
-                }
-              })}
+              <ServerMdx source={lesson.body} stripFirstHeading />
             </article>
 
             {lesson.resources && lesson.resources.length > 0 ? (

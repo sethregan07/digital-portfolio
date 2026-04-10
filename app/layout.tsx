@@ -36,7 +36,6 @@ export const metadata: Metadata = {
   description: siteMetadata.description,
   authors: [{ name: defaultAuthor.name, url: defaultAuthor.website }],
   alternates: {
-    canonical: BASE_URL,
     types: {
       "application/rss+xml": `${BASE_URL}/feed.xml`,
     },
@@ -44,9 +43,6 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: BASE_URL,
-    title: siteMetadata.title.default,
-    description: siteMetadata.description,
     siteName: siteMetadata.title.default,
     images: [
       {
@@ -59,8 +55,6 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: siteMetadata.title.default,
-    description: siteMetadata.description,
     images: [`${BASE_URL}/twitter-image`],
   },
   robots: {

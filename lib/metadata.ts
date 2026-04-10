@@ -9,21 +9,21 @@ export const BASE_URL =
 
 export const defaultAuthor: AuthorType = {
   name: "Originalform",
-  handle: "",
+  handle: "@originalform",
   socialProfiles,
   email: "signal@originalform.org",
-  website: "https://nextjs.org",
-  jobTitle: "Vision for Digital Age",
+  website: BASE_URL,
+  jobTitle: "Essays, frameworks, and courses for clearer thinking",
   company: "",
   availableForWork: true,
   location: {
-    city: "Unity and Cooperation",
+    city: "Los Angeles, CA",
     media: "/losangeles.jpg",
   },
 };
 
-const defaultTitle = `${defaultAuthor.name}'s Blog`;
-const defaultDescription = `I'm ${defaultAuthor.name}. Building hackin’ cool digital products around the world 🌴.`;
+const defaultTitle = defaultAuthor.name;
+const defaultDescription = "Essays, frameworks, and courses on deprogramming, power, and clearer thinking.";
 
 const siteMetadata: SiteMetaData = {
   title: {
@@ -31,15 +31,16 @@ const siteMetadata: SiteMetaData = {
     default: defaultTitle,
   },
   description: defaultDescription,
-  siteRepo: "https://github.com/thedevdavid/digital-garden",
+  siteRepo: "https://github.com/jngnandan/digital-garden-1",
   newsletterProvider: "mailerlite",
-  newsletterUrl: "",
+  newsletterUrl: "https://originalform.org/newsletter",
   analyticsProvider: "umami",
   defaultTheme: "dark",
+  // Set activeAnnouncement: true when you have a real launch announcement to show.
   activeAnnouncement: false,
   announcement: {
-    buttonText: "Support on DevHunt →",
-    link: "https://devhunt.org/tool/modern-developer-blog-template-digital-garden-starter",
+    buttonText: "Start the Deprogramming course →",
+    link: "/projects/deprogramming",
   },
   postsPerPage: 10,
   postsOnHomePage: 8,

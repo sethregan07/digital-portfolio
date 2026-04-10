@@ -164,6 +164,7 @@ function getFallbackPublishedCourseLessonBySlug(course: string, slug: string): D
     readTimeMinutes: lesson.readTimeMinutes,
     resources: lesson.resources ?? [],
     headings: Array.isArray(lesson.headings) ? lesson.headings : [],
+    body: lesson.body.raw,
     bodyCode: lesson.body.code ?? null,
     contentBlocks: null,
   };
@@ -214,6 +215,7 @@ export type DbCourseLessonDetail = {
   readTimeMinutes: number;
   resources: string[];
   headings: any;
+  body: string;
   bodyCode: string | null;
   contentBlocks: any;
 };
@@ -428,6 +430,7 @@ export const getPublishedCourseLessonBySlug = cache(async (course: string, slug:
         readTimeMinutes: true,
         resources: true,
         headings: true,
+        body: true,
         bodyCode: true,
         contentBlocks: true,
       },

@@ -16,11 +16,13 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 
 export type CTAProps = {
-  title: string;
+  eyebrow?: string;
+  title?: string;
   description?: string;
-  buttonText: string;
+  buttonText?: string;
   provider?: "mailerlite" | "listmonk";
   group?: string;
+  includeDefaultGroups?: boolean;
   source?: string;
   successMessage?: string;
   finePrint?: string;
@@ -32,11 +34,13 @@ const formSchema = z.object({
 });
 
 const NewsletterSubscribe = ({
+  eyebrow = "Newsletter",
   title,
   description,
-  buttonText,
-  provider,
+  buttonText = "Subscribe",
+  provider = siteMetadata.newsletterProvider as "mailerlite" | "listmonk",
   group,
+  includeDefaultGroups = true,
   source,
   successMessage,
   finePrint,
@@ -69,6 +73,7 @@ const NewsletterSubscribe = ({
         email: values.email,
         provider,
         group,
+        includeDefaultGroups,
         source,
       }),
     });
@@ -105,21 +110,26 @@ const NewsletterSubscribe = ({
   return (
     <section className={cn("premium-surface-soft border border-border/70 text-card-foreground", className)} {...props}>
       <div className="p-7 md:p-10">
-        <div className="mx-auto max-w-2xl text-center">
-          <div className="mb-3 flex items-center justify-center gap-2 text-[12px] uppercase tracking-[0.16em] text-muted-foreground">
-            <Mail className="h-3.5 w-3.5" />
-            <span>Newsletter</span>
+        {(title || description) && (
+          <div className="mx-auto max-w-2xl text-center">
+            <div className="mb-3 flex items-center justify-center gap-2 text-[12px] uppercase tracking-[0.16em] text-muted-foreground">
+              <Mail className="h-3.5 w-3.5" />
+              <span>{eyebrow}</span>
+            </div>
+            {title ? (
+              <h2 className="text-[1.75rem] font-semibold leading-[1.08] tracking-[-0.025em] text-foreground md:text-[2.1rem]">
+                {title}
+              </h2>
+            ) : null}
+            {description ? (
+              <p className="mt-4 hidden max-w-[58ch] text-[0.98rem] leading-7 text-muted-foreground sm:block">
+                {description}
+              </p>
+            ) : null}
           </div>
-          <h2 className="text-[1.75rem] font-semibold leading-[1.08] tracking-[-0.025em] text-foreground md:text-[2.1rem]">
-            {title}
-          </h2>
+        )}
 
-          <p className="mt-4 hidden max-w-[58ch] text-[0.98rem] leading-7 text-muted-foreground sm:block">
-            {description}
-          </p>
-        </div>
-
-        <div className="mx-auto mt-8 max-w-2xl border-t border-border/60 pt-6">
+        <div className={cn("mx-auto max-w-2xl", title || description ? "mt-8 border-t border-border/60 pt-6" : "")}>
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}

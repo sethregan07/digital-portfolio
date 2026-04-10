@@ -1,7 +1,5 @@
 import { cache } from "react";
 import { PostHeading, PostSeries, SeriesItem } from "@/types";
-import { remark } from "remark";
-import remarkHtml from "remark-html";
 
 import {
   DbPageDetail,
@@ -14,7 +12,6 @@ import {
   getPublishedPostBySlug,
   getPublishedPosts,
   getPublishedPostsBySeriesId,
-  getPublishedPostSlugs,
 } from "@/lib/repositories/content";
 
 export type ContentTagCount = Record<string, number>;
@@ -37,6 +34,7 @@ export type UnifiedArticle = {
   slug: string;
   title: string;
   description: string | null;
+  tags: string[];
   section: string;
   sectionOrder: number;
   lessonOrder: number;
@@ -44,8 +42,7 @@ export type UnifiedArticle = {
   publishedDate: Date | null;
   lastUpdatedDate: Date | null;
   headings: PostHeading[];
-  bodyCode: string | null;
-  contentBlocks: any[] | null;
+  body: string;
   resources: string[];
 };
 
@@ -87,25 +84,39 @@ export function getFallbackSectionFromTags(tags: string[]): string {
   return "Power & Institutions";
 }
 
-function isEditorialArticle(post: DbPostPreview): boolean {
+export function isEditorialArticle(post: Pick<DbPostPreview, "tags">): boolean {
   const tags = post.tags || [];
   return !tags.includes("docs") && !tags.includes("starter");
 }
 
+export function isTemplatePost(post: Pick<DbPostPreview, "tags">): boolean {
+  const tags = post.tags || [];
+  return tags.includes("docs") || tags.includes("starter");
+}
+
+export function isPublicLegacyPost(post: Pick<DbPostPreview, "tags">): boolean {
+  return !isEditorialArticle(post) && !isTemplatePost(post);
+}
+
+export function getCanonicalPostPath(post: Pick<DbPostPreview, "slug" | "tags">): string {
+  return isEditorialArticle(post) ? `/articles/${post.slug}` : `/posts/${post.slug}`;
+}
+
 export async function getRecentPosts(limit = 3): Promise<DbPostPreview[]> {
-  const posts = await getPublishedPosts();
+  const posts = (await getPublishedPosts()).filter(isEditorialArticle);
   return posts.slice(0, limit);
 }
 
 export async function getPostsByTag(tag: string): Promise<DbPostPreview[]> {
   const posts = await getPublishedPosts();
   return posts
+    .filter((post) => !isTemplatePost(post))
     .filter((post) => post.tags?.includes(tag))
     .sort((a, b) => b.publishedDate.getTime() - a.publishedDate.getTime());
 }
 
 export async function getTagCounts(): Promise<ContentTagCount> {
-  const posts = await getPublishedPosts();
+  const posts = (await getPublishedPosts()).filter((post) => !isTemplatePost(post));
   return posts.reduce((acc: ContentTagCount, post) => {
     for (const tag of post.tags || []) {
       acc[tag] = (acc[tag] || 0) + 1;
@@ -160,11 +171,6 @@ export async function getArticlesByCategorySlug(slug: string): Promise<ArticleLi
   return articles.filter((article) => article.section === category);
 }
 
-async function markdownToHtml(markdown: string): Promise<string> {
-  const result = await remark().use(remarkHtml).process(markdown);
-  return result.toString();
-}
-
 export const getPostDetailBySlug = cache(async (slug: string): Promise<any | null> => {
   const post = await getPublishedPostBySlug(slug);
 
@@ -197,8 +203,8 @@ export const getPostDetailBySlug = cache(async (slug: string): Promise<any | nul
 });
 
 export const getPostStaticParams = cache(async (): Promise<{ slug: string }[]> => {
-  const slugs = await getPublishedPostSlugs();
-  return slugs.map((slug) => ({ slug }));
+  const posts = await getPublishedPosts();
+  return posts.filter(isPublicLegacyPost).map((post) => ({ slug: post.slug }));
 });
 
 export const getUnifiedArticleBySlug = cache(async (slug: string): Promise<UnifiedArticle | null> => {
@@ -208,13 +214,13 @@ export const getUnifiedArticleBySlug = cache(async (slug: string): Promise<Unifi
   }
 
   const section = getFallbackSectionFromTags(post.tags || []);
-  const bodyCode = await markdownToHtml(post.body);
 
   return {
     source: "post",
     slug: post.slug,
     title: post.title,
     description: post.description,
+    tags: post.tags || [],
     section,
     sectionOrder: Math.max(1, fallbackSections.indexOf(section as (typeof fallbackSections)[number]) + 1),
     lessonOrder: 1,
@@ -226,8 +232,7 @@ export const getUnifiedArticleBySlug = cache(async (slug: string): Promise<Unifi
           (h) => typeof h?.heading === "number" && typeof h?.text === "string" && typeof h?.slug === "string"
         )
       : [],
-    bodyCode,
-    contentBlocks: null,
+    body: post.body,
     resources: [],
   };
 });
@@ -253,10 +258,7 @@ export const getDeprogrammingLessonBySlug = cache(async (slug: string) => {
     return null;
   }
 
-  return {
-    ...lesson,
-    contentBlocks: Array.isArray(lesson.contentBlocks) ? (lesson.contentBlocks as any[]) : [],
-  };
+  return lesson;
 });
 
 export const getDeprogrammingLessonAdjacent = cache(async (slug: string) => {

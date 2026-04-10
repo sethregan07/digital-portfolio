@@ -1,16 +1,40 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { getPostsByTag } from "@/lib/services/content";
+import { BASE_URL } from "@/lib/metadata";
+import { getCanonicalPostPath, getPostsByTag } from "@/lib/services/content";
 import PostPreview from "@/components/post-preview";
 
 export const revalidate = 300;
 
-// Dynamic metadata for the page
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+  const posts = await getPostsByTag(params.slug);
+
+  if (posts.length === 0) {
+    return {};
+  }
+
+  const title = `Tagged: ${params.slug}`;
+  const description = `${posts.length} ${posts.length === 1 ? "post" : "posts"} tagged ${params.slug}.`;
+  const url = `${BASE_URL}/tags/${params.slug}`;
+
   return {
-    title: `All posts in ${params.slug}`,
-    description: `All posts in ${params.slug}`,
+    title,
+    description,
+    alternates: {
+      canonical: url,
+    },
+    openGraph: {
+      type: "website",
+      url,
+      title,
+      description,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+    },
   };
 }
 
@@ -36,6 +60,7 @@ export default async function TagPage({ params }: { params: { slug: string } }) 
                 description: post.description,
                 publishedDate: post.publishedDate.toISOString(),
                 readTimeMinutes: post.readTimeMinutes,
+                href: getCanonicalPostPath(post),
                 tags: post.tags,
               }}
               key={post.id}

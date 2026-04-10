@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { format, isValid, parseISO } from "date-fns";
 import { ArrowLeft, ArrowRight, BookOpen, Clock, Eye, FileText, Home, Layers } from "lucide-react";
 
-import { BASE_URL } from "@/lib/metadata";
+import { BASE_URL, defaultAuthor } from "@/lib/metadata";
 import {
   getUnifiedArticleAdjacent,
   getUnifiedArticleBySlug,
@@ -13,6 +13,7 @@ import {
 import { cn } from "@/lib/utils";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
+import { ServerMdx } from "@/components/mdx/server";
 import NewsletterSubscribe from "@/components/newsletter-subscribe";
 import { TableOfContents } from "@/components/table-of-contents";
 
@@ -58,12 +59,14 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
   }
 
   const url = `${BASE_URL}/articles/${params.slug}`;
-  const ogImage = `${BASE_URL}/opengraph-image`;
-  const twitterImage = `${BASE_URL}/twitter-image`;
+  const ogImage = `${BASE_URL}/posts/${params.slug}/opengraph-image`;
+  const twitterImage = `${BASE_URL}/posts/${params.slug}/twitter-image`;
 
   return {
     title: article.title,
     description: article.description,
+    authors: [{ name: defaultAuthor.name, url: defaultAuthor.website }],
+    keywords: article.tags,
     alternates: {
       canonical: url,
     },
@@ -95,13 +98,31 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   }
 
   const { previous, next } = await getUnifiedArticleAdjacent(article.source, article.slug);
+  const articleUrl = `${BASE_URL}/articles/${article.slug}`;
+  const articleImage = `${BASE_URL}/posts/${article.slug}/opengraph-image`;
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
     headline: article.title,
     description: article.description,
-    url: `${BASE_URL}/articles/${article.slug}`,
+    url: articleUrl,
+    mainEntityOfPage: articleUrl,
+    datePublished: article.publishedDate?.toISOString(),
+    dateModified: article.lastUpdatedDate?.toISOString() || article.publishedDate?.toISOString(),
+    keywords: article.tags,
+    articleSection: article.section,
+    image: articleImage,
+    author: {
+      "@type": "Person",
+      name: defaultAuthor.name,
+      url: defaultAuthor.website,
+    },
+    publisher: {
+      "@type": "Organization",
+      name: defaultAuthor.name,
+      url: BASE_URL,
+    },
   };
   const publishedDate = formatPostDate(article.publishedDate);
   const lastUpdatedDate = formatPostDate(article.lastUpdatedDate);
@@ -195,29 +216,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                 "[&_ol]:text-[16px] [&_p]:text-[16px] [&_p]:text-foreground/90 [&_ul]:text-[16px]"
               )}
             >
-              {article.bodyCode ? (
-                <div dangerouslySetInnerHTML={{ __html: article.bodyCode }} />
-              ) : (
-                article.contentBlocks?.map((block: any, index: number) => {
-                  switch (block.type) {
-                    case "heading":
-                      const HeadingTag = `h${block.level}` as keyof JSX.IntrinsicElements;
-                      return <HeadingTag key={index}>{block.content}</HeadingTag>;
-                    case "paragraph":
-                      return <p key={index}>{block.content}</p>;
-                    case "list":
-                      return (
-                        <ul key={index} className="list-inside list-disc">
-                          {block.items.map((item: string, itemIndex: number) => (
-                            <li key={itemIndex}>{item}</li>
-                          ))}
-                        </ul>
-                      );
-                    default:
-                      return null;
-                  }
-                })
-              )}
+              <ServerMdx source={article.body} stripFirstHeading />
             </article>
 
             <div className="mt-10 flex flex-wrap items-center justify-between gap-3 border-t border-border/70 pt-8">
