@@ -9,13 +9,32 @@ export const revalidate = 300;
 const previewLessonCount = 3;
 const staticRouteEntries = [
   "/",
+  "/about",
   "/articles",
+  "/articles/series",
+  "/archetypes",
+  "/build",
+  "/checklist",
   "/contact",
+  "/exit",
   "/frameworks",
+  "/free-guide",
+  "/gifts",
+  "/healing",
+  "/letter",
+  "/mini-course",
+  "/north-star",
   "/projects",
   "/projects/deprogramming",
+  "/quiz",
   "/resources",
+  "/start-here",
+  "/system",
+  "/templates",
+  "/tools",
+  "/understand",
   "/uses",
+  "/vocabulary",
 ];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {

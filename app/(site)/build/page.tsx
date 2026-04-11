@@ -5,6 +5,7 @@ import { ArrowRight, CheckCircle2 } from "lucide-react";
 import { BASE_URL } from "@/lib/metadata";
 import { Button } from "@/components/ui/button";
 import NewsletterSubscribe from "@/components/newsletter-subscribe";
+import { Breadcrumb } from "@/components/breadcrumb";
 
 export const revalidate = 300;
 
@@ -79,6 +80,7 @@ export default function BuildPage() {
   return (
     <div className="bg-background pb-24">
       <div className="container max-w-3xl pt-14">
+        <Breadcrumb items={[{ label: "The System", href: "/system" }, { label: "Stage 06 — Build" }]} />
 
         <section className="mb-4 pt-2">
           <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground/50">

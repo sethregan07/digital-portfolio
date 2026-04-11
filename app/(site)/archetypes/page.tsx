@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { Breadcrumb } from "@/components/breadcrumb";
 
 const editorialSerif = {
   fontFamily: "var(--font-serif), Georgia, serif",
@@ -209,6 +210,7 @@ export default function ArchetypesPage() {
     return (
       <div className="bg-background pb-24">
         <div className="container max-w-2xl pt-14">
+          <Breadcrumb items={[{ label: "The System", href: "/system" }, { label: "Stage 05 — Archetype" }]} />
           <section className="border-b border-border pb-12 pt-6">
             <p className="mb-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
               Archetype Finder — Stage 05

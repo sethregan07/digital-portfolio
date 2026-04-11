@@ -4,6 +4,7 @@ import { ArrowRight } from "lucide-react";
 
 import { BASE_URL } from "@/lib/metadata";
 import { Button } from "@/components/ui/button";
+import { Breadcrumb } from "@/components/breadcrumb";
 import NewsletterSubscribe from "@/components/newsletter-subscribe";
 
 export const revalidate = 300;
@@ -57,6 +58,7 @@ export default function UnderstandPage() {
   return (
     <div className="bg-background pb-24">
       <div className="container max-w-3xl pt-14">
+        <Breadcrumb items={[{ label: "The System", href: "/system" }, { label: "Stage 02 — Understand" }]} />
         {/* ── HEADER ── */}
         <section className="mb-4 pt-2">
           <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground/50">

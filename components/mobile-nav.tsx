@@ -21,17 +21,17 @@ export function MobileNav() {
       <SheetTrigger asChild>
         <Button
           variant="ghost"
-          className="mr-2 h-8 border border-border/80 px-2 hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 md:hidden"
+          className="mr-2 h-8 border border-border/80 px-2 hover:bg-transparent focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 md:hidden"
         >
           <Menu className="h-6 w-6" />
           <span className="sr-only">Toggle Menu</span>
         </Button>
       </SheetTrigger>
-      <SheetContent side="bottom" className="border-border bg-background pr-0">
+      <SheetContent side="right" className="w-[300px] border-border bg-background pr-0 sm:w-[340px]">
         <MobileLink href="/" className="flex items-center" onOpenChange={setOpen} aria-label="Go to Home">
           <span className="font-heading text-2xl font-semibold tracking-[-0.03em]">{siteMetadata.title.default}</span>
         </MobileLink>
-        <ScrollArea className="my-4 max-h-96 overflow-y-scroll pb-10">
+        <ScrollArea className="my-4 h-[calc(100vh-8rem)] pb-10">
           <div className="flex flex-col space-y-3">
             {navigationLinks?.map((item) =>
               item.content ? (

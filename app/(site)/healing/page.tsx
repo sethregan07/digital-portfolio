@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowRight, CheckCircle2, Heart } from "lucide-react";
 
 import { BASE_URL } from "@/lib/metadata";
+import { Breadcrumb } from "@/components/breadcrumb";
 import NewsletterSubscribe from "@/components/newsletter-subscribe";
 
 export const revalidate = 300;
@@ -102,6 +103,7 @@ export default function HealingPage() {
   return (
     <div className="bg-background pb-24">
       <div className="container max-w-4xl pt-14">
+        <Breadcrumb items={[{ label: "The System", href: "/system" }, { label: "Stage 04 — Heal" }]} />
         {/* ── HEADER ── */}
         <section className="mb-16 border-b border-border pb-10 pt-6">
           <div className="mb-4 flex items-center gap-2">

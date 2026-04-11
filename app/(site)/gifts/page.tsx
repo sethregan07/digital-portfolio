@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowRight, Compass, Star } from "lucide-react";
 
 import { BASE_URL } from "@/lib/metadata";
+import { Breadcrumb } from "@/components/breadcrumb";
 import NewsletterSubscribe from "@/components/newsletter-subscribe";
 
 export const revalidate = 300;
@@ -138,6 +139,7 @@ export default function GiftsPage() {
   return (
     <div className="bg-background pb-24">
       <div className="container max-w-4xl pt-14">
+        <Breadcrumb items={[{ label: "The System", href: "/system" }, { label: "Stage 05 — Gifts" }]} />
         {/* ── HEADER ── */}
         <section className="mb-16 border-b border-border pb-10 pt-6">
           <div className="mb-4 flex items-center gap-2">
@@ -318,7 +320,7 @@ export default function GiftsPage() {
                 Five questions for finding the direction that is genuinely yours.
               </p>
               <div className="mt-3 flex items-center gap-1 text-[11px] text-muted-foreground/50 transition-colors group-hover:text-muted-foreground">
-                Read more <ArrowRight className="h-3 w-3" />
+                Explore the framework <ArrowRight className="h-3 w-3" />
               </div>
             </Link>
             <Link
@@ -331,7 +333,7 @@ export default function GiftsPage() {
                 If you are struggling to find your gifts, the clearing work comes first.
               </p>
               <div className="mt-3 flex items-center gap-1 text-[11px] text-muted-foreground/50 transition-colors group-hover:text-muted-foreground">
-                Read more <ArrowRight className="h-3 w-3" />
+                Start Stage 04 <ArrowRight className="h-3 w-3" />
               </div>
             </Link>
           </div>

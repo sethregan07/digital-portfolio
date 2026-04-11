@@ -1,18 +1,6 @@
 import { Metadata } from "next";
 import Link from "next/link";
-import {
-  ArrowRight,
-  BookOpen,
-  CheckCircle2,
-  CheckSquare,
-  Clock,
-  FileText,
-  HelpCircle,
-  Lightbulb,
-  MailOpen,
-  Newspaper,
-  ShieldCheck,
-} from "lucide-react";
+import { ArrowRight, BookOpen, CheckCircle2, Clock, FileText, Lightbulb, Newspaper } from "lucide-react";
 
 import siteMetadata, { BASE_URL } from "@/lib/metadata";
 import { getRecentPosts } from "@/lib/services/content";
@@ -106,48 +94,48 @@ const freeResources = [
     description: "A diagnosis and a fix for each sign — in one 10-minute read.",
     tag: "Free Guide",
     href: "/free-guide",
-    icon: FileText,
     meta: "10 min",
+    cta: "Read the guide",
   },
   {
     title: "How Much of Your Thinking Is Actually Yours?",
     description: "A 5-question quiz with a personalised result and reading path.",
     tag: "Quiz",
     href: "/quiz",
-    icon: HelpCircle,
     meta: "2 min",
+    cta: "Take the quiz",
   },
   {
     title: "Think Clearly in 5 Days",
     description: "A free email course on the fundamentals. One lesson per day, 8–11 minutes each.",
     tag: "Email Course",
     href: "/mini-course",
-    icon: MailOpen,
     meta: "5 days",
+    cta: "Start the course",
   },
   {
     title: "The Source Audit",
     description: "Five questions for tracing any belief back to its actual origin.",
     tag: "Worksheet",
     href: "/tools#source-audit",
-    icon: Lightbulb,
     meta: "10–20 min",
+    cta: "Use the worksheet",
   },
   {
     title: "7 Questions Before You Believe Anything",
     description: "A media audit checklist for evaluating any story, claim, or source.",
     tag: "Checklist",
     href: "/checklist",
-    icon: CheckSquare,
     meta: "Reference",
+    cta: "Get the checklist",
   },
   {
     title: "Vocabulary of Conditioning",
     description: "18 key terms explained in depth — from manufactured consent to tribal epistemology.",
     tag: "Reference",
     href: "/vocabulary",
-    icon: BookOpen,
     meta: "Reference",
+    cta: "Browse the vocabulary",
   },
 ];
 
@@ -156,19 +144,16 @@ const trustReasons = [
     title: "Prove it before you pay for it",
     description:
       "The guide, quiz, essays, and first course lessons exist so the work can demonstrate its value before you spend anything. If the free material does not sharpen how you think, the course is not for you.",
-    icon: Newspaper,
   },
   {
     title: "A method, not a worldview",
     description:
       "Originalform does not tell you what to think. It gives you a method for examining what you already think — where it came from, whether it holds up, and what to do when it does not.",
-    icon: ShieldCheck,
   },
   {
     title: "Built for people already building",
     description:
       "This is not motivational content for people stuck in thinking. It is a thinking system for people already in motion — making decisions, building things, trying to trust their own judgment more.",
-    icon: Lightbulb,
   },
 ];
 
@@ -262,7 +247,7 @@ export default async function Home() {
                   { num: "42", label: "lessons" },
                   { num: "3", label: "free previews" },
                   { num: "10", label: "lesson guarantee" },
-                  { num: "15+", label: "essays" },
+                  { num: "47", label: "essays" },
                 ].map((s) => (
                   <div key={s.label} className="px-4 py-4">
                     <span
@@ -302,8 +287,13 @@ export default async function Home() {
           <div className="grid gap-6 md:grid-cols-3">
             {outcomePromises.map((item) => (
               <article key={item.title} className="border border-border/60 bg-card/30 p-6">
-                <p className="mb-3 text-[11px] uppercase tracking-[0.14em] text-muted-foreground">{item.title}</p>
-                <p className="text-[1rem] leading-[1.72] text-muted-foreground">{item.description}</p>
+                <h3
+                  className="mb-3 text-[1.05rem] font-semibold leading-[1.3] tracking-[-0.01em] text-foreground"
+                  style={editorialSerif}
+                >
+                  {item.title}
+                </h3>
+                <p className="text-[0.93rem] leading-[1.75] text-muted-foreground">{item.description}</p>
               </article>
             ))}
           </div>
@@ -376,9 +366,6 @@ export default async function Home() {
           {leadPost ? (
             <div className="grid gap-10 lg:grid-cols-[minmax(0,1.02fr)_minmax(0,0.98fr)] lg:border-b lg:border-border lg:pb-4">
               <article className="border-b border-border pb-8 lg:border-b-0 lg:border-r lg:pb-0 lg:pr-10">
-                <p className="mb-3 text-[12px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-                  Start here
-                </p>
                 <Link href={`/articles/${leadPost.slug}`} className="block">
                   <h2
                     className="max-w-2xl text-[2.45rem] font-extrabold leading-[0.98] tracking-[-0.05em] text-foreground transition-opacity hover:opacity-75 md:text-[3.7rem]"
@@ -450,48 +437,39 @@ export default async function Home() {
             </Link>
           </div>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {freeResources.map((resource) => {
-              const Icon = resource.icon;
-              return (
-                <Link
-                  key={resource.href}
-                  href={resource.href}
-                  className="group flex flex-col border border-border/50 bg-card/20 p-5 transition-colors hover:border-border hover:bg-card/40"
-                >
-                  <div className="mb-4 flex items-center justify-between">
-                    <span className="rounded-sm border border-border/40 px-2 py-0.5 text-[10px] uppercase tracking-[0.12em] text-muted-foreground">
-                      {resource.tag}
-                    </span>
-                    <span className="flex items-center gap-1 text-[11px] text-muted-foreground/50">
-                      <Icon className="h-3.5 w-3.5" />
-                      {resource.meta}
-                    </span>
-                  </div>
-                  <h3
-                    className="mb-2 text-[1.05rem] font-semibold leading-[1.3] tracking-[-0.01em] text-foreground"
-                    style={editorialSerif}
-                  >
-                    {resource.title}
-                  </h3>
-                  <p className="mb-4 flex-1 text-[0.88rem] leading-[1.65] text-muted-foreground">
-                    {resource.description}
-                  </p>
-                  <span className="inline-flex items-center gap-1 text-[11px] uppercase tracking-[0.1em] text-muted-foreground/50 transition-colors group-hover:text-muted-foreground">
-                    Access free <ArrowRight className="h-3 w-3" />
+            {freeResources.map((resource) => (
+              <Link
+                key={resource.href}
+                href={resource.href}
+                className="group flex flex-col border border-border/50 bg-card/20 p-5 transition-colors hover:border-border hover:bg-card/40"
+              >
+                <div className="mb-4 flex items-center justify-between">
+                  <span className="rounded-sm border border-border/40 px-2 py-0.5 text-[10px] uppercase tracking-[0.12em] text-muted-foreground">
+                    {resource.tag}
                   </span>
-                </Link>
-              );
-            })}
+                  <span className="text-[11px] text-muted-foreground/50">{resource.meta}</span>
+                </div>
+                <h3
+                  className="mb-2 text-[1.05rem] font-semibold leading-[1.3] tracking-[-0.01em] text-foreground"
+                  style={editorialSerif}
+                >
+                  {resource.title}
+                </h3>
+                <p className="mb-4 flex-1 text-[0.88rem] leading-[1.65] text-muted-foreground">
+                  {resource.description}
+                </p>
+                <span className="inline-flex items-center gap-1 text-[11px] uppercase tracking-[0.1em] text-muted-foreground/50 transition-colors group-hover:text-muted-foreground">
+                  {resource.cta} <ArrowRight className="h-3 w-3" />
+                </span>
+              </Link>
+            ))}
           </div>
         </section>
 
         <section className="fade-up-delayed bg-card/35 mb-24 border border-border/70 p-7 md:p-10">
           <div className="grid gap-8 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
             <div>
-              <div className="mb-3 flex items-center gap-2">
-                <BookOpen className="h-3.5 w-3.5 text-muted-foreground" />
-                <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Flagship offer</p>
-              </div>
+              <p className="mb-3 text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Flagship course</p>
               <h2 className="text-3xl tracking-[-0.03em] text-foreground md:text-4xl" style={editorialSerif}>
                 Deprogramming is the full system for figuring out which beliefs are actually yours.
               </h2>
@@ -529,18 +507,17 @@ export default async function Home() {
             </p>
           </div>
           <div className="grid gap-6 md:grid-cols-3">
-            {trustReasons.map((item) => {
-              const Icon = item.icon;
-              return (
-                <article key={item.title} className="border border-border/60 p-6">
-                  <div className="mb-4 inline-flex h-10 w-10 items-center justify-center border border-border/70 bg-card/40">
-                    <Icon className="h-4 w-4 text-muted-foreground" />
-                  </div>
-                  <h3 className="mb-2 text-[1.15rem] font-semibold tracking-[-0.02em] text-foreground">{item.title}</h3>
-                  <p className="text-[0.98rem] leading-[1.72] text-muted-foreground">{item.description}</p>
-                </article>
-              );
-            })}
+            {trustReasons.map((item) => (
+              <article key={item.title} className="border border-border/60 p-6">
+                <h3
+                  className="mb-2 text-[1.05rem] font-semibold leading-[1.3] tracking-[-0.02em] text-foreground"
+                  style={editorialSerif}
+                >
+                  {item.title}
+                </h3>
+                <p className="text-[0.93rem] leading-[1.75] text-muted-foreground">{item.description}</p>
+              </article>
+            ))}
           </div>
         </section>
 

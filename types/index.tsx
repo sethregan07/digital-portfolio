@@ -14,6 +14,12 @@ export interface NavItem {
   href?: string;
   description?: string;
   content?: ContentNavItem[];
+  groups?: NavGroup[];
+}
+
+export interface NavGroup {
+  label: string;
+  items: ContentNavItem[];
 }
 
 export interface ContentNavItem extends NavItem {
