@@ -25,7 +25,12 @@ export function Navbar() {
               <>
                 <NavigationMenuTrigger>{item.title}</NavigationMenuTrigger>
                 <NavigationMenuContent>
-                  <ul className="grid w-[280px] gap-2 p-3 md:w-[320px]">
+                  <ul
+                    className={cn(
+                      "grid gap-2 p-3",
+                      item.content.length > 5 ? "w-[580px] grid-cols-2" : "w-[280px] md:w-[320px]"
+                    )}
+                  >
                     {item.content.map((subItem) => (
                       <ListItem
                         key={subItem.href.trim()}

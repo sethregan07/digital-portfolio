@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, Download, FileText, Lightbulb } from "lucide-react";
+import { ArrowRight, BookOpen, CheckSquare, Download, FileText, HelpCircle, Lightbulb, MailOpen } from "lucide-react";
 
 import { BASE_URL } from "@/lib/metadata";
 import { Button } from "@/components/ui/button";
@@ -64,6 +64,41 @@ const frameworks = [
     tag: "Worksheet",
     href: "#source-audit",
     available: true,
+    icon: FileText,
+  },
+  {
+    title: "7 Questions Before You Believe Anything",
+    description:
+      "A media audit checklist for evaluating any story, claim, or piece of information before it shapes what you think.",
+    tag: "Checklist",
+    href: "/checklist",
+    available: true,
+    icon: CheckSquare,
+  },
+  {
+    title: "Vocabulary of Conditioning",
+    description:
+      "18 key terms explained in depth — the language for understanding how beliefs, attention, and behaviour are shaped.",
+    tag: "Reference",
+    href: "/vocabulary",
+    available: true,
+    icon: BookOpen,
+  },
+  {
+    title: "How Much of Your Thinking Is Actually Yours?",
+    description: "A 5-question quiz that gives you a personalised result and recommended reading path.",
+    tag: "Quiz",
+    href: "/quiz",
+    available: true,
+    icon: HelpCircle,
+  },
+  {
+    title: "Think Clearly in 5 Days",
+    description: "A free email course on the fundamentals of independent thinking. One lesson per day.",
+    tag: "Email Course",
+    href: "/mini-course",
+    available: true,
+    icon: MailOpen,
   },
   {
     title: "The Incentive Lens",
@@ -71,20 +106,7 @@ const frameworks = [
     tag: "Coming soon",
     href: "#",
     available: false,
-  },
-  {
-    title: "The Attention Audit",
-    description: "Where does your attention actually go in a week — and who designed it that way?",
-    tag: "Coming soon",
-    href: "#",
-    available: false,
-  },
-  {
-    title: "The Belief Inventory",
-    description: "A structured way to map your 10 strongest beliefs and examine each one for origin and evidence.",
-    tag: "Coming soon",
-    href: "#",
-    available: false,
+    icon: Lightbulb,
   },
 ];
 

@@ -46,42 +46,150 @@ export type UnifiedArticle = {
   resources: string[];
 };
 
-export const fallbackSections = [
-  "Media & Narrative",
-  "Power & Institutions",
-  "Political Economy",
-  "Culture & Conditioning",
+export const articleCategories = [
+  {
+    name: "Media, Propaganda & Attention",
+    slug: "media-propaganda-attention",
+    description: "How narrative control, language, propaganda, and attention capture shape what feels true.",
+  },
+  {
+    name: "Power, Institutions & Democracy",
+    slug: "power-institutions-democracy",
+    description:
+      "Essays on obedience, schooling, institutions, elite coordination, and the limits of representative politics.",
+  },
+  {
+    name: "Political Economy & Social Systems",
+    slug: "political-economy-social-systems",
+    description:
+      "Money, debt, markets, growth, decentralization, and the structural assumptions baked into social order.",
+  },
+  {
+    name: "Technology & Platform Life",
+    slug: "technology-platform-life",
+    description: "What software, platforms, automation, and AI are doing to agency, culture, and daily life.",
+  },
+  {
+    name: "Consciousness, Reality & Meaning",
+    slug: "consciousness-reality-meaning",
+    description:
+      "Pieces about perception, creativity, spirituality, and the difference between inherited belief and direct seeing.",
+  },
+  {
+    name: "Psychology, Healing & Identity",
+    slug: "psychology-healing-identity",
+    description:
+      "How conditioning lands in the nervous system, habits, identity, and the work of becoming less reactive.",
+  },
 ] as const;
-export const articleCategorySlugs: Record<(typeof fallbackSections)[number], string> = {
-  "Media & Narrative": "media-narrative",
-  "Power & Institutions": "power-institutions",
-  "Political Economy": "political-economy",
-  "Culture & Conditioning": "culture-conditioning",
+
+export type ArticleCategoryDefinition = (typeof articleCategories)[number];
+export type ArticleCategoryName = ArticleCategoryDefinition["name"];
+export type ArticleCategorySlug = ArticleCategoryDefinition["slug"];
+
+export const fallbackSections = articleCategories.map((category) => category.name);
+
+const defaultArticleCategory = articleCategories[1];
+const editorialArticleCategoryOverrides: Record<string, ArticleCategorySlug> = {
+  "art-cant-be-bought-or-twistedthats": "consciousness-reality-meaning",
+  "debt-as-a-system-of-social-control": "political-economy-social-systems",
+  "decentralization-beyond-slogans": "political-economy-social-systems",
+  "elites-networks-and-soft-power": "power-institutions-democracy",
+  "healing-after-conditioning": "psychology-healing-identity",
+  "history-of-money": "political-economy-social-systems",
+  "how-ai-could-dissolve-competition": "technology-platform-life",
+  "how-success-is-being-created-why": "psychology-healing-identity",
+  "how-to-be-indistractabile-its-not": "psychology-healing-identity",
+  "how-we-measure-everything-and-illusion": "political-economy-social-systems",
+  "ideas-to-fix-the-the-democracy": "power-institutions-democracy",
+  "is-this-democracy-a-reflection-on": "power-institutions-democracy",
+  "life-vs-ego-finding-your-own-truth": "consciousness-reality-meaning",
+  "manufacturing-consent-and-modern-media": "media-propaganda-attention",
+  "measure-of-progress": "political-economy-social-systems",
+  "obedience-inside-modern-institutions": "power-institutions-democracy",
+  "once-you-see-it-you-cant-unsee-it": "consciousness-reality-meaning",
+  "power-hides-inside-language": "media-propaganda-attention",
+  "power-isnt-where-you-think-it-is": "power-institutions-democracy",
+  "remiagine-our-society": "political-economy-social-systems",
+  "schooling-and-the-management-of-attention": "power-institutions-democracy",
+  "technology-isnt-fixing-your-life": "technology-platform-life",
+  "the-big-lie-were-all-taught-good": "power-institutions-democracy",
+  "the-cost-of-building-without-consciousness": "technology-platform-life",
+  "the-deeper-nature-of-reality-why": "consciousness-reality-meaning",
+  "the-fabricated-world-how-belief-replaces": "consciousness-reality-meaning",
+  "the-illusion-of-democracy": "power-institutions-democracy",
+  "the-illusion-of-freedom-how-monopolies": "political-economy-social-systems",
+  "the-illusion-of-growth-why-we-celebrate": "political-economy-social-systems",
+  "the-limits-of-heroic-politics": "power-institutions-democracy",
+  "the-main-reason-tech-platforms-prioritise": "technology-platform-life",
+  "the-manufactured-consent-machine": "media-propaganda-attention",
+  "the-myth-of-neutral-markets": "political-economy-social-systems",
+  "the-price-of-awakening-and-standing": "consciousness-reality-meaning",
+  "the-reasons-to-protect-your-energy": "psychology-healing-identity",
+  "the-tools-have-evolved-the-patterns": "technology-platform-life",
+  "the-trap-of-being-right": "psychology-healing-identity",
+  "we-are-fish-in-a-tank-swimming-for": "technology-platform-life",
+  "we-dont-have-a-mental-health-crisis": "psychology-healing-identity",
+  "what-if-we-can-reimagine-our-society": "political-economy-social-systems",
+  "why-its-time-for-people-to-think": "consciousness-reality-meaning",
+  "why-propaganda-works-on-smart-people": "media-propaganda-attention",
+  "why-social-systems-are-not-working": "power-institutions-democracy",
+  "why-we-feel-the-way-we-do": "psychology-healing-identity",
+  "why-we-keep-repeating-the-same-patterns": "psychology-healing-identity",
+  "why-we-need-this-to-change-and-our": "political-economy-social-systems",
+  "youre-not-seeing-reality-youre-seeing": "media-propaganda-attention",
 };
 
+function getArticleCategoryDefinitionBySlug(slug: string): ArticleCategoryDefinition | null {
+  return articleCategories.find((category) => category.slug === slug) ?? null;
+}
+
+function getArticleCategoryOrder(slug: string): number {
+  const index = articleCategories.findIndex((category) => category.slug === slug);
+  return index >= 0 ? index + 1 : 1;
+}
+
 export function getArticleCategorySlug(section: string): string {
-  return articleCategorySlugs[section as keyof typeof articleCategorySlugs] ?? "general";
+  return articleCategories.find((category) => category.name === section)?.slug ?? "general";
+}
+
+export function getArticleCategoryBySlug(slug: string): ArticleCategoryDefinition | null {
+  return getArticleCategoryDefinitionBySlug(slug);
 }
 
 export function getArticleCategoryNameFromSlug(slug: string): string | null {
-  const match = Object.entries(articleCategorySlugs).find(([, value]) => value === slug);
-  return match?.[0] ?? null;
+  return getArticleCategoryDefinitionBySlug(slug)?.name ?? null;
+}
+
+function getFallbackArticleCategorySlug(tags: string[]): ArticleCategorySlug {
+  if (tags.some((tag) => ["media", "propaganda", "language", "narrative", "attention"].includes(tag))) {
+    return "media-propaganda-attention";
+  }
+  if (tags.some((tag) => ["politics", "democracy", "education", "development"].includes(tag))) {
+    return "power-institutions-democracy";
+  }
+  if (tags.some((tag) => ["economics", "history", "systems", "decentralisation", "inequality"].includes(tag))) {
+    return "political-economy-social-systems";
+  }
+  if (tags.some((tag) => ["technology", "ai"].includes(tag))) {
+    return "technology-platform-life";
+  }
+  if (tags.some((tag) => ["consciousness", "reality", "philosophy", "art", "creativity"].includes(tag))) {
+    return "consciousness-reality-meaning";
+  }
+  if (tags.some((tag) => ["psychology", "mindset", "wellbeing", "identity", "success"].includes(tag))) {
+    return "psychology-healing-identity";
+  }
+  return defaultArticleCategory.slug;
+}
+
+function getArticleCategory(post: Pick<DbPostPreview, "slug" | "tags">): ArticleCategoryDefinition {
+  const categorySlug = editorialArticleCategoryOverrides[post.slug] ?? getFallbackArticleCategorySlug(post.tags || []);
+  return getArticleCategoryDefinitionBySlug(categorySlug) ?? defaultArticleCategory;
 }
 
 export function getFallbackSectionFromTags(tags: string[]): string {
-  if (tags.some((tag) => ["media", "propaganda", "language", "narrative"].includes(tag))) {
-    return "Media & Narrative";
-  }
-  if (tags.some((tag) => ["economics", "history"].includes(tag))) {
-    return "Political Economy";
-  }
-  if (tags.some((tag) => ["politics", "democracy", "education", "decentralisation"].includes(tag))) {
-    return "Power & Institutions";
-  }
-  if (tags.some((tag) => ["identity", "development", "society"].includes(tag))) {
-    return "Culture & Conditioning";
-  }
-  return "Power & Institutions";
+  return (getArticleCategoryDefinitionBySlug(getFallbackArticleCategorySlug(tags)) ?? defaultArticleCategory).name;
 }
 
 export function isEditorialArticle(post: Pick<DbPostPreview, "tags">): boolean {
@@ -130,17 +238,17 @@ export async function getArticlesForListing(): Promise<ArticleListItem[]> {
   const sectionCounters: Record<string, number> = {};
 
   return posts.map((post) => {
-    const section = getFallbackSectionFromTags(post.tags || []);
-    sectionCounters[section] = (sectionCounters[section] || 0) + 1;
+    const category = getArticleCategory(post);
+    sectionCounters[category.slug] = (sectionCounters[category.slug] || 0) + 1;
     return {
       slug: post.slug,
       title: post.title,
       description: post.description,
       readTimeMinutes: post.readTimeMinutes,
       publishedDate: post.publishedDate,
-      section,
-      sectionOrder: Math.max(1, fallbackSections.indexOf(section as (typeof fallbackSections)[number]) + 1),
-      lessonOrder: sectionCounters[section],
+      section: category.name,
+      sectionOrder: getArticleCategoryOrder(category.slug),
+      lessonOrder: sectionCounters[category.slug],
       href: `/articles/${post.slug}`,
     };
   });
@@ -154,11 +262,11 @@ export async function getArticleCategoryCounts(): Promise<Array<{ name: string; 
     counts.set(article.section, (counts.get(article.section) ?? 0) + 1);
   }
 
-  return fallbackSections
-    .map((section) => ({
-      name: section,
-      slug: getArticleCategorySlug(section),
-      count: counts.get(section) ?? 0,
+  return articleCategories
+    .map((category) => ({
+      name: category.name,
+      slug: category.slug,
+      count: counts.get(category.name) ?? 0,
     }))
     .filter((item) => item.count > 0);
 }
@@ -213,7 +321,8 @@ export const getUnifiedArticleBySlug = cache(async (slug: string): Promise<Unifi
     return null;
   }
 
-  const section = getFallbackSectionFromTags(post.tags || []);
+  const listing = (await getArticlesForListing()).find((article) => article.slug === slug);
+  const category = getArticleCategory(post);
 
   return {
     source: "post",
@@ -221,9 +330,9 @@ export const getUnifiedArticleBySlug = cache(async (slug: string): Promise<Unifi
     title: post.title,
     description: post.description,
     tags: post.tags || [],
-    section,
-    sectionOrder: Math.max(1, fallbackSections.indexOf(section as (typeof fallbackSections)[number]) + 1),
-    lessonOrder: 1,
+    section: listing?.section ?? category.name,
+    sectionOrder: listing?.sectionOrder ?? getArticleCategoryOrder(category.slug),
+    lessonOrder: listing?.lessonOrder ?? 1,
     readTimeMinutes: post.readTimeMinutes,
     publishedDate: post.publishedDate,
     lastUpdatedDate: post.lastUpdatedDate,

@@ -1,34 +1,12 @@
 import "./globals.css";
 
 import { Metadata } from "next";
-import { Bitter, IBM_Plex_Sans_Condensed, Source_Sans_3 } from "next/font/google";
 
 import siteMetadata, { BASE_URL, defaultAuthor } from "@/lib/metadata";
 import { Toaster } from "@/components/ui/toaster";
 import { Analytics } from "@/components/analytics";
 import { BackTopButton } from "@/components/back-to-top";
 import { ThemeProvider } from "@/components/theme-provider";
-
-const sans = IBM_Plex_Sans_Condensed({
-  subsets: ["latin"],
-  variable: "--font-sans",
-  weight: ["400", "500", "600", "700"],
-  display: "swap",
-});
-
-const body = Source_Sans_3({
-  subsets: ["latin"],
-  variable: "--font-body",
-  weight: ["400", "500", "600"],
-  display: "swap",
-});
-
-const serif = Bitter({
-  subsets: ["latin"],
-  variable: "--font-serif",
-  weight: ["700", "800"],
-  display: "swap",
-});
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
@@ -77,9 +55,15 @@ interface RootLayoutProps {
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body
-        className={`${sans.variable} ${body.variable} ${serif.variable} min-h-screen bg-background text-foreground antialiased`}
-      >
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Bitter:wght@700;800&family=IBM+Plex+Sans+Condensed:wght@400;500;600;700&family=Source+Sans+3:wght@400;500;600&display=swap"
+        />
+      </head>
+      <body className="min-h-screen bg-background text-foreground antialiased">
         <ThemeProvider
           storageKey="digital-garden-theme"
           attribute="class"

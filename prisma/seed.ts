@@ -1,3 +1,4 @@
+import { createHash } from "crypto";
 import fs from "fs";
 import path from "path";
 import { PrismaClient } from "@prisma/client";
@@ -13,6 +14,11 @@ try {
 }
 
 const prisma = new PrismaClient();
+const contentRoot = path.join(process.cwd(), "content");
+const pagesDir = path.join(contentRoot, "pages");
+const postsDir = path.join(contentRoot, "posts");
+const coursesDir = path.join(contentRoot, "courses");
+const skippedCourseTemplates = new Set(["lesson-template.mdx"]);
 
 // Helper function to calculate reading time
 function calculateReadingTime(text: string): number {
@@ -116,47 +122,87 @@ function parseMDXToBlocks(content: string): any[] {
 // Helper function to compile MDX to HTML
 async function compileMDX(content: string): Promise<string> {
   try {
-    console.log("Compiling MDX content, length:", content.length);
-    // Use remark to convert markdown to HTML
     const result = await remark().use(remarkHtml).process(content);
-    const html = result.toString();
-    console.log("Compiled HTML length:", html.length);
-    console.log("HTML preview:", html.substring(0, 200));
-    return html;
+    return result.toString();
   } catch (error) {
     console.error("Error compiling MDX:", error);
-    console.error("Falling back to raw content");
-    return content; // fallback to raw content
+    return content;
   }
+}
+
+function getMdxFiles(dirPath: string, options?: { excludeBaseNames?: Set<string> }): string[] {
+  return fs.readdirSync(dirPath, { withFileTypes: true }).flatMap((dirent) => {
+    const entryPath = path.join(dirPath, dirent.name);
+
+    if (dirent.isDirectory()) {
+      return getMdxFiles(entryPath, options);
+    }
+
+    if (!dirent.isFile() || !dirent.name.endsWith(".mdx")) {
+      return [];
+    }
+
+    if (options?.excludeBaseNames?.has(dirent.name)) {
+      return [];
+    }
+
+    return [entryPath];
+  });
+}
+
+function getSlugFromFilePath(filePath: string): string {
+  return path.basename(filePath, ".mdx");
+}
+
+function getStableId(prefix: string, values: Array<string | number | null | undefined>): string {
+  const hash = createHash("sha1")
+    .update(values.map((value) => String(value ?? "")).join("::"))
+    .digest("hex");
+
+  return `${prefix}_${hash}`;
+}
+
+function parseOptionalDate(value: unknown): Date | null {
+  if (!value) {
+    return null;
+  }
+
+  const parsedDate = new Date(String(value));
+  return Number.isNaN(parsedDate.getTime()) ? null : parsedDate;
+}
+
+function getCourseNameFromFilePath(filePath: string): string | null {
+  const relativePath = path.relative(coursesDir, filePath);
+  const pathSegments = relativePath.split(path.sep).filter(Boolean);
+
+  return pathSegments.length > 1 ? pathSegments[0] : null;
 }
 
 async function main() {
   console.log("🌱 Starting seed...");
 
   // Seed Pages
-  const pagesDir = path.join(process.cwd(), "content/pages");
-  const pageFiles = fs.readdirSync(pagesDir).filter((file) => file.endsWith(".mdx"));
+  const pageFiles = getMdxFiles(pagesDir);
 
-  for (const file of pageFiles) {
-    const filePath = path.join(pagesDir, file);
+  for (const filePath of pageFiles) {
     const fileContent = fs.readFileSync(filePath, "utf8");
     const { data, content } = matter(fileContent);
-
-    const slug = file.replace(/\.mdx$/, "");
+    const slug = getSlugFromFilePath(filePath);
+    const lastUpdatedDate = parseOptionalDate(data.lastUpdatedDate);
 
     await prisma.page.upsert({
       where: { slug },
       update: {
         title: data.title,
         description: data.description,
-        lastUpdatedDate: data.lastUpdatedDate ? new Date(data.lastUpdatedDate) : null,
+        lastUpdatedDate,
         status: data.status,
         body: content,
       },
       create: {
         title: data.title,
         description: data.description,
-        lastUpdatedDate: data.lastUpdatedDate ? new Date(data.lastUpdatedDate) : null,
+        lastUpdatedDate,
         status: data.status,
         slug,
         body: content,
@@ -167,35 +213,41 @@ async function main() {
   console.log(`✅ Seeded ${pageFiles.length} pages`);
 
   // Seed Posts
-  const postsDir = path.join(process.cwd(), "content/posts");
-  const postFiles = fs.readdirSync(postsDir).filter((file) => file.endsWith(".mdx"));
+  const postFiles = getMdxFiles(postsDir);
 
-  for (const file of postFiles) {
-    const filePath = path.join(postsDir, file);
+  for (const filePath of postFiles) {
     const fileContent = fs.readFileSync(filePath, "utf8");
     const { data, content } = matter(fileContent);
-
-    const slug = file.replace(/\.mdx$/, "");
+    const slug = getSlugFromFilePath(filePath);
     const headings = extractHeadings(content);
     const readTimeMinutes = calculateReadingTime(content);
+    const publishedDate = parseOptionalDate(data.publishedDate);
+    const lastUpdatedDate = parseOptionalDate(data.lastUpdatedDate);
+
+    if (!publishedDate) {
+      console.log(`⚠️  Skipping ${path.relative(process.cwd(), filePath)} - invalid publishedDate`);
+      continue;
+    }
 
     // Handle tags
-    const tags = data.tags || [];
+    const tags = Array.isArray(data.tags) ? data.tags.filter((tag): tag is string => typeof tag === "string") : [];
     const slugger = new GithubSlugger();
     const tagSlugs = tags.map((tag: string) => slugger.slug(tag));
 
     // Handle author
     let authorId = null;
-    if (data.author) {
+    if (data.author?.name) {
+      const authorLookupId = getStableId("author", [data.author.name, data.author.image]);
       const author = await prisma.author.upsert({
-        where: { id: `${data.author.name}-${data.author.image || ""}` },
+        where: { id: authorLookupId },
         update: {
           name: data.author.name,
-          image: data.author.image,
+          image: data.author.image ?? null,
         },
         create: {
+          id: authorLookupId,
           name: data.author.name,
-          image: data.author.image,
+          image: data.author.image ?? null,
         },
       });
       authorId = author.id;
@@ -203,14 +255,16 @@ async function main() {
 
     // Handle series
     let seriesId = null;
-    if (data.series) {
+    if (data.series?.title && typeof data.series.order === "number") {
+      const seriesLookupId = getStableId("series", [data.series.title, data.series.order]);
       const series = await prisma.series.upsert({
-        where: { id: `${data.series.title}-${data.series.order}` },
+        where: { id: seriesLookupId },
         update: {
           title: data.series.title,
           order: data.series.order,
         },
         create: {
+          id: seriesLookupId,
           title: data.series.title,
           order: data.series.order,
         },
@@ -223,8 +277,8 @@ async function main() {
       update: {
         title: data.title,
         description: data.description,
-        publishedDate: new Date(data.publishedDate),
-        lastUpdatedDate: data.lastUpdatedDate ? new Date(data.lastUpdatedDate) : null,
+        publishedDate,
+        lastUpdatedDate,
         tags,
         status: data.status,
         tagSlugs,
@@ -237,8 +291,8 @@ async function main() {
       create: {
         title: data.title,
         description: data.description,
-        publishedDate: new Date(data.publishedDate),
-        lastUpdatedDate: data.lastUpdatedDate ? new Date(data.lastUpdatedDate) : null,
+        publishedDate,
+        lastUpdatedDate,
         tags,
         status: data.status,
         slug,
@@ -255,76 +309,74 @@ async function main() {
   console.log(`✅ Seeded ${postFiles.length} posts`);
 
   // Seed Courses
-  const coursesDir = path.join(process.cwd(), "content/courses");
-  const courseDirs = fs
-    .readdirSync(coursesDir, { withFileTypes: true })
-    .filter((dirent) => dirent.isDirectory())
-    .map((dirent) => dirent.name);
+  const courseFiles = getMdxFiles(coursesDir, { excludeBaseNames: skippedCourseTemplates });
 
   let totalCourses = 0;
 
-  for (const courseDir of courseDirs) {
-    const coursePath = path.join(coursesDir, courseDir);
-    const courseFiles = fs
-      .readdirSync(coursePath)
-      .filter((file) => file.endsWith(".mdx") && !file.includes("template"));
+  for (const filePath of courseFiles) {
+    const fileContent = fs.readFileSync(filePath, "utf8");
+    const { data, content } = matter(fileContent);
+    const courseName = (typeof data.course === "string" && data.course.trim()) || getCourseNameFromFilePath(filePath);
 
-    for (const file of courseFiles) {
-      const filePath = path.join(coursePath, file);
-      const fileContent = fs.readFileSync(filePath, "utf8");
-      const { data, content } = matter(fileContent);
-
-      // Skip files with invalid data
-      if (!data.title || typeof data.sectionOrder !== "number" || typeof data.lessonOrder !== "number") {
-        console.log(`⚠️  Skipping ${file} - invalid data`);
-        continue;
-      }
-
-      const slug = file.replace(/\.mdx$/, "");
-      const headings = extractHeadings(content);
-      const readTimeMinutes = data.estimatedReadTime || calculateReadingTime(content);
-      const compiledBody = await compileMDX(content);
-      const contentBlocks = parseMDXToBlocks(content);
-
-      await prisma.course.upsert({
-        where: { slug },
-        update: {
-          title: data.title,
-          description: data.description,
-          section: data.section,
-          sectionOrder: data.sectionOrder,
-          lessonOrder: data.lessonOrder,
-          course: courseDir,
-          status: data.status,
-          estimatedReadTime: data.estimatedReadTime,
-          resources: data.resources || [],
-          readTimeMinutes,
-          headings,
-          body: content, // Store raw MDX
-          bodyCode: compiledBody, // Store compiled HTML
-          contentBlocks, // Store structured content
-        },
-        create: {
-          title: data.title,
-          description: data.description,
-          section: data.section,
-          sectionOrder: data.sectionOrder,
-          lessonOrder: data.lessonOrder,
-          course: courseDir,
-          status: data.status,
-          estimatedReadTime: data.estimatedReadTime,
-          resources: data.resources || [],
-          slug,
-          readTimeMinutes,
-          headings,
-          body: content, // Store raw MDX
-          bodyCode: compiledBody, // Store compiled HTML
-          contentBlocks, // Store structured content
-        },
-      });
-
-      totalCourses++;
+    if (
+      !data.title ||
+      !data.description ||
+      !data.section ||
+      typeof data.sectionOrder !== "number" ||
+      typeof data.lessonOrder !== "number" ||
+      !courseName
+    ) {
+      console.log(`⚠️  Skipping ${path.relative(process.cwd(), filePath)} - invalid data`);
+      continue;
     }
+
+    const slug = getSlugFromFilePath(filePath);
+    const headings = extractHeadings(content);
+    const readTimeMinutes = data.estimatedReadTime || calculateReadingTime(content);
+    const compiledBody = await compileMDX(content);
+    const contentBlocks = parseMDXToBlocks(content);
+    const resources = Array.isArray(data.resources)
+      ? data.resources.filter((resource): resource is string => typeof resource === "string")
+      : [];
+
+    await prisma.course.upsert({
+      where: { slug },
+      update: {
+        title: data.title,
+        description: data.description,
+        section: data.section,
+        sectionOrder: data.sectionOrder,
+        lessonOrder: data.lessonOrder,
+        course: courseName,
+        status: data.status,
+        estimatedReadTime: data.estimatedReadTime,
+        resources,
+        readTimeMinutes,
+        headings,
+        body: content,
+        bodyCode: compiledBody,
+        contentBlocks,
+      },
+      create: {
+        title: data.title,
+        description: data.description,
+        section: data.section,
+        sectionOrder: data.sectionOrder,
+        lessonOrder: data.lessonOrder,
+        course: courseName,
+        status: data.status,
+        estimatedReadTime: data.estimatedReadTime,
+        resources,
+        slug,
+        readTimeMinutes,
+        headings,
+        body: content,
+        bodyCode: compiledBody,
+        contentBlocks,
+      },
+    });
+
+    totalCourses++;
   }
 
   console.log(`✅ Seeded ${totalCourses} courses`);

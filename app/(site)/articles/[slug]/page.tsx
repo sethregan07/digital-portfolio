@@ -6,6 +6,7 @@ import { ArrowLeft, ArrowRight, BookOpen, Clock, Eye, FileText, Home, Layers } f
 
 import { BASE_URL, defaultAuthor } from "@/lib/metadata";
 import {
+  getPostDetailBySlug,
   getUnifiedArticleAdjacent,
   getUnifiedArticleBySlug,
   getUnifiedArticleStaticParams,
@@ -97,6 +98,8 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     notFound();
   }
 
+  const postDetail = await getPostDetailBySlug(params.slug);
+  const seriesData = postDetail?.series ?? null;
   const { previous, next } = await getUnifiedArticleAdjacent(article.source, article.slug);
   const articleUrl = `${BASE_URL}/articles/${article.slug}`;
   const articleImage = `${BASE_URL}/posts/${article.slug}/opengraph-image`;
@@ -194,6 +197,44 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           </div>
         </header>
 
+        {/* Series banner — shown inline on mobile, also in sidebar on desktop */}
+        {seriesData?.posts && seriesData.posts.length > 1 && (
+          <div className="mb-8 lg:hidden">
+            <div className="border border-border/60 bg-card/20 p-5">
+              <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                Series — {seriesData.title}
+              </p>
+              <div className="space-y-1">
+                {seriesData.posts.map(
+                  (p: { slug: string; title: string; isCurrent: boolean; status: string }, idx: number) => (
+                    <div key={p.slug} className={cn("flex items-baseline gap-3 py-1.5", p.isCurrent && "")}>
+                      <span className="w-5 shrink-0 text-[10px] text-muted-foreground/40">{idx + 1}</span>
+                      {p.isCurrent ? (
+                        <span className="text-[0.88rem] font-semibold leading-[1.4] text-foreground">{p.title}</span>
+                      ) : p.status === "published" ? (
+                        <Link
+                          href={`/articles/${p.slug}`}
+                          className="text-[0.88rem] leading-[1.4] text-muted-foreground transition-colors hover:text-foreground"
+                        >
+                          {p.title}
+                        </Link>
+                      ) : (
+                        <span className="text-[0.88rem] leading-[1.4] text-muted-foreground/40">{p.title}</span>
+                      )}
+                    </div>
+                  )
+                )}
+              </div>
+              <Link
+                href="/articles/series"
+                className="mt-4 inline-flex items-center gap-1 text-[10px] uppercase tracking-[0.12em] text-muted-foreground/50 transition-colors hover:text-muted-foreground"
+              >
+                All series <ArrowRight className="h-3 w-3" />
+              </Link>
+            </div>
+          </div>
+        )}
+
         <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_280px]">
           <div>
             <div className="mb-6 lg:hidden">
@@ -245,17 +286,57 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           </div>
 
           <aside className="hidden lg:block">
-            <div className={cn("sticky top-28 border border-border/70 bg-card/40 p-5")}>
-              <div className="mb-4 border-b border-border/60 pb-4">
-                <LabelRow icon={FileText} label="Table of Contents" />
-              </div>
-              <div className="grid gap-4">
-                <TableOfContents chapters={article.headings} />
-              </div>
-              <div className="mt-6 border-t border-border/60 pt-4 text-sm leading-7 text-muted-foreground">
-                <p>{`${article.readTimeMinutes} mins read`}</p>
-                {publishedDate ? <p>Published: {publishedDate}</p> : null}
-                {lastUpdatedDate ? <p>Updated: {lastUpdatedDate}</p> : null}
+            <div className="space-y-4">
+              {/* Series navigation */}
+              {seriesData?.posts && seriesData.posts.length > 1 && (
+                <div className="border border-border/60 bg-card/20 p-5">
+                  <p className="mb-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                    Series
+                  </p>
+                  <p className="mb-4 text-[0.82rem] font-semibold text-foreground">{seriesData.title}</p>
+                  <div className="space-y-1">
+                    {seriesData.posts.map(
+                      (p: { slug: string; title: string; isCurrent: boolean; status: string }, idx: number) => (
+                        <div key={p.slug} className="flex items-baseline gap-2.5 py-1">
+                          <span className="w-4 shrink-0 text-[10px] text-muted-foreground/30">{idx + 1}</span>
+                          {p.isCurrent ? (
+                            <span className="text-[0.8rem] font-semibold leading-[1.4] text-foreground">{p.title}</span>
+                          ) : p.status === "published" ? (
+                            <Link
+                              href={`/articles/${p.slug}`}
+                              className="text-[0.8rem] leading-[1.4] text-muted-foreground transition-colors hover:text-foreground"
+                            >
+                              {p.title}
+                            </Link>
+                          ) : (
+                            <span className="text-[0.8rem] leading-[1.4] text-muted-foreground/30">{p.title}</span>
+                          )}
+                        </div>
+                      )
+                    )}
+                  </div>
+                  <Link
+                    href="/articles/series"
+                    className="mt-4 inline-flex items-center gap-1 text-[10px] uppercase tracking-[0.12em] text-muted-foreground/40 transition-colors hover:text-muted-foreground"
+                  >
+                    All series <ArrowRight className="h-3 w-3" />
+                  </Link>
+                </div>
+              )}
+
+              {/* Table of contents */}
+              <div className={cn("sticky top-28 border border-border/70 bg-card/40 p-5")}>
+                <div className="mb-4 border-b border-border/60 pb-4">
+                  <LabelRow icon={FileText} label="Table of Contents" />
+                </div>
+                <div className="grid gap-4">
+                  <TableOfContents chapters={article.headings} />
+                </div>
+                <div className="mt-6 border-t border-border/60 pt-4 text-sm leading-7 text-muted-foreground">
+                  <p>{`${article.readTimeMinutes} mins read`}</p>
+                  {publishedDate ? <p>Published: {publishedDate}</p> : null}
+                  {lastUpdatedDate ? <p>Updated: {lastUpdatedDate}</p> : null}
+                </div>
               </div>
             </div>
           </aside>

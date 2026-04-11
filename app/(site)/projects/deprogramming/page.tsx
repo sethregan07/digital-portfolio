@@ -201,17 +201,19 @@ export default async function DeprogrammingCoursePage() {
                 className="text-[2.8rem] leading-[1.02] tracking-[-0.05em] text-foreground md:text-[4.4rem]"
                 style={editorialSerif}
               >
-                Learn how to tell which beliefs are actually yours before they keep steering your decisions.
+                A method for knowing which of your decisions are running on inherited assumptions — and which ones are
+                actually yours.
               </h1>
               <p className="mt-6 max-w-2xl text-[1.08rem] leading-[1.72] text-muted-foreground">
-                Deprogramming helps you trace beliefs back to their source, see how conditioning works in plain sight,
-                and build a more grounded way of thinking without swapping one ideology for another.
+                By the end of this course, you can identify the specific beliefs driving your biggest decisions — in
+                money, work, and relationships — trace where each one came from, and apply a repeatable framework to any
+                belief you encounter going forward. No ideology swap. A method you keep.
               </p>
               <div className="mt-8 space-y-3">
                 {[
-                  "You suspect some of your strongest convictions were installed before they were examined.",
-                  "You can argue a position well, but tracing its origin is harder.",
-                  "You want a method for clearer thinking, not a new tribe to belong to.",
+                  "You are building something independently and need your judgment to hold up under real pressure.",
+                  "You consume a lot of information but notice your decisions still feel less certain than they should.",
+                  "You want a structured method, not scattered insight — and you are willing to apply it to your own thinking, not just other people's.",
                 ].map((item) => (
                   <div key={item} className="flex items-start gap-3">
                     <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" />

@@ -85,9 +85,11 @@
 
 @layer base {
   :root {
-    --font-inter: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
-    --font-body: var(--font-body), ui-sans-serif, system-ui, sans-serif;
-    --font-space: var(--font-serif), Georgia, serif;
+    --font-sans: "IBM Plex Sans Condensed", ui-sans-serif, system-ui, sans-serif;
+    --font-body: "Source Sans 3", ui-sans-serif, system-ui, sans-serif;
+    --font-serif: "Bitter", Georgia, serif;
+    --font-inter: var(--font-sans);
+    --font-space: var(--font-serif);
     --background: 224 46% 8%;
     --foreground: 42 30% 94%;
     --muted: 221 34% 13%;

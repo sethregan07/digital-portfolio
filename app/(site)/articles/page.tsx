@@ -120,20 +120,31 @@ export default async function Articles() {
             </p>
 
             {categories.length > 0 ? (
-              <div className="mt-7 flex flex-wrap items-center gap-3">
-                <span className="mr-2 text-[10px] uppercase tracking-widest text-muted-foreground/40">
-                  {articles.length} essays
-                </span>
-                {categories.map((category) => (
+              <div className="mt-7 space-y-3">
+                <div className="flex flex-wrap items-center gap-3">
+                  <span className="mr-2 text-[10px] uppercase tracking-widest text-muted-foreground/40">
+                    {articles.length} essays
+                  </span>
                   <Link
-                    key={category.slug}
-                    href={`/articles/category/${category.slug}`}
-                    className="inline-flex items-center gap-1.5 rounded-sm border border-border/60 px-3 py-1 text-[11px] tracking-wide text-muted-foreground transition-colors hover:border-border hover:text-foreground"
+                    href="/articles/series"
+                    className="inline-flex items-center gap-1.5 rounded-sm border border-primary/30 bg-primary/5 px-3 py-1 text-[11px] tracking-wide text-muted-foreground transition-colors hover:border-primary/50 hover:text-foreground"
                   >
-                    {category.name}
-                    <span className="text-muted-foreground/40">{category.count}</span>
+                    Browse by series
+                    <ArrowRight className="h-3 w-3" />
                   </Link>
-                ))}
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
+                  {categories.map((category) => (
+                    <Link
+                      key={category.slug}
+                      href={`/articles/category/${category.slug}`}
+                      className="inline-flex items-center gap-1.5 rounded-sm border border-border/60 px-3 py-1 text-[11px] tracking-wide text-muted-foreground transition-colors hover:border-border hover:text-foreground"
+                    >
+                      {category.name}
+                      <span className="text-muted-foreground/40">{category.count}</span>
+                    </Link>
+                  ))}
+                </div>
               </div>
             ) : null}
           </div>
@@ -194,9 +205,9 @@ export default async function Articles() {
         <section className="border-t border-border pt-10">
           <NewsletterSubscribe
             provider="mailerlite"
-            title="Get thoughtful notes on conditioning, clearer decisions, and grounded living"
-            description="Occasional essays and practical frameworks on the three themes that shape the site: deprogramming, decision-making under noise, and living with more independence. Sent roughly 2x per month."
-            buttonText="Subscribe"
+            title="The letter — for people building on their own terms."
+            description="One mechanism or framework per issue. The kind that changes how you read a news story, evaluate an opportunity, or make a decision. Roughly twice a month. No noise."
+            buttonText="Join the letter"
           />
         </section>
       </div>

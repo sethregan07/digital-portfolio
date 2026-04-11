@@ -12,48 +12,48 @@ const editorialSerif = {
 };
 
 export const metadata: Metadata = {
-  title: "The Letter",
+  title: "The Letter — Originalform",
   description:
-    "A weekly letter on thinking clearly in a world built to prevent it. Essays, frameworks, and tools — no noise.",
+    "A letter for independent builders who need their thinking to hold up under pressure. One mechanism or framework per issue. Sent when there is something worth saying.",
   alternates: { canonical: `${BASE_URL}/letter` },
   openGraph: {
     type: "website",
     url: `${BASE_URL}/letter`,
     title: "The Letter — Originalform",
-    description: "One idea per issue. No noise. Essays, frameworks, and sharper ways to think through conditioning.",
+    description: "For people building independently who need their thinking to hold up. One idea per issue, no noise.",
   },
 };
 
 const whatToExpect = [
   {
-    label: "One idea per issue",
+    label: "One mechanism per issue",
     description:
-      "Not a digest. Not a link roundup. Every issue is built around one argument, one framework, or one question worth sitting with.",
+      "Not a digest. Not a link roundup. Every issue examines one specific mechanism — how a belief gets installed, how an incentive shapes behaviour, how a system maintains itself — and what to do about it.",
   },
   {
-    label: "Practical, not abstract",
+    label: "Built for people already in motion",
     description:
-      "Every issue ends with something you can use or think about differently the same day. Not theory for its own sake.",
+      "This is not motivational content. It is a thinking tool for people building something independently — founders, freelancers, serious readers — who make real decisions and need their judgment to hold up.",
   },
   {
     label: "Sent when there is something worth saying",
     description:
-      "Roughly twice a month. No filler issues to hit a publishing schedule. If there is nothing worth sending, nothing gets sent.",
+      "Roughly twice a month. No filler issues to hit a publishing schedule. If there is nothing worth sending, nothing gets sent. Quality over volume, every time.",
   },
   {
     label: "Direct replies welcome",
     description:
-      "Every issue is sent from signal@originalform.org. Reply directly. Every response is read. Pushback and questions both welcome.",
+      "Every issue is sent from a real address. Reply directly — every response is read. Pushback, questions, and disagreement all welcome. That is part of what the letter is for.",
   },
 ];
 
 const pastIssueTopics = [
-  "How attention is managed before it reaches the classroom",
   "The incentive structure behind what you call common sense",
-  "Why smart people build the most sophisticated rationalizations",
+  "Why smart people build the most sophisticated rationalisations",
   "How debt shapes behaviour without needing force",
   "The difference between information and a framework for using it",
-  "What institutions actually optimise for — and why it's not you",
+  "What institutions actually optimise for — and why it is not you",
+  "How the Millionaire Next Door builds wealth that looks like nothing from the outside",
 ];
 
 export default function LetterPage() {
@@ -72,11 +72,12 @@ export default function LetterPage() {
             The Letter
           </h1>
           <p className="mt-5 text-[1.15rem] leading-[1.7] text-muted-foreground">
-            A letter on thinking clearly in a world built to prevent it.
+            For people building an independent life who need their thinking to hold up under pressure.
           </p>
           <p className="mt-3 text-[1.1rem] leading-[1.7] text-muted-foreground">
-            One idea per issue. Sent when there is something worth saying — roughly twice a month. No noise, no
-            affiliate links, no product pitches dressed as content.
+            One mechanism or framework per issue — the kind that changes how you read a news story, evaluate an
+            opportunity, or make a decision. Sent roughly twice a month, when there is something worth saying. No noise,
+            no affiliate links, no product pitches dressed as content.
           </p>
         </section>
 

@@ -6,10 +6,9 @@ import { ArrowLeft, Clock, Layers } from "lucide-react";
 
 import { BASE_URL } from "@/lib/metadata";
 import {
-  fallbackSections,
+  articleCategories,
+  getArticleCategoryBySlug,
   getArticleCategoryCounts,
-  getArticleCategoryNameFromSlug,
-  getArticleCategorySlug,
   getArticlesByCategorySlug,
 } from "@/lib/services/content";
 import NewsletterSubscribe from "@/components/newsletter-subscribe";
@@ -21,14 +20,14 @@ const editorialSerif = {
 };
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-  const category = getArticleCategoryNameFromSlug(params.slug);
+  const category = getArticleCategoryBySlug(params.slug);
 
   if (!category) {
     return {};
   }
 
-  const title = `${category} Articles`;
-  const description = `Essays filed under ${category}.`;
+  const title = `${category.name} Articles`;
+  const description = category.description;
   const url = `${BASE_URL}/articles/category/${params.slug}`;
 
   return {
@@ -41,15 +40,15 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 }
 
 export async function generateStaticParams(): Promise<Array<{ slug: string }>> {
-  return fallbackSections.map((section) => ({ slug: getArticleCategorySlug(section) }));
+  return articleCategories.map((category) => ({ slug: category.slug }));
 }
 
 export default async function ArticleCategoryPage({ params }: { params: { slug: string } }) {
-  const categoryName = getArticleCategoryNameFromSlug(params.slug);
+  const category = getArticleCategoryBySlug(params.slug);
   const articles = await getArticlesByCategorySlug(params.slug);
   const categories = await getArticleCategoryCounts();
 
-  if (!categoryName || articles.length === 0) {
+  if (!category || articles.length === 0) {
     notFound();
   }
 
@@ -71,10 +70,11 @@ export default async function ArticleCategoryPage({ params }: { params: { slug: 
               <p className="page-kicker">Category</p>
             </div>
             <h1 className="page-title" style={editorialSerif}>
-              {categoryName}
+              {category.name}
             </h1>
             <p className="mt-5 max-w-2xl text-base leading-8 text-muted-foreground">
-              {articles.length} {articles.length === 1 ? "essay" : "essays"} collected under this category.
+              {category.description} This category currently includes {articles.length}{" "}
+              {articles.length === 1 ? "essay." : "essays."}
             </p>
           </div>
         </section>

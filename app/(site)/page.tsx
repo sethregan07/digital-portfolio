@@ -1,6 +1,18 @@
 import { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, BookOpen, CheckCircle2, Clock, FileText, Lightbulb, Newspaper, ShieldCheck } from "lucide-react";
+import {
+  ArrowRight,
+  BookOpen,
+  CheckCircle2,
+  CheckSquare,
+  Clock,
+  FileText,
+  HelpCircle,
+  Lightbulb,
+  MailOpen,
+  Newspaper,
+  ShieldCheck,
+} from "lucide-react";
 
 import siteMetadata, { BASE_URL } from "@/lib/metadata";
 import { getRecentPosts } from "@/lib/services/content";
@@ -57,54 +69,105 @@ const entryPoints = [
 ];
 
 const problemSignals = [
-  "You can defend a belief faster than you can explain where it came from.",
-  "You keep consuming information, but trusting your own judgment less.",
-  "Parts of your politics, work ethic, money beliefs, or identity feel inherited rather than chosen.",
-  "You want a method for thinking more clearly, not another ideology to memorize.",
+  "You are making decisions — in work, money, or life — and you are not fully sure which assumptions driving them are actually yours.",
+  "You read widely and consume good information, but your judgment in high-stakes moments still feels less certain than it should.",
+  "You have started building something independent — a business, a practice, a different way of working — and realise the bottleneck is not information, it is how you think.",
+  "You want a repeatable method, not another framework to agree with.",
 ];
 
 const outcomePromises = [
   {
-    title: "Spot the script",
+    title: "Know which assumptions are running you",
     description:
-      "Name which beliefs came from direct examination and which arrived through repetition, status, fear, or social pressure.",
+      "Identify the specific beliefs driving your biggest decisions — in money, work, and relationships — and trace each to whether it came from examination or inheritance.",
   },
   {
-    title: "Audit the source",
+    title: "Evaluate anything clearly",
     description:
-      "Trace opinions back to institutions, incentives, media environments, and family systems instead of treating familiarity as truth.",
+      "Apply a consistent method to any new idea, institution, or opportunity — so your judgment holds up under pressure rather than defaulting to what feels familiar.",
   },
   {
-    title: "Decide with more independence",
+    title: "Build from your own operating system",
     description:
-      "Use clearer frameworks for work, money, and life choices without needing constant validation from the crowd around you.",
+      "Replace reactive decision-making with a deliberate framework — your archetype, your energy, your direction — so what you build reflects your actual priorities, not someone else's defaults.",
   },
 ];
 
 const flagshipBullets = [
-  "42 structured lessons across conditioning, institutions, media, education, economic systems, and family programming",
-  "The first 3 lessons are free, so you can test the method before you commit",
-  "A Frameworks Reference PDF, curated reading list, and Source Audit Worksheet",
-  "A 10-lesson guarantee if nothing shifts after genuine engagement",
+  "42 structured lessons — conditioning, media, institutions, money systems, education, family programming",
+  "First 3 lessons free — the method earns the right to go deeper before you spend anything",
+  "Concrete outcome: by the end, you can identify which of your current decisions are running on borrowed assumptions and have a repeatable method for any future decision",
+  "10-lesson money-back guarantee — engage genuinely, see no shift, get a full refund",
+];
+
+const freeResources = [
+  {
+    title: "5 Signs Your Thinking Has Been Managed",
+    description: "A diagnosis and a fix for each sign — in one 10-minute read.",
+    tag: "Free Guide",
+    href: "/free-guide",
+    icon: FileText,
+    meta: "10 min",
+  },
+  {
+    title: "How Much of Your Thinking Is Actually Yours?",
+    description: "A 5-question quiz with a personalised result and reading path.",
+    tag: "Quiz",
+    href: "/quiz",
+    icon: HelpCircle,
+    meta: "2 min",
+  },
+  {
+    title: "Think Clearly in 5 Days",
+    description: "A free email course on the fundamentals. One lesson per day, 8–11 minutes each.",
+    tag: "Email Course",
+    href: "/mini-course",
+    icon: MailOpen,
+    meta: "5 days",
+  },
+  {
+    title: "The Source Audit",
+    description: "Five questions for tracing any belief back to its actual origin.",
+    tag: "Worksheet",
+    href: "/tools#source-audit",
+    icon: Lightbulb,
+    meta: "10–20 min",
+  },
+  {
+    title: "7 Questions Before You Believe Anything",
+    description: "A media audit checklist for evaluating any story, claim, or source.",
+    tag: "Checklist",
+    href: "/checklist",
+    icon: CheckSquare,
+    meta: "Reference",
+  },
+  {
+    title: "Vocabulary of Conditioning",
+    description: "18 key terms explained in depth — from manufactured consent to tribal epistemology.",
+    tag: "Reference",
+    href: "/vocabulary",
+    icon: BookOpen,
+    meta: "Reference",
+  },
 ];
 
 const trustReasons = [
   {
-    title: "Read before you buy",
+    title: "Prove it before you pay for it",
     description:
-      "The guide, essays, frameworks, and first course lessons let the work prove itself before you spend anything.",
+      "The guide, quiz, essays, and first course lessons exist so the work can demonstrate its value before you spend anything. If the free material does not sharpen how you think, the course is not for you.",
     icon: Newspaper,
   },
   {
-    title: "Method over ideology",
+    title: "A method, not a worldview",
     description:
-      "Originalform is built to help you examine how beliefs get installed, not to hand you a new script and call it freedom.",
+      "Originalform does not tell you what to think. It gives you a method for examining what you already think — where it came from, whether it holds up, and what to do when it does not.",
     icon: ShieldCheck,
   },
   {
-    title: "Useful on the same day",
+    title: "Built for people already building",
     description:
-      "The writing is meant to change how you interpret news, pressure, incentives, and your own reactions immediately.",
+      "This is not motivational content for people stuck in thinking. It is a thinking system for people already in motion — making decisions, building things, trying to trust their own judgment more.",
     icon: Lightbulb,
   },
 ];
@@ -146,7 +209,8 @@ export default async function Home() {
       <div className="premium-panel border-b border-border/80 px-6 py-3">
         <div className="container flex max-w-5xl items-center justify-between gap-4">
           <p className="text-[12px] uppercase tracking-[0.12em] text-muted-foreground">
-            <span className="font-medium text-foreground">Free guide:</span> 5 signs your thinking has been managed.
+            <span className="font-medium text-foreground">Free:</span> The quiz, the guide, the mini-course, and the
+            checklist — no account needed.
           </p>
           <Button asChild variant="outline" size="sm" className="h-8 shrink-0 px-3">
             <Link href="/free-guide">
@@ -161,17 +225,18 @@ export default async function Home() {
           <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_340px] lg:items-start">
             <div className="max-w-3xl">
               <p className="mb-6 text-[12px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                Essays, frameworks, and a course for people who want their thinking back
+                A thinking system for people building something independent
               </p>
               <h1
                 className="max-w-4xl text-[3.4rem] leading-[0.94] tracking-[-0.06em] text-foreground md:text-[5.35rem]"
                 style={editorialSerif}
               >
-                Learn how to spot borrowed beliefs before they keep steering your decisions.
+                The bottleneck is not information. It is the assumptions running underneath your decisions.
               </h1>
               <p className="mt-8 max-w-2xl text-[1.1rem] leading-[1.72] text-muted-foreground">
-                Originalform turns a vague feeling of "something is off" into a method. Start with a free guide, read
-                the first course lesson, and go deeper only if the work proves itself.
+                Originalform is a system for identifying which of your beliefs you actually chose — and which arrived
+                through conditioning, social pressure, and institutional design. Start free. Go deeper if the method
+                earns it.
               </p>
               <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center">
                 <Button asChild className="h-12 px-7">
@@ -365,6 +430,61 @@ export default async function Home() {
           ) : null}
         </section>
 
+        {/* ── FREE RESOURCES GRID ── */}
+        <section className="fade-up-delayed mb-24">
+          <div className="mb-8 flex items-end justify-between border-b border-border pb-3">
+            <div>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                Free resources — all of them
+              </p>
+              <p className="mt-2 max-w-2xl text-sm leading-7 text-muted-foreground">
+                Every tool, worksheet, and guide on this site is free. No account needed.
+              </p>
+            </div>
+            <Link
+              href="/tools"
+              className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.12em] text-muted-foreground transition-colors hover:text-foreground"
+            >
+              All tools
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {freeResources.map((resource) => {
+              const Icon = resource.icon;
+              return (
+                <Link
+                  key={resource.href}
+                  href={resource.href}
+                  className="group flex flex-col border border-border/50 bg-card/20 p-5 transition-colors hover:border-border hover:bg-card/40"
+                >
+                  <div className="mb-4 flex items-center justify-between">
+                    <span className="rounded-sm border border-border/40 px-2 py-0.5 text-[10px] uppercase tracking-[0.12em] text-muted-foreground">
+                      {resource.tag}
+                    </span>
+                    <span className="flex items-center gap-1 text-[11px] text-muted-foreground/50">
+                      <Icon className="h-3.5 w-3.5" />
+                      {resource.meta}
+                    </span>
+                  </div>
+                  <h3
+                    className="mb-2 text-[1.05rem] font-semibold leading-[1.3] tracking-[-0.01em] text-foreground"
+                    style={editorialSerif}
+                  >
+                    {resource.title}
+                  </h3>
+                  <p className="mb-4 flex-1 text-[0.88rem] leading-[1.65] text-muted-foreground">
+                    {resource.description}
+                  </p>
+                  <span className="inline-flex items-center gap-1 text-[11px] uppercase tracking-[0.1em] text-muted-foreground/50 transition-colors group-hover:text-muted-foreground">
+                    Access free <ArrowRight className="h-3 w-3" />
+                  </span>
+                </Link>
+              );
+            })}
+          </div>
+        </section>
+
         <section className="fade-up-delayed bg-card/35 mb-24 border border-border/70 p-7 md:p-10">
           <div className="grid gap-8 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
             <div>
@@ -427,9 +547,9 @@ export default async function Home() {
         <section className="fade-up-delayed border-t border-border/70 pt-10">
           <NewsletterSubscribe
             provider="mailerlite"
-            title="Get the sharpest ideas from Originalform in your inbox."
-            description="Roughly twice a month: one idea, one framework, and one useful way to examine how your thinking is being shaped. No noise. No endless pitching."
-            buttonText="Send me the letter"
+            title="The letter — for people building on their own terms."
+            description="A letter for independent builders who need their thinking to hold up under pressure. One idea per issue — a mechanism, a framework, or a reframe — sent when there is something worth saying. Roughly twice a month. No noise, no pitch cycle."
+            buttonText="Join the letter"
           />
         </section>
       </div>
